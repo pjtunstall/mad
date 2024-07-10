@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>The Mad Bomber's Tea Party</title>
+    <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <div id="intro">
+      <div id="credits">
+        <div id="credit-content"></div>
+      </div>
+      <div id="start" class="button" style="display: none">SELF DESTRUCT</div>
+      <div id="everything-container">
+        <div id="title-bar">
+          <div id="indicators">
+            <span id="indicator-0" class="led hide"></span>
+            <span id="indicator-1" class="led hide"></span>
+            <span id="indicator-2" class="led hide"></span>
+            <span id="indicator-3" class="led hide"></span>
+          </div>
+          <h1>THE MAD BOMBER'S TEA PARTY</h1>
+          <div id="ready" class="button">&#9658;</div>
+        </div>
+        <div id="grid-container">
+          <div id="main-pane">
+            <div class="eyelid-container">
+              <div class="eyelid top-eyelid"></div>
+              <div class="eyelid bottom-eyelid"></div>
+            </div>
+          </div>
+          <div id="chat-pane">
+            <div id="messages-container">
+              <ul id="chat-messages">
+                <li id="text" class="silver"></li>
+              </ul>
+            </div>
+            <form id="chat-form" action="">
+              <input id="chat-input" type="text" autocomplete="off" />
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="game">
+      <h1 id="game-over"></h1>
+      <div id="grid-wrapper">
+        <div id="info">
+          <div class="info-box">
+            <div id="player-info">Player:</div>
+          </div>
+          <div class="info-box">
+            <div id="power-up">Powerup:</div>
+          </div>
+          <div class="info-box">
+            <div id="lives">Lives: 0</div>
+          </div>
+        </div>
+        <div id="game-grid"></div>
+        <div id="instructions">
+          <div>ARROWS TO MOVE . 'X' TO PLANT BOMB</div>
+          <div>REMOTE CONTROL MODE . PRESS 'SPACE' TO EXPLODE</div>
+        </div>
+      </div>
+      <script>
+        window.addEventListener("load", function () {
+          // Use the 'load' event to wait for the entire page to load, including CSS, to avoid FOUC (Flash of Unstyled Content)
+          setTimeout(function () {
+            document.getElementById("start").style.display = "";
+          }, 0);
+        });
+      </script>
+      <script src="/socket.io/socket.io.js"></script>
+      <script type="module" src="main.js"></script>
+    </div>
+  </body>
+</html>
