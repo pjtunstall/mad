@@ -310,7 +310,7 @@ const powerupArray = [
     count: 1,
   },
   {
-    name: "bomb-pass", // a placeholder for bomb-throw!
+    name: "bomb-pass",
     initialCount: 1,
     count: 1,
   },

@@ -1,10 +1,18 @@
+# Setup
+
+Install Node dependencies: `npm install`. If it reports any vulnerabilities, `npm audit fix`, as directed. Then `node server.js` to run the server on port 3000.
+
+# Progress
+
+Multiplayer Bomberman game working. Just need to add a framework.
+
+Note 1: The instructions and audit expect us to have a simple lobby with a 20s countdown, followed by a 10s countdown for whoever was had joined during the first countdown. Instead, I chose to just implement a 10s countdown. The two countdowns didn't make dramatic sense in the context of my over-the-top intro!
+
+Note 2: I started a fresh repo for Gitea. That's because I used GitHub at first, which has a more generous memory limit for individual files. When I discovered that one of the sound effect files was too big for Gitea, I trimmed it to fit, but Gitea still won't accept the repo as there's a reference to the old file in history.
+
+Note 3: as it stands, it only allows a single instance of the game to be played at any one time.
+
 # Todo
-
-## Summary
-
-We have a working multiplayer bomberman game here. It mainly just remains to add the framework.
-
-Note: I started a fresh repo for Gitea. That's because I used GitHub at first, which has a more generous memory limit for individual files. When I discovered that one of the sound effect files was too big for Gitea, I trimmed it to fit, but Gitea still won't accept the repo as there's a reference to the old file in history.
 
 ## Required
 
@@ -31,8 +39,8 @@ Note: I started a fresh repo for Gitea. That's because I used GitHub at first, w
 - BONUS
   - Easy bonus: allow a 5th player to be spawed in the center of the grid. (Make sure they have space and that they don't interfere with the mechanism to always place one each of the three basic powerups.)
   - POWERUPS
-    - `bomb-throw`. (The current `bomb-pass` is a placeholder for for this.)
-    - Not on the list: imagine a `smoke-bomb` that fills nearby tunnels with smoke that disperses moer slowly than fire, and can be walked through but not seen through.
+    - `bomb-throw` powerup.
+    - Not on the list: `smoke-bomb` that fills nearby tunnels with smoke that disperses more slowly than fire, and can be walked through but not seen through.
     - Not on the list: `soft-block-push`.
   - CO-OP MODES
     - Teams.

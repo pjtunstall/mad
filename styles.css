@@ -833,7 +833,7 @@ img {
   background-position-y: -832px;
   background-position-x: -256px;
 }
-/* bomb pass - Pass through Bombs (a placeholder for bomb-throw) */
+/* bomb pass - Pass through Bombs */
 .bomb-pass {
   background-position-y: -896px;
   background-position-x: -320px;
