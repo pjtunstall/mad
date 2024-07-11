@@ -1,5 +1,5 @@
 const socket = io("http://localhost:3000", {
-  reconnection: false,
+  reconnection: false, // Changing this to allow reconnection would mean we'd have to alter how the server handles disconnections, including "play again" logic.
 });
 
 socket.on("disconnect", (reason) => {

@@ -6,22 +6,33 @@ Install Node dependencies: `npm install`. If it reports any vulnerabilities, `np
 
 Multiplayer Bomberman game working. Just need to add a framework.
 
-Note 1: The instructions and audit expect us to have a simple lobby with a 20s countdown, followed by a 10s countdown for whoever was had joined during the first countdown. Instead, I chose to just implement a 10s countdown. The two countdowns didn't make dramatic sense in the context of my over-the-top intro!
+Notes:
 
-Note 2: I started a fresh repo for Gitea. That's because I used GitHub at first, which has a more generous memory limit for individual files. When I discovered that one of the sound effect files was too big for Gitea, I trimmed it to fit, but Gitea still won't accept the repo as there's a reference to the old file in history.
+1. The instructions and audit expect us to have a simple lobby with a 20s countdown, followed by a 10s countdown for whoever was had joined during the first countdown. Instead, I chose to just implement a 10s countdown. The two countdowns didn't make dramatic sense in the context of my over-the-top intro!
 
-Note 3: as it stands, it only allows a single instance of the game to be played at any one time.
+2. I started a fresh repo for Gitea. That's because I used GitHub at first, which has a more generous memory limit for individual files. When I discovered that one of the sound effect files was too big for Gitea, I trimmed it to fit, but Gitea still won't accept the repo as there's a reference to the old file in history.
+
+3. As it stands, it only allows a single instance of the game to be played at any one time. Switching to allow multiple instances would take some work. For that reason, I'm no longer aiming to host it in the near future.
 
 # Todo
 
-## Required
+## Add framework
 
-- FRAMEWORK
-  - Just game `grid`?
-    - That's probably enough to satisfy the spirit of the exercise without getting bogged down in making it work with all the optional extras of the intro too. All they ask is that we use the framework; they don't say how or to what extent. They don't even ask about it at the audit.
-  - Decide which mini-framework to use: mine was made naively, and thus lends itself to naive technique; plenty of escape hatches.
-  - Note where all relevant the DOM stuff is in the game: `generateLevel`, `buildGrid`, socket handlers, `gameLoop`, `move`, `setSprite`. Audio is ouside of DOM, so ignore that.
-  - Think of suitable state variables to trigger updates.
+We needs to decide which framework to use: mine, Stefan's, or something based on Rodrigo Pombo's `Didact`. Rather than letting that hold us up, we could pick one and have a go. In what follows, for definiteness, I'll assume we're using my `overReact` (because, being made maively, I think it will lend itself to naive, and hence quick and easy, use), but a lot of the points will hold for any of them. I'll assume the goal is simply to framework the core game, taking `grid` or perhaps `gridWrapper` as the app. That's enough to satisfy the spirit of the exercise without getting bogged down in making it work with all the optional extras of the intro too.
+
+Here's what I think we'll need to do:
+
+Find all DOM elements that belong to the app, all code that accesses or changes them, and all relevant global variables. Code that access or changes DOM elements may be
+
+- top-level: typically global variable declarations
+- in event handlers (input handlers and WebSocket on-message handlers)
+- in normal functions such as `generateLevel`, `buildGrid`, `gameLoop`, `move`, `setSprite`.
+
+Write functions to create the virtual nodes and combine them to make the app.
+
+Think of any suitable state variables that we want trigger automatic updates. We also have the option (escape hatch) of being able to simply call the `update()` method on the app.
+
+Rewrite the code to use the framework. Some of this will just be a matter of switching from DOM syntax to virtual DOM syntax. I anticipate it will only be in the event handlers whose logic will need changing a bit.
 
 ## Extra
 
