@@ -262,12 +262,11 @@ function typeLetter(textElement, text, frequency) {
     // Get the next character or tag
     let nextChar = text.charAt(currentIndex);
     if (nextChar === "<") {
-      // If it's the start of a tag
-      // Find the end of the tag
+      // If it's the start of a tag, find the end of the tag, ...
       let endIndex = text.indexOf(">", currentIndex);
-      // Extract the whole tag
+      // ... extract the whole tag, ...
       nextChar = text.slice(currentIndex, endIndex + 1);
-      // Update the currentIndex to be after the tag
+      // ... and update the currentIndex to be after the tag
       currentIndex = endIndex;
     }
 

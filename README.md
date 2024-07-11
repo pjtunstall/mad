@@ -4,7 +4,7 @@ Install Node dependencies: `npm install`. If it reports any vulnerabilities, `np
 
 # Progress
 
-Multiplayer Bomberman game working. Just need to add a framework.
+Multiplayer Bomberman game working. Just need to add a framework. It seems a shame as it will, at best, have no effect for players. The best we can hope for is that likely decline in performance will not be noticeable!
 
 Notes:
 
@@ -30,7 +30,7 @@ Find all DOM elements that belong to the app, all code that accesses or changes 
 
 Write functions to create the virtual nodes and combine them to make the app.
 
-Think of any suitable state variables that we want trigger automatic updates. We also have the option (escape hatch) of being able to simply call the `update()` method on the app.
+Think of any suitable state variables that we want trigger automatic updates. We also have the option (escape hatch) of being able to simply call the `update` method on the app.
 
 Rewrite the code to use the framework. Some of this will just be a matter of switching from DOM syntax to virtual DOM syntax. I anticipate it will only be in the event handlers whose logic will need changing a bit.
 
