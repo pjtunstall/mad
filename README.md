@@ -4,7 +4,7 @@ Install Node dependencies: `npm install`. If it reports any vulnerabilities, `np
 
 # Progress
 
-Multiplayer Bomberman game working. Just need to add a framework. It seems a shame as it will, at best, have no effect for players. The best we can hope for is that likely decline in performance will not be noticeable!
+Multiplayer Bomberman game working. Just need to add a framework. It seems a shame as it will, at best, have no effect for players. All we can hope is that the decline in performance will not be noticeable!
 
 Notes:
 
@@ -18,7 +18,7 @@ Notes:
 
 ## Add framework
 
-We needs to decide which framework to use: mine, Stefan's, or something based on Rodrigo Pombo's `Didact`. Rather than letting that hold us up, we could pick one and have a go. In what follows, for definiteness, I'll assume we're using my `overReact` (because, being made maively, I think it will lend itself to naive, and hence quick and easy, use), but a lot of the points will hold for any of them. I'll assume the goal is simply to framework the core game, taking `grid` or perhaps `gridWrapper` as the app. That's enough to satisfy the spirit of the exercise without getting bogged down in making it work with all the optional extras of the intro too.
+We needs to decide which framework to use: mine, Stefan's, or something based on Rodrigo Pombo's `Didact`. Rather than letting that hold us up, we could pick one and have a go. In what follows, for definiteness, I'll assume we're using my `overReact` (because, being made maively, I think it migh tbe quick and easy to apply), but a lot of the points will hold for any of them. I'll assume the goal is simply to framework the core game, taking `grid` or perhaps `gridWrapper` as the app. That's enough to satisfy the spirit of the exercise without getting bogged down in making it work with all the optional extras of the intro too.
 
 Here's what I think we'll need to do:
 
