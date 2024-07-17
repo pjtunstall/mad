@@ -44,6 +44,7 @@ Rewrite the code to use the framework. Some of this will just be a matter of swi
 
 - SECURITY
   - Sanitize names and messages. (Important to do this before any attempt to host the game.)
+  - Disconnection logic on client: gracefully handle what happens if they disconnect at any stage before, during, or after the game.
   - Reconnection logic (e.g. 3 attempts then consider gone: update player.id to new id using index from client to link them; better yet, use a cookie. Test how well connections last, using a mobile hotspot.)
 - COUNTDOWN
   - Move control to server.
