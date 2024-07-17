@@ -1,5 +1,6 @@
 const http = require("http");
 const fs = require("fs");
+const os = require("os");
 const socketIo = require("socket.io");
 const url = require("url");
 const path = require("path");
@@ -66,10 +67,36 @@ const server = http.createServer((req, res) => {
   });
 });
 
-let io = socketIo(server);
+function getLocalIP() {
+  const interfaces = os.networkInterfaces();
+  for (const interfaceName in interfaces) {
+    const addresses = interfaces[interfaceName];
+    for (const address of addresses) {
+      if (
+        address.family === "IPv4" &&
+        !address.internal &&
+        interfaceName !== "lo"
+      ) {
+        return address.address;
+      }
+    }
+  }
+  return null; // No suitable IP address found
+}
+
+const SERVER_IP_ADDRESS = getLocalIP() || "localhost";
+const io = socketIo(server, {
+  cors: {
+    origin: ":3000",
+    methods: ["GET", "POST"],
+  },
+});
 disconnectAll();
+
 const port = process.env.PORT || 3000;
-server.listen(port, () => console.log(`Server listening on port ${port}`));
+server.listen(port, () =>
+  console.log(`Server listening on port http://${SERVER_IP_ADDRESS}:3000`)
+);
 
 function disconnectAll() {
   for (let [id, socket] of io.of("/").sockets) {

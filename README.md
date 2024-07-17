@@ -4,7 +4,7 @@ Install Node dependencies: `npm install`. If it reports any vulnerabilities, `np
 
 # Progress
 
-Multiplayer Bomberman game working. Just need to add a framework. It seems a shame as it will, at best, have no effect for players. All we can hope is that the decline in performance will not be noticeable!
+The multiplayer Bomberman game is working. Just need to add a framework. It seems a shame as it will, at best, have no effect for players. All we can hope is that the decline in performance will not be noticeable!
 
 Notes:
 
@@ -15,6 +15,12 @@ Notes:
 3. As it stands, it only allows a single instance of the game to be played at any one time. Switching to allow multiple instances would take some work. For that reason, I'm no longer aiming to host it in the near future.
 
 # Todo
+
+## Fix
+
+- Credits sensitive to screen size. Make sure the whole thing displays correctly even on bigger screens than mine.
+
+- Leave as is? I didn't adticipate that if you drop a full-fire by collecting another powerup after planting the full-fire bomb and before it goes off, you can collect it again, allowing you to re-use it. It might be nice to leave it in as a fun quirk that can be learnt and exploited.
 
 ## Add framework
 
