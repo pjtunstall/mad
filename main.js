@@ -102,7 +102,7 @@ const creditContent = document.getElementById("credit-content");
 for (let i = 0; i < 3; i++) {
   creditContent.innerHTML += `
           <div id="credit-content-${i}" class="credit-content">
-            <p class="divider">&#x1f4a3;</p>
+          <p class="divider">&#x1f4a3;</p>
             <p>
               Welcome to The Mad Bomber's Tea Party, a game of skill and fate
               for 2-4 players.

@@ -1,5 +1,5 @@
 :root {
-  --credits-height: 1340;
+  --credits-height: 1380;
   --grid-height: 832px;
   --grid-width: 960px;
   --cell-height: 64px;
@@ -564,6 +564,10 @@ img {
   justify-content: center;
 }
 
+#credit-content-0 .divider {
+  opacity: 0;
+}
+
 .credit-content {
   position: absolute;
   animation-timing-function: linear;
@@ -589,10 +593,10 @@ img {
 
 @keyframes scrollUp-0 {
   0% {
-    top: calc(100vh - var(--credits-height) * 1px);
+    top: calc(100vh - calc(var(--credits-height) * 1px));
   }
   100% {
-    top: calc(100vh - 2 * var(--credits-height) * 1px);
+    top: calc(100vh - calc(var(--credits-height) * 2px));
   }
 }
 
@@ -601,16 +605,16 @@ img {
     top: 100vh;
   }
   100% {
-    top: calc(100vh - var(--credits-height) * 1px);
+    top: calc(100vh - calc(var(--credits-height) * 1px));
   }
 }
 
 @keyframes scrollUp-2 {
   0% {
-    top: calc(100vh - var(--credits-height) * 1px);
+    top: calc(100vh - calc(var(--credits-height) * 1px));
   }
   100% {
-    top: calc(100vh - var(--credits-height) * 2px);
+    top: calc(100vh - calc(var(--credits-height) * 2px));
   }
 }
 
