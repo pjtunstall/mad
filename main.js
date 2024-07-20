@@ -564,7 +564,6 @@ socket.on("player left", ({ player, playersInChat }) => {
     console.log("player left");
     return;
   }
-  console.log("no grid data");
 
   players[player.index] = null;
   const indicator = document.getElementById(`indicator-${player.index}`);

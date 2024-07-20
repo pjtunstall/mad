@@ -20,8 +20,6 @@ Notes:
 
 ## Fix
 
-- Credits sensitive to screen size and type of browser. Make sure the whole thing displays correctly even on bigger screens than mine. Make sure they don't overlap on Firefox. For me, it looks ok on Chrome, Brave, and Safari.
-
 - If possible, hide or get rid of intrusive and unnecessary scroll bars in intro. They're visible always in some browsers. They're only visible on hover in my Chrome (Version 126.0.6478.127 (Official Build) (x86_64)) and Brave (not ideal, but much better), but always visible in some other people's Chrome.
 
 - I didn't adticipate that if you drop a full-fire by collecting another powerup after planting the full-fire bomb and before it goes off, you can collect it again, allowing you to re-use it. It might be nice to leave it in as a fun quirk that can be learnt and exploited. Leave as is?

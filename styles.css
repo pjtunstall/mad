@@ -546,10 +546,10 @@ img {
 }
 
 #credits {
-  position: fixed;
+  position: fixed; /* Removing this makes it wider, naturally. */
   top: 0;
   left: 0;
-  width: 168px;
+  width: 168px; /* Only respected if position is fixed, naturally. */
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.5);
   color: silver;
@@ -557,6 +557,13 @@ img {
   box-sizing: border-box;
   overflow-wrap: break-word;
   hyphens: auto;
+  line-height: 0.8; /* Without this, the default value is "normal", which varies between browsers in the case of this non-standard font. For Chrome and Brave, this is 0.8. For Firefox, 1.2. MDN Web Docs says, "Depends on the user agent. Desktop browsers (including Firefox) use a default value of roughly 1.2, depending on the element's font-family." */
+}
+
+.credit-content {
+  position: absolute; /* Removing this prevents the credits from appearing at all. */
+  animation-timing-function: linear;
+  animation-duration: 32s;
 }
 
 .divider {
@@ -566,12 +573,6 @@ img {
 
 #credit-content-0 .divider {
   opacity: 0;
-}
-
-.credit-content {
-  position: absolute;
-  animation-timing-function: linear;
-  animation-duration: 32s;
 }
 
 #credit-content-0 {
