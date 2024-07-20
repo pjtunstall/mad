@@ -2,9 +2,11 @@
 
 Install Node dependencies: `npm install`. If it reports any vulnerabilities, `npm audit fix`, as directed. Then `node server.js` to run the server on port 3000.
 
+The server will log its IP address in the browser. To connect over a mobile hotspot, players can enter that address in their browser.
+
 # Progress
 
-The multiplayer Bomberman game is working. Just need to add a framework. It seems a shame as it will, at best, have no effect for players. All we can hope is that the decline in performance will not be noticeable!
+The multiplayer Bomberman game is working. We just need to add a framework. It seems a shame as it will, at best, have no effect for players. All we can hope is that the decline in performance will not be noticeable! We can start work on it in a dedicated feature branch.
 
 Notes:
 
@@ -18,9 +20,11 @@ Notes:
 
 ## Fix
 
-- Credits sensitive to screen size. Make sure the whole thing displays correctly even on bigger screens than mine.
+- Credits sensitive to screen size and type of browser. Make sure the whole thing displays correctly even on bigger screens than mine. Make sure they don't overlap on Firefox. For me, it looks ok on Chrome, Brave, and Safari.
 
-- Leave as is? I didn't adticipate that if you drop a full-fire by collecting another powerup after planting the full-fire bomb and before it goes off, you can collect it again, allowing you to re-use it. It might be nice to leave it in as a fun quirk that can be learnt and exploited.
+- If possible, hide or get rid of intrusive and unnecessary scroll bars in intro. They're visible always in some browsers. They're only visible on hover in my Chrome (Version 126.0.6478.127 (Official Build) (x86_64)) and Brave (not ideal, but much better), but always visible in some other people's Chrome.
+
+- I didn't adticipate that if you drop a full-fire by collecting another powerup after planting the full-fire bomb and before it goes off, you can collect it again, allowing you to re-use it. It might be nice to leave it in as a fun quirk that can be learnt and exploited. Leave as is?
 
 ## Add framework
 
