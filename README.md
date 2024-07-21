@@ -1,12 +1,16 @@
 # Setup
 
-Install Node dependencies: `npm install`. If it reports any vulnerabilities, `npm audit fix`, as directed. Then `node server.js` to run the server on port 3000.
+To run the server, install Node dependencies: `npm install`. If it reports any vulnerabilities, `npm audit fix`, as directed. Then `node server.js` to run the server on port 3000.
 
 The server will log its IP address in the browser. To connect over a mobile hotspot, players can enter that address in their browser.
 
 # Progress
 
-The multiplayer Bomberman game is working. We just need to add a framework. It seems a shame as it will, at best, have no effect for players. All we can hope is that the decline in performance will not be noticeable! We can start work on it in a dedicated feature branch.
+The multiplayer Bomberman game is working in Chrome, Brave, Firefox, and Safari. Not yet tested in Edge.
+
+Some smallish things to fix. (See below.)
+
+We mainly just need to add a framework for the sake of the exercsie. It seems a shame as it will, at best, have no effect for players. All we can hope is that the decline in performance will not be noticeable! We can start work on it in a dedicated feature branch.
 
 Notes:
 
