@@ -24,6 +24,8 @@ Notes:
 
 ## Fix
 
+- Make sure it's possible to scroll all the way up to see the top of each outro text.
+
 - Make sure outro text for loser scrolls all the way into view.
 
 - If you're fast enough, you can plant a bomb after being killed and before you're transported back to your corner. Disable X while death in progress.

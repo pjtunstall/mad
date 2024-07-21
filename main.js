@@ -257,7 +257,6 @@ function transitionToName() {
 
   const textElement = document.getElementById("text");
   typeLetter(textElement, introText, 14);
-  textElement.scrollIntoView(false);
 
   chatForm.querySelector("input").focus();
 }
@@ -1299,7 +1298,7 @@ function gameOverHandler(survivorIndex, type) {
           gameOver.innerHTML = `<h1>GAME OVER<br/><br/>THE CLASHING CYMBALS OF VICTORY<br/>ARE YOURS<br/>'${winner.role.toUpperCase()}'<h1>`;
         } else {
           imageElement.src = `assets/images/game-over/lost.jpg`;
-          gameOver.innerHTML = `<h1>GAME OVER<br/><br/>YOU LOST TO<br/><br/>'${winner.role}'</h1>`;
+          gameOver.innerHTML = `<h1>GAME OVER<br/><br/>YOU LOST TO<br/>'${winner.role}'</h1>`;
         }
       } else {
         imageElement.src = `assets/images/game-over/lost.jpg`;
@@ -1331,7 +1330,6 @@ function gameOverHandler(survivorIndex, type) {
       chatForm.querySelector("input").focus();
       chatMessages.insertBefore(textElement, chatMessages.firstChild);
       typeLetter(textElement, outroText, 14);
-      textElement.scrollIntoView(false);
     }, 8192);
   }, 4096);
 }
