@@ -36,6 +36,7 @@ html {
   display: flex;
   justify-content: center;
   align-items: center;
+  line-height: 0.8; /* Without this, the default value is "normal", which varies between browsers in the case of this non-standard font. For Chrome and Brave, this is 0.8. For Firefox, 1.2. MDN Web Docs says, "Depends on the user agent. Desktop browsers (including Firefox) use a default value of roughly 1.2, depending on the element's font-family." */
 }
 
 .blue {
@@ -557,7 +558,6 @@ img {
   box-sizing: border-box;
   overflow-wrap: break-word;
   hyphens: auto;
-  line-height: 0.8; /* Without this, the default value is "normal", which varies between browsers in the case of this non-standard font. For Chrome and Brave, this is 0.8. For Firefox, 1.2. MDN Web Docs says, "Depends on the user agent. Desktop browsers (including Firefox) use a default value of roughly 1.2, depending on the element's font-family." */
 }
 
 .credit-content {
