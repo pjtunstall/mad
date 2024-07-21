@@ -18,7 +18,11 @@ Notes:
 
 # Todo
 
-## Fix?
+## Fix
+
+- Make sure outro text for loser scrolls all the way into view.
+
+- If you're fast enough, you can plant a bomb after being killed and before you're transported back to your corner. Disable X while death in progress.
 
 - I didn't adticipate that if you drop a full-fire by collecting another powerup after planting the full-fire bomb and before it goes off, you can collect it again, allowing you to re-use it. It might be nice to leave it in as a fun quirk that can be learnt and exploited. Leave as is?
 

@@ -257,6 +257,9 @@ function transitionToName() {
 
   const textElement = document.getElementById("text");
   typeLetter(textElement, introText, 14);
+  textElement.scrollIntoView(false);
+
+  chatForm.querySelector("input").focus();
 }
 
 function typeLetter(textElement, text, frequency) {
@@ -615,9 +618,11 @@ function transitionToChat() {
   const chatMessages = document.getElementById("chat-messages");
   chatMessages.innerHTML = "";
   chatForm.style.opacity = 1;
-  chatForm.querySelector("input").value = "";
+  const inputField = chatForm.querySelector("input");
+  inputField.value = "";
   let placeholderIndex = Math.floor(Math.random() * placeholders.length);
-  chatForm.querySelector("input").placeholder = placeholders[placeholderIndex];
+  inputField.placeholder = placeholders[placeholderIndex];
+  inputField.focus();
 
   const imageElement = document.querySelector("#main-pane img");
   imageElement.remove();
@@ -1294,7 +1299,7 @@ function gameOverHandler(survivorIndex, type) {
           gameOver.innerHTML = `<h1>GAME OVER<br/><br/>THE CLASHING CYMBALS OF VICTORY<br/>ARE YOURS<br/>'${winner.role.toUpperCase()}'<h1>`;
         } else {
           imageElement.src = `assets/images/game-over/lost.jpg`;
-          gameOver.innerHTML = `<h1>GAME OVER<br/><br/>YOU LOST TO '${winner.role}'</h1>`;
+          gameOver.innerHTML = `<h1>GAME OVER<br/><br/>YOU LOST TO<br/><br/>'${winner.role}'</h1>`;
         }
       } else {
         imageElement.src = `assets/images/game-over/lost.jpg`;
@@ -1323,8 +1328,10 @@ function gameOverHandler(survivorIndex, type) {
       chatMessages.innerHTML = "";
       const textElement = document.createElement("li");
       textElement.style.color = "silver";
+      chatForm.querySelector("input").focus();
       chatMessages.insertBefore(textElement, chatMessages.firstChild);
       typeLetter(textElement, outroText, 14);
+      textElement.scrollIntoView(false);
     }, 8192);
   }, 4096);
 }
