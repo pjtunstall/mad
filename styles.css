@@ -288,7 +288,24 @@ body {
 #chat-messages li {
   list-style-type: none;
   padding-bottom: 15px;
+  /* `overflow: hidden` here makes text of menu items a bit smaller, although it doesn't affect the size of the intro text. It doesn't prevent the superfluous scrollbar. */
   /* border: 1px red solid; */
+}
+
+#chat-messages::-webkit-scrollbar {
+  width: 8px;
+}
+
+#chat-messages::-webkit-scrollbar-track {
+  background: black;
+}
+
+#chat-messages::-webkit-scrollbar-thumb {
+  background: black;
+}
+
+#chat-messages:hover::-webkit-scrollbar-thumb {
+  background: #222;
 }
 
 #chat-form {
