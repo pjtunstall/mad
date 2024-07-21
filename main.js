@@ -90,7 +90,7 @@ const hypogeum = [
   "awaits the will of the Blasted God",
   "has been cast into the waiting room",
   "has descended into the entrance pit",
-  "has been thrown into the pen",
+  "has been thrown into the holding pen",
   "is here",
   "is here now",
   "is present now",

@@ -288,10 +288,10 @@ body {
 #chat-messages li {
   list-style-type: none;
   padding-bottom: 15px;
-  /* `overflow: hidden` here makes text of menu items a bit smaller, although it doesn't affect the size of the intro text. It doesn't prevent the superfluous scrollbar. */
   /* border: 1px red solid; */
 }
 
+/* ... but the following hack not only hides the scrollbar for chat-messages but also for message-container in Chrome. */
 #chat-messages::-webkit-scrollbar {
   width: 8px;
 }
@@ -306,6 +306,16 @@ body {
 
 #chat-messages:hover::-webkit-scrollbar-thumb {
   background: #222;
+}
+
+/* Firefox-specific styling */
+#chat-messages {
+  scrollbar-color: black black; /* Set both thumb and track to black */
+}
+
+/* Optional hover effect for Firefox */
+#chat-messages:hover {
+  scrollbar-color: #222 black;
 }
 
 #chat-form {
@@ -379,6 +389,12 @@ img {
   overflow: auto; /* Prevents text from growing the element vertically. */
   /* Clip does the same on Chrome and Brave (and allows scroll!), but, on Firefox, lets the element grow longer when the text overflows. */
   flex-grow: 1;
+  overflow: -moz-hidden-unscrollable;
+  overflow-y: hidden;
+  min-height: 0; /* Prevents the element from growing vertically in Firefox. */
+  max-height: 100%;
+  scrollbar-width: none;
+  -ms-overflow-style: none; /* Supposed to hide scrollbar in Edge and IE: test! */
   /* border: red 1px solid; */
 }
 
