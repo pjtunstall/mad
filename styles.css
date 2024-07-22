@@ -291,10 +291,9 @@ body {
   /* border: 1px red solid; */
 }
 
-/* ... but the following hack not only hides the scrollbar for chat-messages but also for message-container in Chrome. */
-#chat-messages::-webkit-scrollbar {
-  width: 8px;
-}
+/* Current styling of scrollbars, which seems interchangeable with the method that follows it: */
+
+/* ... */
 
 #chat-messages::-webkit-scrollbar-track {
   background: black;
@@ -310,13 +309,41 @@ body {
 
 /* Firefox-specific styling */
 #chat-messages {
-  scrollbar-color: black black; /* Set both thumb and track to black */
+  scrollbar-color: black black;
 }
 
 /* Optional hover effect for Firefox */
 #chat-messages:hover {
   scrollbar-color: #222 black;
 }
+
+/* ... */
+
+/* An alternative version that seems to do the same in Chrome and Firefox at least. Might be useful as an alternative if something else one day ends up making the current system for displaying scrollbars not work. Obtained from Gemini while trying to find a way to have scrollbar consistently shown on hover and only on hover. */
+/* #chat-messages::-webkit-scrollbar-thumb {
+  background-color: transparent;
+}
+
+#chat-messages:hover::-webkit-scrollbar-thumb {
+  background-color: #222;
+}
+
+#chat-messages scrollbar-thumb {
+  background-color: transparent;
+}
+
+#chat-messages:hover scrollbar-thumb {
+  background-color: #222;
+}
+
+#chat-messages {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+#chat-messages:hover {
+  scrollbar-color: #222 transparent;
+} */
 
 #chat-form {
   width: 100%;

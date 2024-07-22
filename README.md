@@ -74,6 +74,8 @@ Rewrite the code to use the framework. Some of this will just be a matter of swi
   - GHOST
     - Player comes back as a ghost is suggested. I think it would dilute the drama though. Gilding the lily.
 - DESIGN
+  - See if we can get scrollbar "thumb" to appear on hover over the roles menu. At the moment, it appears briefly when the menu first appears. I think this is preferable to how it was before, though, when all sorts of scrollbars appeared all the time.
+  - Make scrollbar "thumb" partially transparent or not overlapping the right edge of the text if possible.
   - At full screen or suchlike width, chat pane overhangs left edge of input box.
   - Make intro layout more responsive to handle smaller window size, especially the ready button that currently overlaps the title when the screen gets too narrow.
   - Fix scale in CSS to rely only on units relative to screen size and make sure it works on various screen sizes.
