@@ -6,31 +6,23 @@ The server will log its IP address in the browser. To connect over a mobile hots
 
 # Progress
 
-The multiplayer Bomberman game is working in Chrome, Brave, Firefox, and Safari. Not yet tested in Edge.
-
-Some smallish things to fix. (See below.)
+The multiplayer Bomberman game is working in Chrome, Brave, Firefox (except that skate movement looks a bit glitchy on Firefox), and Safari. Not yet tested in Edge.
 
 We mainly just need to add a framework for the sake of the exercsie. It seems a shame as it will, at best, have no effect for players. All we can hope is that the decline in performance will not be noticeable! We can start work on it in a dedicated feature branch.
 
 Notes:
 
-1. The instructions and audit expect us to have a simple lobby with a 20s countdown, followed by a 10s countdown for whoever was had joined during the first countdown. Instead, I chose to just implement a 10s countdown. The two countdowns didn't make dramatic sense in the context of my over-the-top intro!
+1. The instructions and audit expect us to have a simple lobby with a 20s countdown, followed by a 10s countdown for whoever has joined during the first countdown. Instead, I chose to just implement a 10s countdown. The two countdowns didn't make dramatic sense in the context of my over-the-top intro!
 
 2. I started a fresh repo for Gitea. That's because I used GitHub at first, which has a more generous memory limit for individual files. When I discovered that one of the sound effect files was too big for Gitea, I trimmed it to fit, but Gitea still won't accept the repo as there's a reference to the old file in history.
 
-3. As it stands, it only allows a single instance of the game to be played at any one time. Switching to allow multiple instances would take some work. For that reason, I'm no longer aiming to host it in the near future.
+3. As it stands, it only allows a single instance of the game to be played at any one time. Switching to allow multiple instances would take some work.
 
 # Todo
 
 ## Fix
 
-- Make sure it's possible to scroll all the way up to see the top of each outro text.
-
-- Make sure outro text for loser scrolls all the way into view.
-
-- If you're fast enough, you can plant a bomb after being killed and before you're transported back to your corner. Disable X while death in progress.
-
-- I didn't adticipate that if you drop a full-fire by collecting another powerup after planting the full-fire bomb and before it goes off, you can collect it again, allowing you to re-use it. It might be nice to leave it in as a fun quirk that can be learnt and exploited. Leave as is?
+- Firefox skate movement.
 
 ## Add framework
 
@@ -52,8 +44,13 @@ Rewrite the code to use the framework. Some of this will just be a matter of swi
 
 ## Extra
 
+- FIX?
+  - If you're fast enough, you can plant a bomb after being killed and before you're transported back to your corner. It could be a good exercise to think how it might be fixed. `keydown` event listener is removed on receiving the signal to kill your own character, but you've still had a chance to plant a bomb after the one that killed you exploded. A small delay could be added before allowing you to plant a new bomb, or `X` could be disabled till after the explosion logic is all dealt with. Not a priority, though. I quite like it as a quirk.
+  - You can sometimes run through the fire. It still kills you, so it doens't affect the outcome, and I actually quite like the effect, so I'd be inclined not to fix this one.
+  - I didn't adticipate that if you drop a full-fire by collecting another powerup after planting the full-fire bomb and before it goes off, you can collect it again, allowing you to re-use it. It might be nice to leave it in as a fun quirk that can be learnt and exploited. Or it might be a good exercise to fix just it.
 - SECURITY
   - Sanitize names and messages. (Important to do this before any attempt to host the game.)
+  - Neater "play again" logic, rather then current, crude solution, which is to force a page reload.
   - Disconnection logic on client: gracefully handle what happens if they disconnect at any stage before, during, or after the game.
   - Reconnection logic (e.g. 3 attempts then consider gone: update player.id to new id using index from client to link them; better yet, use a cookie. Test how well connections last, using a mobile hotspot.)
 - COUNTDOWN
@@ -77,7 +74,6 @@ Rewrite the code to use the framework. Some of this will just be a matter of swi
   - GHOST
     - Player comes back as a ghost is suggested. I think it would dilute the drama though. Gilding the lily.
 - DESIGN
-  - Make sure end of intro and outro text scrolls fully into view on different browsers and operating systems, screen sizes, shapes, and zooms.
   - At full screen or suchlike width, chat pane overhangs left edge of input box.
   - Make intro layout more responsive to handle smaller window size, especially the ready button that currently overlaps the title when the screen gets too narrow.
   - Fix scale in CSS to rely only on units relative to screen size and make sure it works on various screen sizes.
@@ -87,7 +83,7 @@ Rewrite the code to use the framework. Some of this will just be a matter of swi
   - Add randomizer to allow alternative profile pictures for roles: name consistently and put each selection in its own folder so we can programmatically pic one from the folder.
     - If we then use it, make a background for red3.
   - Get gray's pitchfork in shot.
-  - Write backstory or character sketch for each role and have it appear possibly as a popup on hovering over their profile picture.
+  - Write backstory or character sketch for each role and think how and where to display them.
 - KEYS
   - Let different keys be used for different players, at least for testing, so that two can play on one keyboard.
 - STRUCTURE

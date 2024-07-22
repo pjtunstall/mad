@@ -392,7 +392,6 @@ img {
   overflow: -moz-hidden-unscrollable;
   overflow-y: hidden;
   min-height: 0; /* Prevents the element from growing vertically in Firefox. */
-  max-height: 100%;
   scrollbar-width: none;
   -ms-overflow-style: none; /* Supposed to hide scrollbar in Edge and IE: test! */
   /* border: red 1px solid; */
