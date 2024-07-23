@@ -1,3 +1,88 @@
+let phase;
+let players;
+let ownIndex;
+let playersInLobby;
+const startButton = document.getElementById("start");
+const everythingContainer = document.getElementById("everything-container");
+const readyButton = document.getElementById("ready");
+const chatForm = document.getElementById("chat-form");
+const chatInput = document.getElementById("chat-input");
+let currentIndex;
+let lastClickedItem;
+let alreadyInChat;
+let countdown;
+let typingTimeout;
+let counting;
+let timerStartTime;
+let resumeFrom;
+let timerId;
+let transitTimeBetweenCells;
+let color = ["red", "green", "blue", "yellow"];
+let position = [
+  { y: 1, x: 1 },
+  { y: 1, x: 13 },
+  { y: 11, x: 1 },
+  { y: 11, x: 13 },
+];
+
+let direction = [
+  { y: 0, x: 0, key: "" },
+  { y: 0, x: 0, key: "" },
+  { y: 0, x: 0, key: "" },
+  { y: 0, x: 0, key: "" },
+];
+let playerPowerups = ["none", "none", "none", "none"];
+let grid = document.getElementById("game-grid");
+let gridDataFromServer;
+const gameStatus = document.getElementById("game-status");
+const startUp = document.getElementById("start-up");
+const gameOver = document.getElementById("game-over");
+const spriteSize = 64;
+let bomberManWrapper;
+const gridWrapper = document.getElementById("grid-wrapper");
+const infoWrapper = document.getElementById("info");
+const instructions = document.getElementById("instructions");
+const playerInfo = document.getElementById("player-info");
+const lives = document.getElementById("lives");
+const power = document.getElementById("power-up");
+const gridRow = 13;
+const gridCol = 15;
+const cellSize = 64;
+let horizontalAnimation = [0, 0, 0, 0];
+const startingScore = 0;
+let currentScore = startingScore;
+let isGameOver = false;
+const isKilled = new Array(4).fill(false);
+let cellsArr;
+let breakableCells;
+let powerUps;
+let gameLoopId;
+
+// intro and outro sounds
+let context;
+let musicGainNode;
+const introMusic =
+  "assets/music/music_fx_ominous_cinematic_nordic_folk_with_hardanger.mp3";
+const outroMusic =
+  "assets/music/music_fx_rustic_folk_blissful_epiphany_dulcimer_drones.mp3";
+const audio = new Audio("assets/sfx/quick-mechanical-keyboard-14391.mp3");
+audio.loop = true;
+const clock = new Audio("assets/sfx/old-fashioned-clock-sound-37729.mp3");
+clock.loop = true;
+
+// game sounds
+const powerupSound = new Audio("assets/sfx/coin-pickup-98269.mp3");
+const fuseSound = new Audio("assets/sfx/fuse.mp3");
+const screamSound = new Audio("assets/sfx/cartoon-scream-1-6835.mp3");
+fuseSound.loop = true;
+const explosionSound = new Audio(
+  "assets/sfx/8-bit-explosion-low-resonant-45659.mp3"
+);
+const fullExplosionSound = new Audio(
+  "assets/sfx/052168_huge-explosion-85199.mp3"
+);
+let remoteControlFuses = [null, null, null, null];
+
 const socket = io(":3000", {
   reconnection: false, // Changing this to allow reconnection would mean we'd have to alter how the server handles disconnections, including "play again" logic.
 });
@@ -141,51 +226,6 @@ const introText = `<br /><br /><br /><br />In the depths of Melancholia, heavies
 let outroText;
 const outroTextWin = `<br /><br /><br /><br />'Nos morituri te salutamus'<br /><br />In the depths of Melancholia, heaviest planet in the universe, a mad alien emperor once issued a decree<br /><br />Funny way to celebrate a solstice, but as good as any you suppose.<br /><br />The laurels and faded ribbons mark you apart as a bomber to be reckoned with although the further you wander the less they mean. But what does any of it mean?<br /><br />You were ready to be one of them, your heroes, the ones who went before. Ready for the blasted god. Yet it's you that great spirit of disaster has bowed down to. You had no plan for this.<br /><br />'We who are about to die salute you'<br /><br />The words grow dim with time as you trudge out into the waste.<br /><br />'Aut non' The emperor's reply.<br /><br />'Or not'<br /><br />And now . . . Uncharted territory.<br /><br />`;
 const outroTextLose = `<br /><br /><br /><br />Something was different this time. You took it to portend some especially great glory. What else could it be, this fiery feeling, this ecstasy?<br /><br />'Nos morituri . . .'<br /><br />Gunpowder, your favorite perfume, hung thick on the winter air that day. You trod as in a dream, craft honed to perfection. Mind racing beyond body, your spirit could hardly contain itself. That should have been the clue.<br /><br />But victory was all you'd known. How could you have known?<br /><br />You moved as never till now, ten steps ahead of your rivals and saw the dozen meanings in every gesture, all the futures branching.<br /><br />All but one.<br /><br />'We who are about to die salute you'<br /><br />'Or not'. The emperor's reply rings hollow in your ears. That charred husk--it dawns on you--is your own. The spectators rise in great silent tumult, but you are already far hence.<br /><br />You were a gladiator once.<br /><br />And now . . . Uncharted territory.<br /><br />`;
-
-let phase;
-let players;
-let ownIndex;
-let playersInLobby;
-let currentIndex;
-let lastClickedItem;
-let alreadyInChat;
-let countdown;
-let typingTimeout;
-let counting;
-let timerStartTime;
-let resumeFrom;
-let timerId;
-
-// intro and outro sounds
-let context;
-let musicGainNode;
-const introMusic =
-  "assets/music/music_fx_ominous_cinematic_nordic_folk_with_hardanger.mp3";
-const outroMusic =
-  "assets/music/music_fx_rustic_folk_blissful_epiphany_dulcimer_drones.mp3";
-const audio = new Audio("assets/sfx/quick-mechanical-keyboard-14391.mp3");
-audio.loop = true;
-const clock = new Audio("assets/sfx/old-fashioned-clock-sound-37729.mp3");
-clock.loop = true;
-
-// game sounds
-const powerupSound = new Audio("assets/sfx/coin-pickup-98269.mp3");
-const fuseSound = new Audio("assets/sfx/fuse.mp3");
-const screamSound = new Audio("assets/sfx/cartoon-scream-1-6835.mp3");
-fuseSound.loop = true;
-const explosionSound = new Audio(
-  "assets/sfx/8-bit-explosion-low-resonant-45659.mp3"
-);
-const fullExplosionSound = new Audio(
-  "assets/sfx/052168_huge-explosion-85199.mp3"
-);
-let remoteControlFuses = [null, null, null, null];
-
-const startButton = document.getElementById("start");
-const everythingContainer = document.getElementById("everything-container");
-const readyButton = document.getElementById("ready");
-const chatForm = document.getElementById("chat-form");
-const chatInput = document.getElementById("chat-input");
 
 transitionToStart();
 
@@ -762,20 +802,19 @@ async function startCountdown() {
   socket.emit("start game");
 }
 
-let color = ["red", "green", "blue", "yellow"];
-
 socket.on("start game", ({ updatedPlayers, newGrid }) => {
   players = updatedPlayers;
   gridDataFromServer = newGrid;
   for (const player of players) {
     color[player.index] = player.color;
   }
+  transitTimeBetweenCells = [64, 64, 64, 64];
   bomberManWrapper = new Array(players.length);
   for (let i = 0; i < players.length; i++) {
     bomberManWrapper[i] = document.createElement("div");
     bomberManWrapper[
       i
-    ].style.transition = `transform ${transitTimeBetweenCells}ms`;
+    ].style.transition = `transform ${transitTimeBetweenCells[i]}ms`;
   }
   startGame();
 });
@@ -791,47 +830,6 @@ function startGame() {
   document.getElementById("game").classList.add("show");
   generateLevel();
 }
-
-let position = [
-  { y: 1, x: 1 },
-  { y: 1, x: 13 },
-  { y: 11, x: 1 },
-  { y: 11, x: 13 },
-];
-
-let direction = [
-  { y: 0, x: 0, key: "" },
-  { y: 0, x: 0, key: "" },
-  { y: 0, x: 0, key: "" },
-  { y: 0, x: 0, key: "" },
-];
-
-let grid = document.getElementById("game-grid");
-let gridDataFromServer;
-const gameStatus = document.getElementById("game-status");
-const startUp = document.getElementById("start-up");
-const gameOver = document.getElementById("game-over");
-
-const spriteSize = 64;
-const transitTimeBetweenCells = 64;
-let step = 0.25;
-let bomberManWrapper;
-
-const gridWrapper = document.getElementById("grid-wrapper");
-const infoWrapper = document.getElementById("info");
-const instructions = document.getElementById("instructions");
-const playerInfo = document.getElementById("player-info");
-const lives = document.getElementById("lives");
-const power = document.getElementById("power-up");
-const gridRow = 13;
-const gridCol = 15;
-const cellSize = 64;
-
-let horizontalAnimation = [0, 0, 0, 0];
-const startingScore = 0;
-let currentScore = startingScore;
-let isGameOver = false;
-const isKilled = new Array(4).fill(false);
 
 function buildGrid() {
   for (let row = 0; row < gridRow; row++) {
@@ -870,17 +868,9 @@ function setSprite(spriteX, spriteY, player) {
   }px`;
 }
 
-//generate level for first time
-let cellsArr;
-let breakableCells;
-let powerUps;
-
-let gameLoopId;
-
 function generateLevel() {
   isGameOver = false;
 
-  // score.textContent = `Score: ${currentScore}`;
   playerInfo.textContent = `Player: ${color[ownIndex]}`;
   lives.textContent = "Lives: 3";
   power.innerHTML = "PowerUp: none";
@@ -925,6 +915,7 @@ function getPowerUp(y, x, powerup, index) {
   sound.onended = function () {
     sound.src = "";
   };
+  playerPowerups[index] = powerup.name;
   const cell = cellsArr[y][x];
   cell.classList.remove("power-up");
   cell.classList.remove(powerup.name);
@@ -935,6 +926,17 @@ function getPowerUp(y, x, powerup, index) {
     if (powerup.name === "remote-control") {
       remoteControl = true;
     }
+  }
+  if (powerup.name === "skate") {
+    transitTimeBetweenCells[index] /= 2;
+    bomberManWrapper[
+      index
+    ].style.transition = `transform ${transitTimeBetweenCells[index]}ms`;
+  } else if (playerPowerups[index] === "skate") {
+    transitTimeBetweenCells[index] *= 2;
+    bomberManWrapper[
+      index
+    ].style.transition = `transform ${transitTimeBetweenCells[index]}ms`;
   }
 }
 
@@ -1130,7 +1132,7 @@ const onKeyUp = (e) => {
   }
 };
 
-const moveInterval = 50;
+const moveInterval = 25;
 let lastTime = 0;
 let lastCollisionCheck = 0;
 const collisionCheckInterval = 100;
@@ -1138,10 +1140,6 @@ let accumulatedFrameTime = 0;
 
 const gameLoop = (timestamp) => {
   gameLoopId = requestAnimationFrame(gameLoop);
-
-  for (let i = 0; i < players.length; i++) {
-    move(i);
-  }
 
   if (!lastTime) {
     lastTime = timestamp;
@@ -1156,6 +1154,7 @@ const gameLoop = (timestamp) => {
     accumulatedFrameTime -= moveInterval;
     for (let i = 0; i < players.length; i++) {
       animateWalk(i);
+      move(i);
     }
   }
 };
@@ -1237,6 +1236,13 @@ socket.on("used full-fire", (index) => {
 
 socket.on("spawned", ({ index, isGameOver, powerup, y, x, life }) => {
   if (powerup) {
+    if (playerPowerups[index] === "skate") {
+      transitTimeBetweenCells[index] *= 2;
+      bomberManWrapper[
+        index
+      ].style.transition = `transform ${transitTimeBetweenCells[index]}ms`;
+    }
+    playerPowerups[index] = "none";
     const cell = cellsArr[y][x];
     cell.classList.add("power-up");
     cell.classList.add(powerup.name);

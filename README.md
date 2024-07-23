@@ -6,9 +6,9 @@ The server will log its IP address in the browser. To connect over a mobile hots
 
 # Progress
 
-The multiplayer Bomberman game is working in Chrome, Brave, Firefox (except that skate movement looks a bit glitchy on Firefox), and Safari. Not yet tested in Edge.
+The multiplayer Bomberman game is working in Chrome, Brave, Firefox, and Safari. Not yet tested in Edge.
 
-We mainly just need to add a framework for the sake of the exercsie. It seems a shame as it will, at best, have no effect for players. All we can hope is that the decline in performance will not be noticeable! We can start work on it in a dedicated feature branch.
+We mainly just need to add a framework for the sake of the exerise. It seems a shame as it will, at best, have no effect for players. All we can hope is that the decline in performance will not be noticeable! We can start work on it in a dedicated feature branch.
 
 Notes:
 
@@ -19,10 +19,6 @@ Notes:
 3. As it stands, it only allows a single instance of the game to be played at any one time. Switching to allow multiple instances would take some work.
 
 # Todo
-
-## Fix
-
-- Firefox skate movement.
 
 ## Add framework
 
