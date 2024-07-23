@@ -59,13 +59,13 @@ TypeError: Cannot read properties of undefined (reading 'undefined')
   - I didn't adticipate that if you drop a full-fire by collecting another powerup after planting the full-fire bomb and before it goes off, you can collect it again, allowing you to re-use it. It might be nice to leave it in as a fun quirk that can be learnt and exploited. Or it might be a good exercise to fix just it.
 - SECURITY
   - Neater "play again" logic, rather then current, crude solution, which is to force a page reload.
-  - Disconnection logic on client: gracefully handle what happens if all but one players disconnect during countdown. For now, I'm forcing a page reload even for the remaining player. I'd like to let the game begin and then have them see the "your foes have fled into the aether" ending. But when I tried that, the text is superimposed over the game grid. It's a puzzle why the game over handler doesn't make the grid fade as it does when all but one players disconnect during the game.
   - Reconnection logic (e.g. 3 attempts then consider gone: update player.id to new id using index from client to link them; better yet, use a cookie. Test how well connections last, using a mobile hotspot.)
 - COUNTDOWN
   - Move control to server.
   - Throttle ready/pause button.
 - REFACTOR
-  - Simplify any logic if possible.
+  - For preformance, recycle fixed-size arrays and objects where possible, rather than pushing, popping, and making new ones.
+  - Simplify any logic that can be simplified.
   - Consider whether any variable names could be made clearer or standardized.
     - In particular, `gameInProgress`, `isGameActive`, `isGameInitialized` could be renamed to reflect exactly when each is set to true and what it indicates. Are all of them necessary?
   - Tidy project structure, maybe split into modules.
@@ -90,7 +90,6 @@ TypeError: Cannot read properties of undefined (reading 'undefined')
   - Test scrollbars etc. in Edge too. Improve current hacky solution. Understand better.
   - Design own sprites.
   - Find a font with more punctiation. None that I've tried looked good enough to sacrifice Wolves and Ravens.
-  - At least find an acceptable, pseudo-runic fallback font with an AE-ligature for the "your foes have fled into the aether" ending. It should look good and fit in with the main font, Wolves and Ravens.
 - ROLES
   - Add randomizer to allow alternative profile pictures for roles: name consistently and put each selection in its own folder so we can programmatically pic one from the folder.
     - If we then use it, make a background for red3.

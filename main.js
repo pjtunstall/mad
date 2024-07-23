@@ -1329,8 +1329,6 @@ function gameOverHandler(survivorIndex, type) {
     } else {
       outroText = outroTextWin;
       imageElement.src = "assets/images/game-over/won.jpg";
-      // // Sadly no AE-ligature in the nice font, and the fallback stands out too much beside it.
-      // gameOver.innerHTML = `<h1>GAME OVER<br/><br/>A MEANINGLESS TRIUMPH<br/>YOUR FOES HAVE FLED INTO THE &#xC6;THER<h1>`;
       gameOver.innerHTML = `<h1>GAME OVER<br/><br/>A MEANINGLESS TRIUMPH<br/>YOUR FOES HAVE FLED INTO THE AETHER<h1>`;
     }
     gameOver.classList.remove("show");

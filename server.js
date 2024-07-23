@@ -24,11 +24,13 @@ let isGameInitialized;
 let playAgainTimeoutId;
 let isAfterGame;
 let playersInGame;
+let disconnectees;
 
 // INTRO
 
 function initializeIntro() {
   players = [];
+  disconnectees = [];
   playersInChat = 0;
   playersInCountdown = 0;
   playersInGame = 0;
@@ -262,17 +264,16 @@ io.on("connection", (socket) => {
       }
     }
 
-    players[player.index] = null;
     if (player.phase === "chat") {
       playersInChat--;
     }
     if (playersInCountdown > 0) {
       playersInCountdown--;
-      if (playersInCountdown < 2) {
-        restart();
-      }
+      disconnectees.push(player.index);
+      return;
     }
 
+    players[player.index] = null;
     io.emit("player left", { player: player, playersInChat: playersInChat });
     io.emit("new space");
   });
@@ -282,6 +283,7 @@ function restart() {
   clearTimeout(playAgainTimeoutId);
   playAgainTimeoutId = setTimeout(() => {
     players = [];
+    disconnectees = [];
     playersInChat = 0;
     playersInCountdown = 0;
     playersInGame = 0;
@@ -370,10 +372,10 @@ function initializeGame() {
   players = players.filter((p) => p && p.color);
   numPlayers = players.length;
   playersInGame = numPlayers;
-  if (numPlayers === 1) {
-    isGameInitialized = false;
-    io.emit("game over", { survivorIndex: 0, type: false });
-  }
+  // if (numPlayers === 1) {
+  //   isGameInitialized = false;
+  //   io.emit("game over", { survivorIndex: 0, type: false });
+  // }
   for (let i = 0; i < players.length; i++) {
     players[i].index = i;
     io.to(players[i].id).emit("own index", i);
@@ -385,6 +387,14 @@ function initializeGame() {
       updatedPlayers: players,
       newGrid: grid,
     });
+    if (disconnectees.includes(i)) {
+      const x = i;
+      setTimeout(() => {
+        players[i].lives = 1;
+        playersInGame--;
+        kill(players[i], false);
+      }, 1000);
+    }
   }
   gameLoopId = setInterval(gameLoop, tick);
 }
