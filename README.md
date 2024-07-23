@@ -41,7 +41,7 @@ Rewrite the code to use the framework. Some of this will just be a matter of swi
 ## Extra
 
 - FIX
-  - Server crasheed once when a player in Safari CTR+SHIFT+R's to view simplified page, without styles, during countdown. Apparently this led to them being undefined even though the normal disconnection logic had not gone ahead. But I've tried a few times and haven't managed to replicate it. Ideally we'd handle disconnection during countdown more gracefully; consider this bug while implementing that, and think what could be made more robust. It triggered the classic lightning-conductor-of-errors, `isDead(player)`. I've since added some protections and logging in case of future issues.
+  - I don't know if this will occur nwo that disconnections during countdown are handled better, but I'll leave the details here just in case. Server crasheed once when a player in Safari CTR+SHIFT+R's to view simplified page, without styles, during countdown. Apparently this led to them being undefined even though the normal disconnection logic had not gone ahead. But I've tried a few times and haven't managed to replicate it. It triggered the classic lightning-conductor-of-errors, `isDead(player)`. I've since added some protections and logging in case of future issues.
 
 ````
 return grid[player?.position?.y][player?.position?.x].type === "fire";
@@ -82,7 +82,7 @@ TypeError: Cannot read properties of undefined (reading 'undefined')
   - GHOST
     - Player comes back as a ghost is suggested. I think it would dilute the drama though. Gilding the lily.
 - DESIGN
-  - See if we can get scrollbar "thumb" to appear on hover over the roles menu. At the moment, it appears briefly when the menu first appears. I think this is preferable to how it was before, though, when all sorts of scrollbars appeared all the time.
+  - See if we can get scrollbar "thumb" to appear on hover over the roles menu in all browsers, not just Firefox. At the moment, it appears briefly when the menu first appears in Chrome, for example. I think this is preferable to how it was before, though, when all sorts of scrollbars appeared all the time.
   - Make scrollbar "thumb" partially transparent or not overlapping the right edge of the text if possible.
   - At full screen or suchlike width, chat pane overhangs left edge of input box.
   - Make intro layout more responsive to handle smaller window size, especially the ready button that currently overlaps the title when the screen gets too narrow.
