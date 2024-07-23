@@ -351,12 +351,15 @@ function startSlideshow(images) {
 
   let imgElement = document.createElement("img");
   imgElement.className = "show";
+
+  // // I've noticed that, unfortunately, the way browsers display alt text interferes with the design as it positions this text intrusively over the image itself. I've decided to remove it for now.
   // imgElement.alt =
   //   "bleak slideshow images of human figures (tiny specks of insignificance) battling it out in towering, gray-black amphitheaters for the amusement of monstrous alien gods";
 
   let mainPane = document.getElementById("main-pane");
   mainPane.appendChild(imgElement);
 
+  // Watch out! There is another fucntion of this name, with a different signature, in the global scope.
   function updateImage() {
     imgElement.classList.remove("show");
     document.querySelector(".top-eyelid").style.transform = "translateY(0)";
@@ -376,13 +379,24 @@ function startSlideshow(images) {
   return setInterval(updateImage, 8192);
 }
 
-function updateImage(imageElement, toSrc, delay = 512) {
+// Beware! There is another function of this name, with a different signature, inside the `startSlideshow` function.
+function updateImage(imageElement, toSrc, delay = 1024) {
   imageElement.classList.remove("show");
-  document.querySelector(".top-eyelid").style.transform = "translateY(0)";
-  document.querySelector(".bottom-eyelid").style.transform = "translateY(0)";
+
   setTimeout(() => {
+    // Needed to remove and re-append the image element make it work in Safari. It was fine in Chrome, Brave, and Firefox. Safari was downloading the right image and showed the correct src for the image element. One theory is "aggressive caching". Failed solutions that might be useful on another occasion: `imageElement.src = toSrc + "?t=" + Date.now()` to make the browser think it's a new image, or `imageElement.src = "";` followed by `imageElement.src = toSrc;`, intended to force a reload. Removing the image and replacing it with a new one lost the event listeners. Rather than going to the trouble of re-adding them, I tried this approach, which worked.
+    const mainPane = document.getElementById("main-pane");
+    imageElement.classList.remove("show");
+    mainPane.removeChild(imageElement);
     imageElement.src = toSrc;
     imageElement.classList.add("show");
+    mainPane.appendChild(imageElement);
+  }, 512);
+
+  document.querySelector(".top-eyelid").style.transform = "translateY(0)";
+  document.querySelector(".bottom-eyelid").style.transform = "translateY(0)";
+
+  setTimeout(() => {
     document.querySelector(".top-eyelid").style.transform = "translateY(-100%)";
     document.querySelector(".bottom-eyelid").style.transform =
       "translateY(100%)";
@@ -1315,7 +1329,9 @@ function gameOverHandler(survivorIndex, type) {
     } else {
       outroText = outroTextWin;
       imageElement.src = "assets/images/game-over/won.jpg";
-      gameOver.innerHTML = `<h1>GAME OVER<br/><br/>A MEANINGLESS TRIUMPH<br/>YOUR FOES HAVE FLED INTO THE &#xC6;THER<h1>`;
+      // // Sadly no AE-ligature in the nice font, and the fallback stands out too much beside it.
+      // gameOver.innerHTML = `<h1>GAME OVER<br/><br/>A MEANINGLESS TRIUMPH<br/>YOUR FOES HAVE FLED INTO THE &#xC6;THER<h1>`;
+      gameOver.innerHTML = `<h1>GAME OVER<br/><br/>A MEANINGLESS TRIUMPH<br/>YOUR FOES HAVE FLED INTO THE AETHER<h1>`;
     }
     gameOver.classList.remove("show");
     gameOver.classList.add("hide");

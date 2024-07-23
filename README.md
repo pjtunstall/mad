@@ -20,10 +20,6 @@ Notes:
 
 # Todo
 
-## Fix
-
-- Role images don't appear oin Safari, even though the src property changes correctly according to Web Inspector.
-
 ## Add framework
 
 We needs to decide which framework to use: mine, Stefan's, or something based on Rodrigo Pombo's `Didact`. Rather than letting that hold us up, we could pick one and have a go. In what follows, for definiteness, I'll assume we're using my `overReact` (because, being made maively, I think it migh tbe quick and easy to apply), but a lot of the points will hold for any of them. I'll assume the goal is simply to framework the core game, taking `grid` or perhaps `gridWrapper` as the app. That's enough to satisfy the spirit of the exercise without getting bogged down in making it work with all the optional extras of the intro too.
@@ -44,14 +40,26 @@ Rewrite the code to use the framework. Some of this will just be a matter of swi
 
 ## Extra
 
-- FIX?
+- FIX
+  - Server crasheed once when a player in Safari CTR+SHIFT+R's to view image during countdown. Apparently this led to them being undefined even though the normal disconnection logic had not gone ahead. But I've tried a few times and haven't managed to replicate it. It triggered the classic lightning-conductor-of-errors line, 683.
+
+````
+return grid[player?.position?.y][player?.position?.x].type === "fire";
+                                  ^
+
+TypeError: Cannot read properties of undefined (reading 'undefined')
+    at isDead (/Users/petertunstall/Desktop/bomberman-dom/server.js:683:35)
+    at Timeout.gameLoop [as _onTimeout] (/Users/petertunstall/Desktop/bomberman-dom/server.js:401:9)
+    at listOnTimeout (node:internal/timers:573:17)
+    at process.processTimers (node:internal/timers:514:7)```
+
   - Sometimes there is a pause on initiating movement or changing direction before it takes effect.
   - If you're fast enough, you can plant a bomb after being killed and before you're transported back to your corner. It could be a good exercise to think how it might be fixed. `keydown` event listener is removed on receiving the signal to kill your own character, but you've still had a chance to plant a bomb after the one that killed you exploded. A small delay could be added before allowing you to plant a new bomb, or `X` could be disabled till after the explosion logic is all dealt with. Not a priority, though. I quite like it as a quirk.
   - You can sometimes run through the fire. It still kills you, so it doens't affect the outcome, and I actually quite like the effect, so I'd be inclined not to fix this one.
   - I didn't adticipate that if you drop a full-fire by collecting another powerup after planting the full-fire bomb and before it goes off, you can collect it again, allowing you to re-use it. It might be nice to leave it in as a fun quirk that can be learnt and exploited. Or it might be a good exercise to fix just it.
 - SECURITY
   - Neater "play again" logic, rather then current, crude solution, which is to force a page reload.
-  - Disconnection logic on client: gracefully handle what happens if they disconnect at any stage before, during, or after the game.
+  - Disconnection logic on client: gracefully handle what happens if all but one players disconnect during countdown. For now, I'm forcing a page reload even for the remaining player. I'd like to let the game begin and then have them see the "your foes have fled into the aether" ending. But when I tried that, the text is superimposed over the game grid. It's a puzzle why the game over handler doesn't make the grid fade as it does when all but one players disconnect during the game.
   - Reconnection logic (e.g. 3 attempts then consider gone: update player.id to new id using index from client to link them; better yet, use a cookie. Test how well connections last, using a mobile hotspot.)
 - COUNTDOWN
   - Move control to server.
@@ -81,6 +89,8 @@ Rewrite the code to use the framework. Some of this will just be a matter of swi
   - Fix scale in CSS to rely only on units relative to screen size and make sure it works on various screen sizes.
   - Test scrollbars etc. in Edge too. Improve current hacky solution. Understand better.
   - Design own sprites.
+  - Find a font with more punctiation. None that I've tried looked good enough to sacrifice Wolves and Ravens.
+  - At least find an acceptable, pseudo-runic fallback font with an AE-ligature for the "your foes have fled into the aether" ending. It should look good and fit in with the main font, Wolves and Ravens.
 - ROLES
   - Add randomizer to allow alternative profile pictures for roles: name consistently and put each selection in its own folder so we can programmatically pic one from the folder.
     - If we then use it, make a background for red3.
@@ -94,3 +104,4 @@ Rewrite the code to use the framework. Some of this will just be a matter of swi
 - HOSTING
   - Allow multiple game instance at once.
   - Host, maybe on Glitch, which I gather has a limited free option to host a Node server.
+````
