@@ -5,7 +5,13 @@ const socketIo = require("socket.io");
 const url = require("url");
 const path = require("path");
 
-// INTRO
+const createDOMPurify = require("dompurify");
+const { JSDOM } = require("jsdom");
+const window = new JSDOM("").window;
+const DOMPurify = createDOMPurify(window);
+function sanitize(message) {
+  return DOMPurify.sanitize(message, { ALLOWED_TAGS: [] });
+}
 
 const Player = require("./classes/player.js");
 
@@ -18,6 +24,8 @@ let isGameInitialized;
 let playAgainTimeoutId;
 let isAfterGame;
 let playersInGame;
+
+// INTRO
 
 function initializeIntro() {
   players = [];
@@ -136,6 +144,7 @@ io.on("connection", (socket) => {
   socket.emit("players", players);
 
   socket.on("name", (name) => {
+    name = sanitize(name);
     player.name = name;
     player.phase = "roles";
   });
@@ -156,6 +165,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("chat message", (msg) => {
+    msg = sanitize(msg);
     io.emit("chat message", { msg, player });
   });
 
@@ -245,8 +255,8 @@ io.on("connection", (socket) => {
       for (const player of players) {
         if (player?.id === socket.id) {
           player.lives = 1;
-          kill(player);
           playersInGame--;
+          kill(player, false);
           return;
         }
       }
@@ -609,7 +619,7 @@ function addFire(y, x, style) {
   }, 1000);
 }
 
-function deathAnimationEnd(player) {
+function deathAnimationEnd(player, isNotDisconnected) {
   player.deathInProgress = false;
   if (player.lives === 0) {
     return;
@@ -647,7 +657,7 @@ function deathAnimationEnd(player) {
           break;
         }
       }
-      io.emit("game over", { survivorIndex, type: true });
+      io.emit("game over", { survivorIndex, type: isNotDisconnected });
     }
     return;
   }
@@ -673,7 +683,7 @@ function isDead(player) {
   return grid[player?.position?.y][player?.position?.x].type === "fire";
 }
 
-function kill(player) {
+function kill(player, isNotDisconnected = true) {
   if (player.deathInProgress) {
     return;
   }
@@ -689,7 +699,9 @@ function kill(player) {
     remoteControlBombCoordinates[player.index] = null;
     io.emit("detonateRemoteControlBomb", player.index);
   }
-  setTimeout(deathAnimationEnd, 1000, player);
+  setTimeout(() => {
+    deathAnimationEnd(player, isNotDisconnected);
+  }, 1000);
 }
 
 function buildGrid() {
