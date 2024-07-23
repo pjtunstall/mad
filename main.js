@@ -909,7 +909,7 @@ function generateLevel() {
 let remoteControl = false;
 let isRemoteControlBombPlanted = false;
 
-function getPowerUp(y, x, powerup, index) {
+function getPowerup(y, x, powerup, index) {
   const sound = powerupSound.cloneNode(true);
   sound.play();
   sound.onended = function () {
@@ -1132,6 +1132,7 @@ const onKeyUp = (e) => {
   }
 };
 
+let offbeat = false;
 const moveInterval = 25;
 let lastTime = 0;
 let lastCollisionCheck = 0;
@@ -1151,8 +1152,12 @@ const gameLoop = (timestamp) => {
   accumulatedFrameTime += moveDeltaTime;
 
   while (accumulatedFrameTime >= moveInterval) {
+    offbeat = !offbeat;
     accumulatedFrameTime -= moveInterval;
     for (let i = 0; i < players.length; i++) {
+      if (playerPowerups[i] !== "skate" && offbeat) {
+        continue;
+      }
       animateWalk(i);
       move(i);
     }
@@ -1185,7 +1190,7 @@ socket.on(
       cell.classList.add("power-up");
       cell.classList.add(previousPowerup.name);
     }
-    getPowerUp(y, x, powerup, index);
+    getPowerup(y, x, powerup, index);
   }
 );
 
