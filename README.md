@@ -41,7 +41,7 @@ Rewrite the code to use the framework. Some of this will just be a matter of swi
 ## Extra
 
 - FIX
-  - Server crasheed once when a player in Safari CTR+SHIFT+R's to view image during countdown. Apparently this led to them being undefined even though the normal disconnection logic had not gone ahead. But I've tried a few times and haven't managed to replicate it. It triggered the classic lightning-conductor-of-errors line, 683.
+  - Server crasheed once when a player in Safari CTR+SHIFT+R's to view simplified page, without styles, during countdown. Apparently this led to them being undefined even though the normal disconnection logic had not gone ahead? But I've tried a few times and haven't managed to replicate it. Ideally we'd handle disconnection during countdown more gracefully; consider this bug while implementing that, and think what could be made more robust. It triggered the classic lightning-conductor-of-errors line, 683.
 
 ````
 return grid[player?.position?.y][player?.position?.x].type === "fire";
