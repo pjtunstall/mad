@@ -680,10 +680,19 @@ function spawn(player) {
 
 function isDead(player) {
   // This line has been the nonspecific lightning conductor of errors. If something goes wrong, it often shows up here (e.g. if the player was not defined for some reason, or player.position, or the value was out of range).
-  if (!player || !player.position || !grid) {
-    return;
+  if (!player) {
+    console.warn("isDead: Player object is undefined.");
+    return false;
   }
-  return grid[player?.position?.y][player?.position?.x].type === "fire";
+  if (!player.position) {
+    console.warn("isDead: Player position is undefined.");
+    return false;
+  }
+  if (!grid) {
+    console.warn("isDead: Grid is undefined.");
+    return false;
+  }
+  return grid[player?.position?.y][player?.position?.x]?.type === "fire";
 }
 
 function kill(player, isNotDisconnected = true) {
