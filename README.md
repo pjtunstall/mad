@@ -41,7 +41,7 @@ Rewrite the code to use the framework. Some of this will just be a matter of swi
 ## Extra
 
 - FIX
-  - Server crasheed once when a player in Safari CTR+SHIFT+R's to view simplified page, without styles, during countdown. Apparently this led to them being undefined even though the normal disconnection logic had not gone ahead. But I've tried a few times and haven't managed to replicate it. Ideally we'd handle disconnection during countdown more gracefully; consider this bug while implementing that, and think what could be made more robust. It triggered the classic lightning-conductor-of-errors, `isDead(player)`. I've since added some protections: return if !player or !player.position or !grid.
+  - Server crasheed once when a player in Safari CTR+SHIFT+R's to view simplified page, without styles, during countdown. Apparently this led to them being undefined even though the normal disconnection logic had not gone ahead. But I've tried a few times and haven't managed to replicate it. Ideally we'd handle disconnection during countdown more gracefully; consider this bug while implementing that, and think what could be made more robust. It triggered the classic lightning-conductor-of-errors, `isDead(player)`. I've since added some protections and logging in case of future issues.
 
 ````
 return grid[player?.position?.y][player?.position?.x].type === "fire";
