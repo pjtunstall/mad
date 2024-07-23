@@ -679,7 +679,10 @@ function spawn(player) {
 }
 
 function isDead(player) {
-  // This line was the nonspecific lightning conductor of all errors! If something went wrong, it often showed up here (e.g. if the player was not defined for some reason, or player.position, or the value was out of range).
+  // This line has been the nonspecific lightning conductor of errors. If something goes wrong, it often shows up here (e.g. if the player was not defined for some reason, or player.position, or the value was out of range).
+  if (!player || !player.position || !grid) {
+    return;
+  }
   return grid[player?.position?.y][player?.position?.x].type === "fire";
 }
 
