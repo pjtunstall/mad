@@ -16,7 +16,6 @@ let counting;
 let timerStartTime;
 let resumeFrom;
 let timerId;
-let transitTimeBetweenCells;
 let color = ["red", "green", "blue", "yellow"];
 let position = [
   { y: 1, x: 1 },
@@ -32,6 +31,8 @@ let direction = [
   { y: 0, x: 0, key: "" },
 ];
 let playerPowerups = ["none", "none", "none", "none"];
+const skateTime = 32;
+const normalTime = 64;
 let grid = document.getElementById("game-grid");
 let gridDataFromServer;
 const gameStatus = document.getElementById("game-status");
@@ -435,7 +436,7 @@ function scrollToTopOfChatMessages() {
 
 function fixWidth(chatMessages) {
   const dummyItem = document.createElement("li");
-  dummyItem.textContent = "This is a long dummy item, maybe even longer?";
+  dummyItem.textContent = "This is a long dummy item to make space here.";
   dummyItem.classList.add("menu-item");
   dummyItem.classList.add("dummy");
   dummyItem.style.opacity = "0";
@@ -822,13 +823,10 @@ socket.on("start game", ({ updatedPlayers, newGrid }) => {
   for (const player of players) {
     color[player.index] = player.color;
   }
-  transitTimeBetweenCells = [64, 64, 64, 64];
   bomberManWrapper = new Array(players.length);
   for (let i = 0; i < players.length; i++) {
     bomberManWrapper[i] = document.createElement("div");
-    bomberManWrapper[
-      i
-    ].style.transition = `transform ${transitTimeBetweenCells[i]}ms`;
+    bomberManWrapper[i].style.transition = `transform ${normalTime}ms`;
   }
   startGame();
 });
@@ -942,15 +940,9 @@ function getPowerup(y, x, powerup, index) {
     }
   }
   if (powerup.name === "skate") {
-    transitTimeBetweenCells[index] /= 2;
-    bomberManWrapper[
-      index
-    ].style.transition = `transform ${transitTimeBetweenCells[index]}ms`;
-  } else if (playerPowerups[index] === "skate") {
-    transitTimeBetweenCells[index] *= 2;
-    bomberManWrapper[
-      index
-    ].style.transition = `transform ${transitTimeBetweenCells[index]}ms`;
+    bomberManWrapper[index].style.transition = `transform ${skateTime}ms`;
+  } else {
+    bomberManWrapper[index].style.transition = `transform ${normalTime}ms`;
   }
 }
 
@@ -1255,11 +1247,8 @@ socket.on("used full-fire", (index) => {
 
 socket.on("spawned", ({ index, isGameOver, powerup, y, x, life }) => {
   if (powerup) {
-    if (playerPowerups[index] === "skate") {
-      transitTimeBetweenCells[index] *= 2;
-      bomberManWrapper[
-        index
-      ].style.transition = `transform ${transitTimeBetweenCells[index]}ms`;
+    if (powerup.name === "skate") {
+      bomberManWrapper[index].style.transition = `transform ${normalTime}ms`;
     }
     playerPowerups[index] = "none";
     const cell = cellsArr[y][x];
