@@ -270,6 +270,9 @@ io.on("connection", (socket) => {
     if (playersInCountdown > 0) {
       playersInCountdown--;
       disconnectees.push(player.index);
+      if (playersInCountdown === 0) {
+        restart();
+      }
       return;
     }
 

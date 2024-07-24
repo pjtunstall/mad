@@ -56,7 +56,6 @@ let isGameOver = false;
 const isKilled = new Array(4).fill(false);
 let cellsArr;
 let breakableCells;
-let powerUps;
 let gameLoopId;
 
 // intro and outro sounds
@@ -886,18 +885,17 @@ function generateLevel() {
   playerInfo.textContent = `Player: ${color[ownIndex]}`;
   lives.textContent = "Lives: 3";
   power.innerHTML = "PowerUp: none";
-
   let newGrid = document.createElement("div");
   grid.parentNode.replaceChild(newGrid, grid);
   grid = newGrid;
   grid.id = "game-grid";
   buildGrid();
   cellsArr = createCellsArr();
-
-  powerUps = Array.from(document.querySelectorAll(".powerUp"));
   game.style.display = "flex";
   game.classList.add("show");
   gridWrapper.classList.remove("hide");
+  infoWrapper.style.display = "flex";
+  instructions.style.display = "flex";
 
   for (let i = 0; i < players.length; i++) {
     isKilled[i] = false;
@@ -912,9 +910,8 @@ function generateLevel() {
 
   document.addEventListener("keydown", onKeyDown);
   document.addEventListener("keyup", onKeyUp);
+
   gameLoopId = requestAnimationFrame(gameLoop);
-  infoWrapper.style.display = "flex";
-  instructions.style.display = "flex";
 }
 
 /** POWER UPS */
@@ -1282,9 +1279,9 @@ socket.on("game over", ({ survivorIndex, type }) => {
   gameOverHandler(survivorIndex, type);
 });
 
-document.addEventListener("keydown", keydownHandler);
-
 function gameOverHandler(survivorIndex, type) {
+  document.removeEventListener("keydown", onKeyDown);
+  document.removeEventListener("keyup", onKeyUp);
   outroText = outroTextLose;
   cancelAnimationFrame(gameLoopId);
   let winner;
