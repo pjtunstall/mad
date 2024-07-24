@@ -22,7 +22,7 @@ Notes:
 
 ## Add framework
 
-We needs to decide which framework to use: mine, Stefan's, the one Bilal has been working on, or something based on Rodrigo Pombo's `Didact`. In what follows, for definiteness, I'll assume we're using my `overReact` (because, being made maively, I think it migh tbe quick and easy to apply), but a lot of the points will hold for any of them. I'll assume the goal is simply to framework the core game, taking `grid` or perhaps `gridWrapper` as the app. That's enough to satisfy the spirit of the exercise without getting bogged down in making it work with all the optional extras of the intro too.
+We need to decide which framework to use: mine, Stefan's, the one Bilal has been working on, or something based on Rodrigo Pombo's `Didact`. In what follows, for definiteness, I'll assume we're using my `overReact` (because, being made maively, I think it migh tbe quick and easy to apply), but a lot of the points will hold for any of them. I'll assume the goal is simply to framework the core game, taking `grid` or perhaps `gridWrapper` as the app. That's enough to satisfy the spirit of the exercise without getting bogged down in making it work with all the optional extras of the intro too.
 
 Here's what I think we'll need to do:
 
@@ -43,18 +43,7 @@ Rewrite the code to use the framework. Some of this will just be a matter of swi
 ## Extra
 
 - FIX
-  - Possibly already fixed now that disconnections during countdown are handled better, but I'll leave the details here just in case. Server crashed once when a player in Safari pressed CTR+SHIFT+R to view simplified page, without styles, during countdown. Apparently this led to them being undefined even though the normal disconnection logic had not gone ahead. I've tried a few times and haven't managed to replicate it. It triggered the classic lightning-conductor-of-errors, `isDead(player)`. Since then I've added some protections and logging in case of future issues.
-
-````
-return grid[player?.position?.y][player?.position?.x].type === "fire";
-                                  ^
-
-TypeError: Cannot read properties of undefined (reading 'undefined')
-    at isDead (/Users/petertunstall/Desktop/bomberman-dom/server.js:683:35)
-    at Timeout.gameLoop [as _onTimeout] (/Users/petertunstall/Desktop/bomberman-dom/server.js:401:9)
-    at listOnTimeout (node:internal/timers:573:17)
-    at process.processTimers (node:internal/timers:514:7)```
-
+  - Possibly already fixed now that disconnections during countdown are handled better, but I'll leave the details here just in case. Server crashed once when a player in Safari pressed CTR+SHIFT+R to view simplified page, without styles, during countdown. Apparently this led to them being undefined even though the normal disconnection logic had not gone ahead. I've tried a few times and haven't managed to replicate it. It triggered the classic lightning-conductor-of-errors, `isDead(player)`: `return grid[player?.position?.y][player?.position?.x].type === "fire";` (accusing arrow points to 2nd instance of player in the line), "TypeError: Cannot read properties of undefined (reading 'undefined')". Since then I've added some protections and logging in case of future issues.
   - Sometimes there is a pause on initiating movement or changing direction before it takes effect.
   - If you're fast enough, you can plant a bomb after being killed and before you're transported back to your corner. It could be a good exercise to think how it might be fixed. `keydown` event listener is removed on receiving the signal to kill your own character, but you've still had a chance to plant a bomb after the one that killed you exploded. A small delay could be added before allowing you to plant a new bomb, or `X` could be disabled till after the explosion logic is all dealt with. Not a priority, though. I quite like it as a quirk.
   - You can sometimes run through the fire. It still kills you, so it doens't affect the outcome, and I actually quite like the effect, so I'd be inclined not to fix this one.
@@ -86,7 +75,7 @@ TypeError: Cannot read properties of undefined (reading 'undefined')
 - DESIGN
   - See if we can get scrollbar "thumb" to appear on hover over the roles menu in all browsers, not just Firefox. At the moment, it appears briefly when the menu first appears in Chrome, for example. I think this is preferable to how it was before, though, when all sorts of scrollbars appeared all the time.
   - Make scrollbar "thumb" partially transparent or not overlapping the right edge of the text if possible.
-  - At full screen or suchlike width, chat pane overhangs left edge of input box.
+  - Beyond a certain width, chat pane overhangs left edge of input box.
   - Make intro layout more responsive to handle smaller window size, especially the ready button that currently overlaps the title when the screen gets too narrow.
   - Fix scale in CSS to rely only on units relative to screen size and make sure it works on various screen sizes.
   - Test scrollbars etc. in Edge too. Improve current hacky solution. Understand better.
@@ -94,7 +83,6 @@ TypeError: Cannot read properties of undefined (reading 'undefined')
   - Find a font with more punctiation. None that I've tried looked good enough to sacrifice Wolves and Ravens.
 - ROLES
   - Add randomizer to allow alternative profile pictures for roles: name consistently and put each selection in its own folder so we can programmatically pic one from the folder.
-    - If we then use it, make a background for red3.
   - Get gray's pitchfork in shot.
   - Write backstory or character sketch for each role and think how and where to display them.
 - KEYS
@@ -105,4 +93,3 @@ TypeError: Cannot read properties of undefined (reading 'undefined')
 - HOSTING
   - Allow multiple game instance at once.
   - Host, maybe on Glitch, which I gather has a limited free option to host a Node server.
-````
