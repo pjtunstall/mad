@@ -60,7 +60,7 @@ In `startGame()`,
 
 `document.getElementById("game").classList.add("show");`
 
-Then `buildGrid()`, `createCellsArr()`, `setSprite(spriteX, spriteY, player)`, and `generateLevel()` are all relevant. And that concludes the setup. In detail, in `buildGrid()`, for each cell of the grid, we make a div and give it the class `cell`, the `style` attributes `top` and `left` with its pixel coordinates, and a `power-up` class if it contains a powerup, along with a class with the name of the specific powerup, `bomb-up`, `fire-up`, `skate`, etc.
+Then `buildGrid()`, `setSprite(spriteX, spriteY, player)`, and `generateLevel()` are all relevant. And that concludes the setup. In detail, in `buildGrid()`, for each cell of the grid, we make a div and give it the class `cell`, the `style` attributes `top` and `left` with its pixel coordinates, and a `power-up` class if it contains a powerup, along with a class with the name of the specific powerup, `bomb-up`, `fire-up`, `skate`, etc.
 
 ```javascript
 const cellData = gridDataFromServer[row][col];
