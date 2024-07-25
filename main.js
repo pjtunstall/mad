@@ -39,7 +39,7 @@ const gameStatus = document.getElementById("game-status");
 const startUp = document.getElementById("start-up");
 const gameOver = document.getElementById("game-over");
 const spriteSize = 64;
-let bomberManWrapper;
+let bomberManWrapper = [];
 const gridWrapper = document.getElementById("grid-wrapper");
 const infoWrapper = document.getElementById("info");
 const instructions = document.getElementById("instructions");
@@ -819,14 +819,6 @@ async function startCountdown() {
 socket.on("start game", ({ updatedPlayers, newGrid }) => {
   players = updatedPlayers;
   gridDataFromServer = newGrid;
-  for (const player of players) {
-    color[player.index] = player.color;
-  }
-  bomberManWrapper = new Array(players.length);
-  for (let i = 0; i < players.length; i++) {
-    bomberManWrapper[i] = document.createElement("div");
-    bomberManWrapper[i].style.transition = `transform ${normalTime}ms`;
-  }
   startGame();
 });
 
@@ -891,8 +883,12 @@ function generateLevel() {
   infoWrapper.style.display = "flex";
   instructions.style.display = "flex";
 
+  bomberManWrapper = [];
   for (let i = 0; i < players.length; i++) {
     isKilled[i] = false;
+    color[i] = players[i].color;
+    bomberManWrapper[i] = document.createElement("div");
+    bomberManWrapper[i].style.transition = `transform ${normalTime}ms`;
     bomberManWrapper[i].classList.add("bomber-man");
     bomberManWrapper[
       i

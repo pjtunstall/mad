@@ -1,3 +1,7 @@
+# Plan for Adding the Framework
+
+First, identify all event listeners that might affect the DOM, then all DOM elements and all lines in `main.js` that affect those elements.
+
 ## Event listeners
 
 In `generateLevel`,
@@ -46,21 +50,11 @@ const lives = document.getElementById("lives");
 const power = document.getElementById("power-up");
 ```
 
-In web socket on "start game" handler,
-
-```javascript
-bomberManWrapper = new Array(players.length);
-for (let i = 0; i < players.length; i++) {
-  bomberManWrapper[i] = document.createElement("div");
-  bomberManWrapper[i].style.transition = `transform ${normalTime}ms`;
-}
-```
-
 In `startGame()`,
 
 `document.getElementById("game").classList.add("show");`
 
-Then `buildGrid()`, `setSprite(spriteX, spriteY, player)`, and `generateLevel()` are all relevant. And that concludes the setup. In detail, in `buildGrid()`, for each cell of the grid, we make a div and give it the class `cell`, the `style` attributes `top` and `left` with its pixel coordinates, and a `power-up` class if it contains a powerup, along with a class with the name of the specific powerup, `bomb-up`, `fire-up`, `skate`, etc.
+`generateLevel()` concludes the setup. It calls `buildGrid()`, which returns `cellsArr`, a 2d array of 13 rows of 15 columns each. In `buildGrid()`, for each cell of the grid, we make a div and give it the class `cell`, the `style` attributes `top` and `left` with its pixel coordinates, and a `power-up` class if it contains a powerup, along with a class with the name of the specific powerup, `bomb-up`, `fire-up`, `skate`, etc.
 
 ```javascript
 const cellData = gridDataFromServer[row][col];
@@ -75,4 +69,55 @@ if (cellData.powerup) {
   cell.classList.add(cellData.powerup.name);
 }
 grid.append(cell);
+cellsArr[row].push(cell);
 ```
+
+`generateLevel()` calls `setSprite(spriteX, spriteY, player)`, which is also used during the game. It changes the CSS `background-position` property to animate the player's walk:
+
+```javascript
+player.style.backgroundPosition = `-${spriteX * spriteSize}px -${
+  spriteY * spriteSize
+}px`;
+```
+
+`generateLevel()` creates the stats bar and a new game grid, substituting it for the previous one. Initially, `game-grid` is an empty div, `<div id="game-grid"></div>`, referenced in the JS as `let grid = document.getElementById("game-grid");`.
+
+```javascript
+playerInfo.textContent = `Player: ${color[ownIndex]}`;
+lives.textContent = "Lives: 3";
+power.innerHTML = "PowerUp: none";
+let newGrid = document.createElement("div");
+grid.parentNode.replaceChild(newGrid, grid);
+grid = newGrid;
+grid.id = "game-grid";
+```
+
+Then, after `buildGrid()` has populated the grid with cells, `generateLevel()` continues with
+
+```javascript
+game.style.display = "flex";
+game.classList.add("show");
+gridWrapper.classList.remove("hide");
+infoWrapper.style.display = "flex";
+instructions.style.display = "flex";
+```
+
+It concludes by styling the the player character elements in the `bomberManWrapper` array. To each `bomberManWrapper[i]`, where `i` ranges over the length of the players array, `geneerateLevel()` assigns the class `bomber-man` and sets the background image and initial position, i.e. frame, of the walking animation, then appends the bomberManWrapper to the grid.
+
+```javascript
+bomberManWrapper = [];
+for (let i = 0; i < players.length; i++) {
+  // ...
+  bomberManWrapper[i] = document.createElement("div");
+  bomberManWrapper[i].style.transition = `transform ${normalTime}ms`;
+  bomberManWrapper[i].classList.add("bomber-man");
+  bomberManWrapper[
+    i
+  ].style.backgroundImage = `url('assets/images/player-sprites/${color[i]}.png')`;
+  // n & 1 is 1 if n is odd, 0 if n is even
+  setSprite(horizontalAnimation[i], (1 + i) & 1, bomberManWrapper[i]);
+  grid.appendChild(bomberManWrapper[i]);
+}
+```
+
+Now we come to the socket and keypress event handlers associated with the game itself and the functions they call.
