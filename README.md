@@ -10,6 +10,8 @@ The multiplayer Bomberman game is working in Chrome, Brave, Firefox, and Safari.
 
 We mainly just need to add a framework for the sake of the exerise. It seems a shame as it will, at best, have no effect for players. All we can hope is that the decline in performance will not be noticeable! We can start work on it in a dedicated feature branch.
 
+We could implement the framework in a way that would turn it on and off with a flag, or just do it in a separate branch.
+
 Notes:
 
 1. The instructions and audit expect us to have a simple lobby with a 20s countdown, followed by a 10s countdown for whoever has joined during the first countdown. Instead, I chose to just implement a 10s countdown. The two countdowns didn't make dramatic sense in the context of my over-the-top intro!

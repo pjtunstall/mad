@@ -843,7 +843,9 @@ function startGame() {
 }
 
 function buildGrid() {
+  const cellsArr = [];
   for (let row = 0; row < gridRow; row++) {
+    cellsArr.push([]);
     for (let col = 0; col < gridCol; col++) {
       const cellData = gridDataFromServer[row][col];
       const cell = document.createElement("div");
@@ -857,17 +859,10 @@ function buildGrid() {
         cell.classList.add(cellData.powerup.name);
       }
       grid.append(cell);
+      cellsArr[row].push(cell);
     }
   }
-}
-
-function createCellsArr() {
-  let oneDArr = [].slice.call(document.getElementsByClassName("cell"));
-  let twoDArr = [];
-  for (let i = 0; i < gridCol; i++) {
-    twoDArr.push(oneDArr.slice(i * gridCol, i * gridCol + gridCol));
-  }
-  return twoDArr;
+  return cellsArr;
 }
 
 // Player walking sprites are arranged in the spritesheet as follows:
@@ -889,8 +884,7 @@ function generateLevel() {
   grid.parentNode.replaceChild(newGrid, grid);
   grid = newGrid;
   grid.id = "game-grid";
-  buildGrid();
-  cellsArr = createCellsArr();
+  cellsArr = buildGrid();
   game.style.display = "flex";
   game.classList.add("show");
   gridWrapper.classList.remove("hide");
