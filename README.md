@@ -1,8 +1,10 @@
 # The Mad Bomber's Tea Party
 
-[1. Setup](#setup)
-[2. Progress](#progress)
-[3. Todo](#todo)
+[1. Setup](#1-setup)
+
+[2. Progress](#2-progress)
+
+[3. Todo](#3-todo)
 
 - [Add framework](#add-framework)
 - [Extra](#extra)

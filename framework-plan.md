@@ -1,4 +1,4 @@
-# Plan for Adding the Framework
+# Plan for adding the framework
 
 [1. Overview](#1-overview)
 
