@@ -18,8 +18,8 @@ const Player = require("./classes/player.js");
 let players;
 let playersInChat;
 let playersInCountdown;
-let gameInProgress;
-let isGameActive;
+let isGameInProgress; // Set to true when the first player sends the "ready" signal.
+let isFirstStartGameSignalReceived; // Necessary because all players will send this signal when their countdown reaches 0; I suppose it would might be better to make it so that we wait till all players have sent this signal, in which case, make sure we handle what would happen then if someone disconnects during the countdown and is thus unable to send the signal. Eventually, move countdown logic to server.
 let isGameInitialized;
 let playAgainTimeoutId;
 let isAfterGame;
@@ -34,8 +34,8 @@ function initializeIntro() {
   playersInChat = 0;
   playersInCountdown = 0;
   playersInGame = 0;
-  gameInProgress = false;
-  isGameActive = false;
+  isGameInProgress = false;
+  isFirstStartGameSignalReceived = false;
   isGameInitialized = false;
   isAfterGame = false;
 }
@@ -117,7 +117,7 @@ function disconnectAll() {
 }
 
 io.on("connection", (socket) => {
-  if (gameInProgress) {
+  if (isGameInProgress) {
     socket.emit("game in progress");
     return;
   }
@@ -175,7 +175,7 @@ io.on("connection", (socket) => {
     if (isAfterGame) {
       return;
     }
-    gameInProgress = true;
+    isGameInProgress = true;
     playersInCountdown = 0;
     for (const player of players) {
       if (player?.phase === "chat") {
@@ -190,11 +190,11 @@ io.on("connection", (socket) => {
   });
 
   socket.on("start game", () => {
-    if (isGameActive) {
+    if (isFirstStartGameSignalReceived) {
       // Necessary because all players will send this signal. Eventually, move countdown logic to server.
       return;
     }
-    isGameActive = true;
+    isFirstStartGameSignalReceived = true;
     setTimeout(() => {
       initializeGame();
     }, 500);
@@ -253,7 +253,7 @@ io.on("connection", (socket) => {
       return;
     }
 
-    if (isGameActive) {
+    if (isFirstStartGameSignalReceived) {
       for (const player of players) {
         if (player?.id === socket.id) {
           player.lives = 1;
@@ -290,8 +290,8 @@ function restart() {
     playersInChat = 0;
     playersInCountdown = 0;
     playersInGame = 0;
-    isGameActive = false;
-    gameInProgress = false;
+    isFirstStartGameSignalReceived = false;
+    isGameInProgress = false;
     isGameInitialized = false;
     isAfterGame = false;
     io.emit("play again");
@@ -403,7 +403,7 @@ function initializeGame() {
 }
 
 function gameLoop() {
-  if (!gameInProgress) {
+  if (!isGameInProgress) {
     return;
   }
 
