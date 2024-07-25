@@ -52,7 +52,6 @@ const cellSize = 64;
 let horizontalAnimation = [0, 0, 0, 0];
 const startingScore = 0;
 let currentScore = startingScore;
-let isGameOver = false;
 const isKilled = new Array(4).fill(false);
 let cellsArr;
 let breakableCells;
@@ -866,8 +865,6 @@ function setSprite(spriteX, spriteY, player) {
 }
 
 function generateLevel() {
-  isGameOver = false;
-
   playerInfo.textContent = `Player: ${color[ownIndex]}`;
   lives.textContent = "Lives: 3";
   power.innerHTML = "PowerUp: none";
@@ -1091,12 +1088,10 @@ const onKeyDown = (e) => {
     case "ArrowDown":
     case "ArrowRight":
     case "ArrowLeft":
-      if (!isGameOver) {
-        socket.emit("move", { index: ownIndex, key: e.key });
-      }
+      socket.emit("move", { index: ownIndex, key: e.key });
       break;
     case "x":
-      if (!isGameOver && !isKilled[ownIndex]) {
+      if (!isKilled[ownIndex]) {
         socket.emit("bomb", {
           index: ownIndex,
           y: position[ownIndex].y,
@@ -1106,7 +1101,7 @@ const onKeyDown = (e) => {
       break;
     case " ":
     case "Spacebar":
-      if (!isGameOver && isRemoteControlBombPlanted) {
+      if (isRemoteControlBombPlanted) {
         socket.emit("detonateRemoteControlBomb", ownIndex);
       }
       break;
@@ -1268,7 +1263,6 @@ socket.on("game over", ({ survivorIndex, type }) => {
   document.removeEventListener("keydown", onKeyDown);
   document.removeEventListener("keyup", onKeyUp);
   cancelAnimationFrame(gameLoopId);
-  isGameOver = true;
   gridWrapper.classList.add("hide");
   gameOver.innerHTML = "";
   gameOver.classList.remove("hide");
@@ -1280,16 +1274,13 @@ socket.on("game over", ({ survivorIndex, type }) => {
 });
 
 function displayGameOverMessage(survivorIndex, type) {
+  console.log("survivorIndex", survivorIndex);
+  console.log("ownIndex", ownIndex);
   const imageElement = document.querySelector("#main-pane img");
-  let winner;
-  if (survivorIndex === null) {
-    winner = null;
-  } else {
-    winner = players[survivorIndex];
-  }
+  let winner = players[survivorIndex] ?? null;
   outroText = outroTextLose;
   if (type) {
-    if (survivorIndex) {
+    if (winner) {
       if (ownIndex === survivorIndex) {
         outroText = outroTextWin;
         imageElement.src = "assets/images/game-over/won.jpg";
