@@ -1265,20 +1265,9 @@ socket.on("spawned", ({ index, isGameOver, powerup, y, x, life }) => {
 });
 
 socket.on("game over", ({ survivorIndex, type }) => {
-  gameOverHandler(survivorIndex, type);
-});
-
-function gameOverHandler(survivorIndex, type) {
   document.removeEventListener("keydown", onKeyDown);
   document.removeEventListener("keyup", onKeyUp);
-  outroText = outroTextLose;
   cancelAnimationFrame(gameLoopId);
-  let winner;
-  if (survivorIndex === null) {
-    winner = null;
-  } else {
-    winner = players[survivorIndex];
-  }
   isGameOver = true;
   gridWrapper.classList.add("hide");
   gameOver.innerHTML = "";
@@ -1286,49 +1275,64 @@ function gameOverHandler(survivorIndex, type) {
   gameOver.classList.add("show");
   gameOver.style.display = "flex";
   setTimeout(() => {
-    const imageElement = document.querySelector("#main-pane img");
-    if (type) {
-      if (survivorIndex !== null) {
-        if (ownIndex === survivorIndex) {
-          outroText = outroTextWin;
-          imageElement.src = "assets/images/game-over/won.jpg";
-          gameOver.innerHTML = `<h1>GAME OVER<br/><br/>THE CLASHING CYMBALS OF VICTORY<br/>ARE YOURS<br/>'${winner.role.toUpperCase()}'<h1>`;
-        } else {
-          imageElement.src = `assets/images/game-over/lost.jpg`;
-          gameOver.innerHTML = `<h1>GAME OVER<br/><br/>YOU LOST TO<br/>'${winner.role}'</h1>`;
-        }
+    displayGameOverMessage(survivorIndex, type);
+  }, 4096);
+});
+
+function displayGameOverMessage(survivorIndex, type) {
+  const imageElement = document.querySelector("#main-pane img");
+  let winner;
+  if (survivorIndex === null) {
+    winner = null;
+  } else {
+    winner = players[survivorIndex];
+  }
+  outroText = outroTextLose;
+  if (type) {
+    if (survivorIndex) {
+      if (ownIndex === survivorIndex) {
+        outroText = outroTextWin;
+        imageElement.src = "assets/images/game-over/won.jpg";
+        gameOver.innerHTML = `<h1>GAME OVER<br/><br/>THE CLASHING CYMBALS OF VICTORY<br/>ARE YOURS<br/>'${winner.role.toUpperCase()}'<h1>`;
       } else {
         imageElement.src = `assets/images/game-over/lost.jpg`;
-        gameOver.innerHTML = `<h1>GAME OVER<br/><br/>THERE ARE NO WINNERS</h1>`;
+        gameOver.innerHTML = `<h1>GAME OVER<br/><br/>YOU LOST TO<br/>'${winner.role}'</h1>`;
       }
     } else {
-      outroText = outroTextWin;
-      imageElement.src = "assets/images/game-over/won.jpg";
-      gameOver.innerHTML = `<h1>GAME OVER<br/><br/>A MEANINGLESS TRIUMPH<br/>YOUR FOES HAVE FLED INTO THE AETHER<h1>`;
+      imageElement.src = `assets/images/game-over/lost.jpg`;
+      gameOver.innerHTML = `<h1>GAME OVER<br/><br/>THERE ARE NO WINNERS</h1>`;
     }
-    gameOver.classList.remove("show");
-    gameOver.classList.add("hide");
-    setTimeout(() => {
-      fetchMusic(outroMusic);
-      document.body.style.background = "black";
-      document.body.style.transform = "scale(1)";
-      game.style.display = "none";
-      credits.style.display = "none";
-      intro.style.display = "block";
-      intro.classList.add("show");
-      readyButton.innerHTML = "&#x1f4a3;";
-      readyButton.classList.remove("hide");
-      readyButton.classList.add("show");
-      readyButton.addEventListener("click", playAgainHandler);
-      const chatMessages = document.getElementById("chat-messages");
-      chatMessages.innerHTML = "";
-      const textElement = document.createElement("li");
-      textElement.style.color = "silver";
-      chatForm.querySelector("input").focus();
-      chatMessages.insertBefore(textElement, chatMessages.firstChild);
-      typeLetter(textElement, outroText, 14);
-    }, 8192);
-  }, 4096);
+  } else {
+    outroText = outroTextWin;
+    imageElement.src = "assets/images/game-over/won.jpg";
+    gameOver.innerHTML = `<h1>GAME OVER<br/><br/>A MEANINGLESS TRIUMPH<br/>YOUR FOES HAVE FLED INTO THE AETHER<h1>`;
+  }
+  gameOver.classList.remove("show");
+  gameOver.classList.add("hide");
+  setTimeout(() => {
+    transitionToOutro();
+  }, 8192);
+}
+
+function transitionToOutro() {
+  fetchMusic(outroMusic);
+  document.body.style.background = "black";
+  document.body.style.transform = "scale(1)";
+  game.style.display = "none";
+  credits.style.display = "none";
+  intro.style.display = "block";
+  intro.classList.add("show");
+  readyButton.innerHTML = "&#x1f4a3;";
+  readyButton.classList.remove("hide");
+  readyButton.classList.add("show");
+  readyButton.addEventListener("click", playAgainHandler);
+  const chatMessages = document.getElementById("chat-messages");
+  chatMessages.innerHTML = "";
+  const textElement = document.createElement("li");
+  textElement.style.color = "silver";
+  chatForm.querySelector("input").focus();
+  chatMessages.insertBefore(textElement, chatMessages.firstChild);
+  typeLetter(textElement, outroText, 14);
 }
 
 function playAgainHandler() {

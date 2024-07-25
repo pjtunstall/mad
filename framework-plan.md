@@ -4,6 +4,8 @@ First, identify all event listeners that might affect the DOM, then all DOM elem
 
 ## Event listeners
 
+In game event listeners:
+
 In `generateLevel`,
 
 `document.addEventListener("keydown", onKeyDown);`
@@ -32,6 +34,24 @@ In `gameOverHandler(survivorIndex, type)`,
 
 We also have all the socket listeners, of the form `socket.on`.
 
+- lose remote control
+- life up
+- add fire
+- remove fire
+- start
+- move
+- powerup
+- plantNormalBomb
+- plantRemoteControlBomb
+- detonateRemoteControlBomb
+- destroy block
+- desroy powerup
+- dead
+- used full-fire
+- spawned
+- game over
+- play again
+
 ## Elements
 
 Globally,
@@ -50,9 +70,7 @@ const lives = document.getElementById("lives");
 const power = document.getElementById("power-up");
 ```
 
-In `startGame()`,
-
-`document.getElementById("game").classList.add("show");`
+In `startGame()`, we make the game visible with `document.getElementById("game").classList.add("show");`
 
 `generateLevel()` concludes the setup. It calls `buildGrid()`, which returns `cellsArr`, a 2d array of 13 rows of 15 columns each. In `buildGrid()`, for each cell of the grid, we make a div and give it the class `cell`, the `style` attributes `top` and `left` with its pixel coordinates, and a `power-up` class if it contains a powerup, along with a class with the name of the specific powerup, `bomb-up`, `fire-up`, `skate`, etc.
 
