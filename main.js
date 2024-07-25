@@ -812,7 +812,7 @@ async function startCountdown() {
   readyButton.classList.add("hide");
   readyButton.classList.remove("show");
 
-  // At this point, we could send a signal to the server like this to start the game, but it would make more sense to move the countdown logic to the server and have it initiate the game itself when it reaches this point.
+  // At this point, we could send a signal to the server like this to start the game, but it would make more sense to move the countdown logic to the server and have it initiate the game itself when it reaches this point, maybe waiting a couple of seconds for any lagging players to catch up to zero, but starting regardless when some deadline is reached.
   socket.emit("start game");
 }
 
@@ -824,7 +824,6 @@ socket.on("start game", ({ updatedPlayers, newGrid }) => {
 
 function startGame() {
   audio.pause();
-  everythingContainer.style.display = "none";
   intro.style.display = "none";
 
   document.body.style.background = "gray";
@@ -1315,7 +1314,6 @@ function gameOverHandler(survivorIndex, type) {
       document.body.style.transform = "scale(1)";
       game.style.display = "none";
       credits.style.display = "none";
-      everythingContainer.style.display = "block";
       intro.style.display = "block";
       intro.classList.add("show");
       readyButton.innerHTML = "&#x1f4a3;";
