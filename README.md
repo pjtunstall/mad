@@ -1,10 +1,19 @@
-# Setup
+# The Mad Bomber's Tea Party
+
+[Setup](#setup)
+[Progress](#progress)
+[Todo](#todo)
+
+- [Add framework](#add-framework)
+- [Extra](#extra)
+
+## Setup
 
 To run the server, install Node dependencies: `npm install`. If it reports any vulnerabilities, `npm audit fix`, as directed. Then `node server.js` to run the server on port 3000.
 
 The server will log its IP address in the browser. To connect over a mobile hotspot, players can enter that address in their browser.
 
-# Progress
+## Progress
 
 The multiplayer Bomberman game is working in Chrome, Brave, Firefox, and Safari. Not yet tested in Edge.
 
@@ -20,9 +29,9 @@ Notes:
 
 3. As it stands, it only allows a single instance of the game to be played at any one time. Switching to allow multiple instances would take some work.
 
-# Todo
+## Todo
 
-## Add framework
+### Add framework
 
 We need to decide which framework to use: mine, Stefan's, the one Bilal has been working on, or something based on Rodrigo Pombo's `Didact`. In what follows, for definiteness, I'll assume we're using my `overReact` (because, being made maively, I think it migh tbe quick and easy to apply), but a lot of the points will hold for any of them. I'll assume the goal is simply to framework the core game, taking `grid` or perhaps `gridWrapper` as the app. That's enough to satisfy the spirit of the exercise without getting bogged down in making it work with all the optional extras of the intro too.
 
@@ -42,7 +51,7 @@ Rewrite write event handlers to only modify virtual DOM. These include handlers 
 
 Rewrite the code to use the framework. Some of this will just be a matter of switching from DOM syntax to virtual DOM syntax. I anticipate it will only be in the event handlers whose logic will need changing a bit.
 
-## Extra
+### Extra
 
 - FIX
   - Possibly already fixed now that disconnections during countdown are handled better, but I'll leave the details here just in case. Server crashed once when a player in Safari pressed CTR+SHIFT+R to view simplified page, without styles, during countdown. Apparently this led to them being undefined even though the normal disconnection logic had not gone ahead. I've tried a few times and haven't managed to replicate it. It triggered the classic lightning-conductor-of-errors, `isDead(player)`: `return grid[player?.position?.y][player?.position?.x].type === "fire";` (accusing arrow points to 2nd instance of player in the line), "TypeError: Cannot read properties of undefined (reading 'undefined')". Since then I've added some protections and logging in case of future issues.

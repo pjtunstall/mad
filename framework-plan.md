@@ -1,8 +1,14 @@
 # Plan for Adding the Framework
 
+[1. Overview](#1-overview)
+[2. Event listeners](#-event-listeners)
+[3. Elements](#2-elements)
+
+## 1. Overview
+
 First, identify all event listeners that might affect the DOM, then all DOM elements and all lines in `main.js` that affect those elements.
 
-## Event listeners
+## 2. Event listeners
 
 In game event listeners:
 
@@ -52,7 +58,7 @@ We also have all the socket listeners, of the form `socket.on`.
 - game over
 - play again
 
-## Elements
+## 3. Elements
 
 Globally,
 
@@ -70,7 +76,7 @@ const lives = document.getElementById("lives");
 const power = document.getElementById("power-up");
 ```
 
-In `startGame()`, we make the game visible with `document.getElementById("game").classList.add("show");`
+In `socket.on("start game" ...`, we make the game visible with `document.getElementById("game").classList.add("show");`
 
 `generateLevel()` concludes the setup. It calls `buildGrid()`, which returns `cellsArr`, a 2d array of 13 rows of 15 columns each. In `buildGrid()`, for each cell of the grid, we make a div and give it the class `cell`, the `style` attributes `top` and `left` with its pixel coordinates, and a `power-up` class if it contains a powerup, along with a class with the name of the specific powerup, `bomb-up`, `fire-up`, `skate`, etc.
 
@@ -138,4 +144,4 @@ for (let i = 0; i < players.length; i++) {
 }
 ```
 
-Now we come to the socket and keypress event handlers associated with the game itself and the functions they call.
+Now we come to the socket and keypress event handlers associated with the game itself, and to the functions they call.

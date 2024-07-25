@@ -818,19 +818,13 @@ async function startCountdown() {
 socket.on("start game", ({ updatedPlayers, newGrid }) => {
   players = updatedPlayers;
   gridDataFromServer = newGrid;
-  startGame();
-});
-
-function startGame() {
   audio.pause();
   intro.style.display = "none";
-
   document.body.style.background = "gray";
   document.body.style.transform = "scale(0.5)";
-
   document.getElementById("game").classList.add("show");
   generateLevel();
-}
+});
 
 function buildGrid() {
   const cellsArr = [];
@@ -1274,10 +1268,8 @@ socket.on("game over", ({ survivorIndex, type }) => {
 });
 
 function displayGameOverMessage(survivorIndex, type) {
-  console.log("survivorIndex", survivorIndex);
-  console.log("ownIndex", ownIndex);
+  const winner = players[survivorIndex];
   const imageElement = document.querySelector("#main-pane img");
-  let winner = players[survivorIndex] ?? null;
   outroText = outroTextLose;
   if (type) {
     if (winner) {
