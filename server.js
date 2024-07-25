@@ -18,13 +18,13 @@ const Player = require("./classes/player.js");
 let players;
 let playersInChat;
 let playersInCountdown;
-let isGameInProgress; // Set to true when the first player sends the "ready" signal.
-let isFirstStartGameSignalReceived; // Necessary because all players will send this signal when their countdown reaches 0; I suppose it would might be better to make it so that we wait till all players have sent this signal, in which case, make sure we handle what would happen then if someone disconnects during the countdown and is thus unable to send the signal. Eventually, move countdown logic to server.
+let isGameInProgress; // Set to true when the first player sends the "ready" signal to initiate the countdown for all players in chat.
 let isGameInitialized;
 let playAgainTimeoutId;
 let isAfterGame;
 let playersInGame;
 let disconnectees;
+let numberOfStartSignalsReceived;
 
 // INTRO
 
@@ -35,9 +35,9 @@ function initializeIntro() {
   playersInCountdown = 0;
   playersInGame = 0;
   isGameInProgress = false;
-  isFirstStartGameSignalReceived = false;
   isGameInitialized = false;
   isAfterGame = false;
+  numberOfStartSignalsReceived = 0;
 }
 
 initializeIntro();
@@ -190,11 +190,11 @@ io.on("connection", (socket) => {
   });
 
   socket.on("start game", () => {
-    if (isFirstStartGameSignalReceived) {
+    numberOfStartSignalsReceived++;
+    if (numberOfStartSignalsReceived !== playersInCountdown) {
       // Necessary because all players will send this signal. Eventually, move countdown logic to server.
       return;
     }
-    isFirstStartGameSignalReceived = true;
     setTimeout(() => {
       initializeGame();
     }, 500);
@@ -253,7 +253,7 @@ io.on("connection", (socket) => {
       return;
     }
 
-    if (isFirstStartGameSignalReceived) {
+    if (isGameInitialized) {
       for (const player of players) {
         if (player?.id === socket.id) {
           player.lives = 1;
@@ -290,7 +290,7 @@ function restart() {
     playersInChat = 0;
     playersInCountdown = 0;
     playersInGame = 0;
-    isFirstStartGameSignalReceived = false;
+    numberOfStartSignalsReceived = 0;
     isGameInProgress = false;
     isGameInitialized = false;
     isAfterGame = false;
