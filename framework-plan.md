@@ -1,7 +1,9 @@
 # Plan for Adding the Framework
 
 [1. Overview](#1-overview)
+
 [2. Event listeners](#-event-listeners)
+
 [3. Elements](#2-elements)
 
 ## 1. Overview
