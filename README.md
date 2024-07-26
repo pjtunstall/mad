@@ -39,7 +39,7 @@ We need to decide which framework to use: mine, Stefan's, the one Bilal has been
 
 Here's what I think we'll need to do:
 
-Find all DOM elements that belong to the app, all code that accesses or changes them, and all relevant global variables. Code that access or changes DOM elements may be
+Find all DOM elements that belong to the app. Find all code that accesses or changes them, and variables that reference them. (See `framework-plan.md`.) Code that access or changes DOM elements may be
 
 - top-level: typically global variable declarations
 - in event handlers (socket, keydown, keyup, animationend)

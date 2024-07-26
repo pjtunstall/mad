@@ -664,7 +664,10 @@ function deathAnimationEnd(player, isNotDisconnected) {
       clearInterval(gameLoopId);
       let survivorIndex = null;
       for (const otherPlayer of players) {
-        if (otherPlayer.lives > 0 && !otherPlayer.deathInProgress) {
+        if (
+          otherPlayer.lives > 1 ||
+          (otherPlayer.lives > 0 && !otherPlayer.deathInProgress)
+        ) {
           // Only allow a player to win if they're not in the process of losing their last life
           survivorIndex = otherPlayer.index;
           break;

@@ -64,6 +64,8 @@ let currentScore = startingScore;
 const isKilled = new Array(4).fill(false);
 let cellsArr; // 2d array to store the cells of the game grid
 let bomberManWrapper; // Array to store the player sprite divs
+let remoteControl = false;
+let isRemoteControlBombPlanted = false;
 
 // Game loop variables
 let gameLoopId;
@@ -846,6 +848,10 @@ socket.on("start game", ({ updatedPlayers, newGrid }) => {
 });
 
 function buildGrid() {
+  let newGrid = document.createElement("div");
+  grid.parentNode.replaceChild(newGrid, grid);
+  grid = newGrid;
+  grid.id = "game-grid";
   cellsArr = [];
   for (let row = 0; row < numberOfRowsInGrid; row++) {
     cellsArr.push([]);
@@ -873,16 +879,14 @@ function buildGrid() {
 }
 
 function generateLevel() {
+  remoteControl = false;
+  isRemoteControlBombPlanted = false;
+
   playerColor.textContent = `Player: ${players[ownIndex].color}`;
   lives.textContent = "Lives: 3";
   power.innerHTML = "PowerUp: none";
-  let newGrid = document.createElement("div");
-  grid.parentNode.replaceChild(newGrid, grid);
-  grid = newGrid;
-  grid.id = "game-grid";
+
   buildGrid();
-  game.style.display = "flex";
-  game.classList.add("show");
   gridWrapper.classList.remove("hide");
   infoWrapper.style.display = "flex";
   instructions.style.display = "flex";
@@ -899,6 +903,9 @@ function generateLevel() {
     // n & 1 is 1 if n is odd, 0 if n is even
     setSprite(horizontalAnimation[i], (1 + i) & 1, bomberManWrapper[i]);
     grid.appendChild(bomberManWrapper[i]);
+
+    game.style.display = "flex";
+    game.classList.add("show");
   }
 
   document.addEventListener("keydown", onKeyDown);
@@ -907,9 +914,26 @@ function generateLevel() {
   gameLoopId = requestAnimationFrame(gameLoop);
 }
 
-/** POWER UPS */
-let remoteControl = false;
-let isRemoteControlBombPlanted = false;
+function gameLoop(timestamp) {
+  gameLoopId = requestAnimationFrame(gameLoop);
+  if (!lastTime) {
+    lastTime = timestamp;
+  }
+  const moveDeltaTime = timestamp - lastTime;
+  lastTime = timestamp;
+  accumulatedFrameTime += moveDeltaTime;
+  while (accumulatedFrameTime >= moveInterval) {
+    offbeat = !offbeat;
+    accumulatedFrameTime -= moveInterval;
+    for (let i = 0; i < players.length; i++) {
+      if (playerPowerups[i] !== "skate" && offbeat) {
+        continue;
+      }
+      animateWalk(i);
+      move(i);
+    }
+  }
+}
 
 function getPowerup(y, x, powerup, index) {
   const sound = powerupSound.cloneNode(true);
@@ -996,16 +1020,6 @@ socket.on("life-up", (index, life, y, x) => {
   }
 });
 
-function explode(y, x, style) {
-  if (isGameOver) {
-    return;
-  }
-  cellsArr[y][x].classList.add(style);
-  if (gridData[y][x].type === "breakable") {
-    socket.emit("destroy", { y, x });
-  }
-}
-
 socket.on("remove fire", ({ y, x, style }) => {
   cellsArr[y][x].classList.remove(style);
 });
@@ -1020,6 +1034,16 @@ socket.on("add fire", (arr) => {
     explode(cellData.y, cellData.x, cellData.style);
   });
 });
+
+function explode(y, x, style) {
+  if (isGameOver) {
+    return;
+  }
+  cellsArr[y][x].classList.add(style);
+  if (gridData[y][x].type === "breakable") {
+    socket.emit("destroy", { y, x });
+  }
+}
 
 const onKeyDown = (e) => {
   switch (e.key) {
@@ -1057,27 +1081,6 @@ const onKeyUp = (e) => {
       break;
   }
 };
-
-function gameLoop(timestamp) {
-  gameLoopId = requestAnimationFrame(gameLoop);
-  if (!lastTime) {
-    lastTime = timestamp;
-  }
-  const moveDeltaTime = timestamp - lastTime;
-  lastTime = timestamp;
-  accumulatedFrameTime += moveDeltaTime;
-  while (accumulatedFrameTime >= moveInterval) {
-    offbeat = !offbeat;
-    accumulatedFrameTime -= moveInterval;
-    for (let i = 0; i < players.length; i++) {
-      if (playerPowerups[i] !== "skate" && offbeat) {
-        continue;
-      }
-      animateWalk(i);
-      move(i);
-    }
-  }
-}
 
 function keydownHandler(e) {
   if (e.key === "s") {
