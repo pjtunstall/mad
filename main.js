@@ -7,6 +7,7 @@
 // 6. Story and credits text, character and color arrays
 
 // Intro and general variables
+let isGameOver;
 let phase;
 let players;
 let ownIndex;
@@ -33,7 +34,7 @@ let position = [
   { y: 11, x: 1 },
   { y: 11, x: 13 },
 ];
-
+// Components of normalized velocity vector for each player, and the key pressed to achieve that vector
 let direction = [
   { y: 0, x: 0, key: "" },
   { y: 0, x: 0, key: "" },
@@ -41,29 +42,28 @@ let direction = [
   { y: 0, x: 0, key: "" },
 ];
 let playerPowerups = ["none", "none", "none", "none"];
-const skateTime = 32;
-const normalTime = 64;
+const skateTime = 32; // time in ms for player to move one cell with skate powerup
+const normalTime = 64; // time in ms for player to move one cell without skate powerup
+let gridData;
 let grid = document.getElementById("game-grid");
-let gridDataFromServer;
 const startUp = document.getElementById("start-up");
 const gameOver = document.getElementById("game-over");
-const spriteSize = 64;
-let bomberManWrapper = [];
 const gridWrapper = document.getElementById("grid-wrapper");
 const infoWrapper = document.getElementById("info");
 const instructions = document.getElementById("instructions");
 const playerColor = document.getElementById("player-color");
 const lives = document.getElementById("lives");
 const power = document.getElementById("power-up");
-const gridRow = 13;
-const gridCol = 15;
+const numberOfRowsInGrid = 13;
+const numberOfColumnsInGrid = 15;
 const cellSize = 64;
-let horizontalAnimation = [0, 0, 0, 0];
+const spriteSize = 64;
+let horizontalAnimation = [0, 0, 0, 0]; // background-positions representing current frames of each player's walking animation
 const startingScore = 0;
 let currentScore = startingScore;
 const isKilled = new Array(4).fill(false);
-let cellsArr;
-let breakableCells;
+let cellsArr; // 2d array to store the cells of the game grid
+let bomberManWrapper; // Array to store the player sprite divs
 
 // Game loop variables
 let gameLoopId;
@@ -256,6 +256,7 @@ const outroTextLose = `<br /><br /><br /><br />Something was different this time
 transitionToStart();
 
 function transitionToStart() {
+  isGameOver = false;
   phase = "start";
   ownIndex = null;
   playersInLobby = 0;
@@ -630,8 +631,8 @@ socket.on("player joined chat", ({ player, playersInChat }) => {
 
 socket.on("player left", ({ player, playersInChat }) => {
   console.log("player left");
-  if (gridDataFromServer) {
-    console.log("player left");
+  if (gridData) {
+    // i.e. if the game has been initialized and the server has sent the grid data. In that case, a signal will have been sent to kill that player.
     return;
   }
 
@@ -806,7 +807,7 @@ async function* counter(i) {
 }
 
 async function startCountdown() {
-  if (gridDataFromServer) {
+  if (gridData) {
     // Prevents the countdown from starting when ready button is used to restart game at the end
     return;
   }
@@ -835,7 +836,7 @@ async function startCountdown() {
 
 socket.on("start game", ({ updatedPlayers, newGrid }) => {
   players = updatedPlayers;
-  gridDataFromServer = newGrid;
+  gridData = newGrid;
   audio.pause();
   intro.style.display = "none";
   document.body.style.background = "gray";
@@ -845,26 +846,30 @@ socket.on("start game", ({ updatedPlayers, newGrid }) => {
 });
 
 function buildGrid() {
-  const cellsArr = [];
-  for (let row = 0; row < gridRow; row++) {
+  cellsArr = [];
+  for (let row = 0; row < numberOfRowsInGrid; row++) {
     cellsArr.push([]);
-    for (let col = 0; col < gridCol; col++) {
-      const cellData = gridDataFromServer[row][col];
+    for (let col = 0; col < numberOfColumnsInGrid; col++) {
+      const cellData = gridData[row][col];
       const cell = document.createElement("div");
       cell.classList.add("cell");
       cell.style.top = `${cellData.top}px`;
       cell.style.left = `${cellData.left}px`;
-      cell.classList.add(`${cellData.type}`);
-      if (cellData.powerup) {
-        console.log(cellData.powerup.name);
-        cell.classList.add("power-up");
-        cell.classList.add(cellData.powerup.name);
+      const type = cellData.type;
+      if (type === "breakable") {
+        cell.classList.add("breakable");
+        if (cellData.powerup) {
+          console.log(cellData.powerup.name);
+          cell.classList.add("power-up");
+          cell.classList.add(cellData.powerup.name);
+        }
+      } else if (type === "unbreakable") {
+        cell.classList.add("unbreakable");
       }
       grid.append(cell);
       cellsArr[row].push(cell);
     }
   }
-  return cellsArr;
 }
 
 function generateLevel() {
@@ -875,7 +880,7 @@ function generateLevel() {
   grid.parentNode.replaceChild(newGrid, grid);
   grid = newGrid;
   grid.id = "game-grid";
-  cellsArr = buildGrid();
+  buildGrid();
   game.style.display = "flex";
   game.classList.add("show");
   gridWrapper.classList.remove("hide");
@@ -917,7 +922,6 @@ function getPowerup(y, x, powerup, index) {
   cell.classList.remove("power-up");
   cell.classList.remove(powerup.name);
   cell.classList.remove("mystery");
-  cell.classList.add("walkable");
   if (index === ownIndex) {
     power.innerHTML = `PowerUp: ${powerup.name}`;
     if (powerup.name === "remote-control") {
@@ -983,7 +987,6 @@ socket.on("life-up", (index, life, y, x) => {
   const cell = cellsArr[y][x];
   cell.classList.remove("power-up");
   cell.classList.remove("life-up");
-  cell.classList.add("walkable");
   if (index === ownIndex) {
     lives.textContent = `Lives: ${life}`;
     power.innerHTML = "PowerUp: &#x2665;&#xfe0f;";
@@ -993,86 +996,30 @@ socket.on("life-up", (index, life, y, x) => {
   }
 });
 
-function plantRemoteControlBomb(y, x, index) {
-  if (index === ownIndex) {
-    isRemoteControlBombPlanted = true;
-  }
-
-  const fuse = fuseSound.cloneNode(true);
-  fuse.play();
-  remoteControlFuses[index] = fuse;
-
-  const bomberManCell = cellsArr[y][x];
-  const bombElement = document.createElement("div");
-  bombElement.classList.add("bomb");
-  bombElement.style.top = bomberManCell.style.top;
-  bombElement.style.left = bomberManCell.style.left;
-  bombElement.id = `bomb-${y}-${x}`;
-  grid.appendChild(bombElement);
-  bomberManCell.classList.remove("walkable");
-  bombElement.style.animation = "bomb-animation 1s steps(1) infinite";
-}
-
-function plantNormalBomb(y, x, full) {
-  const fuse = fuseSound.cloneNode(true);
-  fuse.play();
-  setTimeout(() => {
-    fuse.src = "";
-    const explosion = full
-      ? fullExplosionSound.cloneNode(true)
-      : explosionSound.cloneNode(true);
-    if (!full) {
-      explosion.volume = 0.3;
-    }
-    explosion.play();
-    explosion.onended = function () {
-      explosion.src = "";
-    };
-  }, 1000);
-  const bomberManCell = cellsArr[y][x];
-  const bombElement = document.createElement("div");
-  bombElement.classList.add("bomb");
-  bombElement.style.top = bomberManCell.style.top;
-  bombElement.style.left = bomberManCell.style.left;
-  bombElement.id = `bomb-${y}-${x}`;
-  grid.appendChild(bombElement);
-  bomberManCell.classList.remove("walkable");
-  bombElement.style.animation = "bomb-animation 1s steps(1) 2";
-}
-
 function explode(y, x, style) {
-  const cell = cellsArr[y][x];
-  if (cell.classList.contains("breakable")) {
+  if (isGameOver) {
+    return;
+  }
+  cellsArr[y][x].classList.add(style);
+  if (gridData[y][x].type === "breakable") {
     socket.emit("destroy", { y, x });
   }
-  cell.classList.add(style);
 }
 
 socket.on("remove fire", ({ y, x, style }) => {
-  const cell = cellsArr[y][x];
-  cell.classList.remove(style);
+  cellsArr[y][x].classList.remove(style);
 });
 
 socket.on("add fire", (arr) => {
-  const cell = cellsArr[arr[0].y][arr[0].x];
+  if (isGameOver) {
+    return;
+  }
   const bombElement = document.getElementById(`bomb-${arr[0].y}-${arr[0].x}`);
-  cell.classList.remove("hasBomb");
-  cell.classList.add("walkable");
   bombElement.remove();
   arr.forEach((cellData) => {
     explode(cellData.y, cellData.x, cellData.style);
   });
 });
-
-function destroyBlocks(y, x) {
-  const cell = cellsArr[y][x];
-  cell.classList.remove("breakable");
-  cell.classList.add("breakable-block-destruction");
-  cell.addEventListener("animationend", () => {
-    cell.classList.remove("breakable-block-destruction");
-    cell.classList.add("walkable");
-  });
-}
 
 const onKeyDown = (e) => {
   switch (e.key) {
@@ -1094,7 +1041,7 @@ const onKeyDown = (e) => {
     case " ":
     case "Spacebar":
       if (isRemoteControlBombPlanted) {
-        socket.emit("detonateRemoteControlBomb", ownIndex);
+        socket.emit("detonate remote control bomb", ownIndex);
       }
       break;
   }
@@ -1140,7 +1087,7 @@ function keydownHandler(e) {
 
 socket.on("start", (grid) => {
   document.removeEventListener("keydown", keydownHandler);
-  gridDataFromServer = grid;
+  gridData = grid;
   generateLevel();
 });
 
@@ -1161,15 +1108,52 @@ socket.on(
   }
 );
 
-socket.on("plantNormalBomb", ({ y, x, full }) => {
-  plantNormalBomb(y, x, full);
+socket.on("plant normal bomb", ({ y, x, full }) => {
+  const fuse = fuseSound.cloneNode(true);
+  fuse.play();
+  setTimeout(() => {
+    fuse.src = "";
+    const explosion = full
+      ? fullExplosionSound.cloneNode(true)
+      : explosionSound.cloneNode(true);
+    if (!full) {
+      explosion.volume = 0.3;
+    }
+    explosion.play();
+    explosion.onended = () => {
+      explosion.src = "";
+    };
+  }, 1000);
+  const bomberManCell = cellsArr[y][x];
+  const bombElement = document.createElement("div");
+  bombElement.classList.add("bomb");
+  bombElement.style.top = bomberManCell.style.top;
+  bombElement.style.left = bomberManCell.style.left;
+  bombElement.id = `bomb-${y}-${x}`;
+  grid.appendChild(bombElement);
+  bombElement.style.animation = "bomb-animation 1s steps(1) 2";
 });
 
-socket.on("plantRemoteControlBomb", ({ y, x, index }) => {
-  plantRemoteControlBomb(y, x, index);
+socket.on("plant remote control bomb", ({ y, x, index }) => {
+  if (index === ownIndex) {
+    isRemoteControlBombPlanted = true;
+  }
+
+  const fuse = fuseSound.cloneNode(true);
+  fuse.play();
+  remoteControlFuses[index] = fuse;
+
+  const bomberManCell = cellsArr[y][x];
+  const bombElement = document.createElement("div");
+  bombElement.classList.add("bomb");
+  bombElement.style.top = bomberManCell.style.top;
+  bombElement.style.left = bomberManCell.style.left;
+  bombElement.id = `bomb-${y}-${x}`;
+  grid.appendChild(bombElement);
+  bombElement.style.animation = "bomb-animation 1s steps(1) infinite";
 });
 
-socket.on("detonateRemoteControlBomb", (index) => {
+socket.on("detonate remote control bomb", (index) => {
   if (index === ownIndex) {
     isRemoteControlBombPlanted = false;
   }
@@ -1180,19 +1164,26 @@ socket.on("detonateRemoteControlBomb", (index) => {
   const explosion = explosionSound.cloneNode(true);
   explosion.volume = 0.3;
   explosion.play();
-  explosion.onended = function () {
+  explosion.onended = () => {
     explosion.src = "";
   };
 });
 
 socket.on("destroy block", ({ y, x }) => {
-  destroyBlocks(y, x);
+  if (isGameOver) {
+    return;
+  }
+  const cell = cellsArr[y][x];
+  cell.classList.remove("breakable");
+  cell.classList.add("breakable-block-destruction");
+  cell.addEventListener("animationend", () => {
+    cell.classList.remove("breakable-block-destruction");
+  });
 });
 
 socket.on("destroy powerup", ({ y, x, powerupName }) => {
   const cell = cellsArr[y][x];
   cell.classList.remove("power-up");
-  cell.classList.add("walkable");
   cell.classList.remove(powerupName);
 });
 
@@ -1254,6 +1245,7 @@ socket.on("spawned", ({ index, isGameOver, powerup, y, x, life }) => {
 });
 
 socket.on("game over", ({ survivorIndex, type }) => {
+  isGameOver = true;
   document.removeEventListener("keydown", onKeyDown);
   document.removeEventListener("keyup", onKeyUp);
   cancelAnimationFrame(gameLoopId);

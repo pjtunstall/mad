@@ -19,9 +19,7 @@ The server will log its IP address in the terminal. To connect over a mobile hot
 
 The multiplayer Bomberman game is working in Chrome, Brave, Firefox, and Safari. Not yet tested in Edge.
 
-We mainly just need to add a framework for the sake of the exerise. It seems a shame as it will, at best, have no effect for players. All we can hope is that the decline in performance will not be noticeable! We can start work on it in a dedicated feature branch.
-
-We could implement the framework in a way that would turn it on and off with a flag, or just do it in a separate branch.
+The only essential thing left to do for the sake of he audit is to add a framework.
 
 Notes:
 
@@ -35,6 +33,8 @@ Notes:
 
 ### Add framework
 
+This seems a shame as it will, at best, have no effect for players. All we can hope is that the decline in performance will not be noticeable! I suggest we start work on it in a dedicated feature branch so that we'll still have a pre-framework version, in case we want to improve it or eventually host it.
+
 We need to decide which framework to use: mine, Stefan's, the one Bilal has been working on, or something based on Rodrigo Pombo's `Didact`. In what follows, for definiteness, I'll assume we're using my `overReact` (because, being made maively, I think it migh tbe quick and easy to apply), but a lot of the points will hold for any of them. I'll assume the goal is simply to framework the core game, taking `grid` or perhaps `gridWrapper` as the app. That's enough to satisfy the spirit of the exercise without getting bogged down in making it work with all the optional extras of the intro too.
 
 Here's what I think we'll need to do:
@@ -42,20 +42,21 @@ Here's what I think we'll need to do:
 Find all DOM elements that belong to the app, all code that accesses or changes them, and all relevant global variables. Code that access or changes DOM elements may be
 
 - top-level: typically global variable declarations
-- in event handlers (input handlers and WebSocket on-message handlers)
-- in normal functions such as `generateLevel`, `buildGrid`, `gameLoop`, `move`, `setSprite`.
+- in event handlers (socket, keydown, keyup, animationend)
+- in other functions called by event handlers (directly or indirectly)
 
-Write functions to create the virtual nodes and combine them to make the app.
+Create the virtual nodes and combine them to make the app.
+
+Rewrite event handlers to only modify virtual DOM. These include handlers for `keydown` and `keyup` events, `animationend`, and those for dealing with messages from the socket.
 
 Think of any suitable state variables that we want trigger automatic updates. We also have the option (escape hatch) of being able to simply call the `update` method on the app.
 
-Rewrite write event handlers to only modify virtual DOM. These include handlers for `keydown` and `keyup` events, `animationend`, and those for dealing with messages from the socket.
-
-Rewrite the code to use the framework. Some of this will just be a matter of switching from DOM syntax to virtual DOM syntax. I anticipate it will only be in the event handlers whose logic will need changing a bit.
+Make sure that updates are called whenever necessary.
 
 ### Extra
 
 - FIX
+  - There's often a jump where the character profile picture changes when the eyelids are still open.
   - Possibly already fixed now that disconnections during countdown are handled better, but I'll leave the details here just in case. Server crashed once when a player in Safari pressed CTR+SHIFT+R to view simplified page, without styles, during countdown. Apparently this led to them being undefined even though the normal disconnection logic had not gone ahead. I've tried a few times and haven't managed to replicate it. It triggered the classic lightning-conductor-of-errors, `isDead(player)`: `return grid[player?.position?.y][player?.position?.x].type === "fire";` (accusing arrow points to 2nd instance of player in the line), "TypeError: Cannot read properties of undefined (reading 'undefined')". Since then I've added some protections and logging in case of future issues.
   - Sometimes there is a pause on initiating movement or changing direction before it takes effect.
   - If you're fast enough, you can plant a bomb after being killed and before you're transported back to your corner. It could be a good exercise to think how it might be fixed. `keydown` event listener is removed on receiving the signal to kill your own character, but you've still had a chance to plant a bomb after the one that killed you exploded. A small delay could be added before allowing you to plant a new bomb, or `X` could be disabled till after the explosion logic is all dealt with. Not a priority, though. I quite like it as a quirk.
@@ -105,4 +106,4 @@ Rewrite the code to use the framework. Some of this will just be a matter of swi
   - Investigate whether it would be worth implementing the "state pattern" for powerups, especially the movement logic.
 - HOSTING
   - Allow multiple game instance at once.
-  - Host, maybe on Glitch, which I gather has a limited free option to host a Node server.
+  - Host, maybe on Glitch, which I gather has a limited free option to host a Node server, or on Google App Engine, which, I gather, can be made private, and accessible by signing in to Google. The latter would need an authentication page before the game starts.

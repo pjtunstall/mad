@@ -229,7 +229,7 @@ io.on("connection", (socket) => {
     plantNormalBomb(y, x, index);
   });
 
-  socket.on("detonateRemoteControlBomb", (index) => {
+  socket.on("detonate remote control bomb", (index) => {
     detonate(
       remoteControlBombCoordinates[index].y,
       remoteControlBombCoordinates[index].x,
@@ -239,7 +239,7 @@ io.on("connection", (socket) => {
     if (players[index].plantedBombs > 0) {
       players[index].plantedBombs--;
     }
-    io.emit("detonateRemoteControlBomb", index);
+    io.emit("detonate remote control bomb", index);
   });
 
   socket.on("disconnect", () => {
@@ -541,7 +541,7 @@ function plantNormalBomb(y, x, index) {
   if (player.powerup?.name === "full-fire") {
     full = true;
   }
-  io.emit("plantNormalBomb", { y, x, full });
+  io.emit("plant normal bomb", { y, x, full });
   setTimeout(() => {
     detonate(y, x, fireRange);
     if (player.powerup?.name === "full-fire") {
@@ -563,7 +563,7 @@ function plantRemoteControlBomb(y, x, index) {
   player.plantedBombs++;
   grid[y][x].type = "bomb";
   remoteControlBombCoordinates[index] = { y, x };
-  io.emit("plantRemoteControlBomb", { y, x, index });
+  io.emit("plant remote control bomb", { y, x, index });
 }
 
 // Calculates where the fire can go based on the bomb's position. We make use of the fact that the unbreakable walls are at even coordinates.
@@ -722,7 +722,7 @@ function kill(player, isNotDisconnected = true) {
       1
     );
     remoteControlBombCoordinates[player.index] = null;
-    io.emit("detonateRemoteControlBomb", player.index);
+    io.emit("detonate remote control bomb", player.index);
   }
   setTimeout(() => {
     deathAnimationEnd(player, isNotDisconnected);
@@ -746,7 +746,7 @@ function buildGrid() {
         col === numberOfColumnsInGrid - 1 ||
         (row % 2 === 0 && col % 2 === 0)
       ) {
-        type = "indestructible";
+        type = "unbreakable";
       } else if (
         (row >= 1 && row <= 2 && col >= 1 && col <= 2) ||
         (row >= 1 &&

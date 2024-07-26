@@ -809,18 +809,6 @@ img {
   position: absolute;
   height: var(--cell-height);
   width: var(--cell-width);
-}
-
-.indestructible {
-  background-image: url("assets/images/sprites.png");
-  height: var(--cell-height);
-  width: var(--cell-width);
-  background-position-x: -192px;
-  background-position-y: -192px;
-  background-size: var(--spritesheet-size);
-}
-
-.walkable {
   background: var(--cell-color);
 }
 
@@ -891,6 +879,15 @@ img {
   height: var(--cell-height);
   width: var(--cell-width);
   background-position-x: -256px;
+  background-position-y: -192px;
+  background-size: var(--spritesheet-size);
+}
+
+.unbreakable {
+  background-image: url("assets/images/sprites.png");
+  height: var(--cell-height);
+  width: var(--cell-width);
+  background-position-x: -192px;
   background-position-y: -192px;
   background-size: var(--spritesheet-size);
 }

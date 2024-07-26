@@ -2,45 +2,17 @@
 
 [1. Overview](#1-overview)
 
-[2. Event listeners](#-event-listeners)
+[2. Event listeners](#2-event-listeners)
 
-[3. Elements](#2-elements)
+[3. Elements](#3-elements)
 
 ## 1. Overview
 
-I suggest we just framework the game itself, rather than the intro. First, identify all event listeners that might affect the DOM, then all DOM elements and all lines in `main.js` that affect those elements.
+I suggest we just framework the game itself, rather than the intro. First, identify all event listeners that might affect the DOM, all DOM elements and variables that refer to them, and all lines in `main.js` that affect those elements.
 
 ## 2. Event listeners
 
-In game event listeners:
-
-In `generateLevel`,
-
-`document.addEventListener("keydown", onKeyDown);`
-`document.addEventListener("keyup", onKeyUp);`
-
-In `killBomberMan(index)`,
-
-`document.removeEventListener("keydown", onKeyDown);`
-
-In `destroyBlocks(y, x)`,
-
-`cell.addEventListener("animationend", () => {`
-
-In `socket.on("start", ...`,
-
-`document.removeEventListener("keydown", keydownHandler);`
-
-In `socket.on("spawned", ...`,
-
-`document.addEventListener("keydown", onKeyDown);`
-
-In `gameOverHandler(survivorIndex, type)`,
-
-`document.removeEventListener("keydown", onKeyDown);`
-`document.removeEventListener("keyup", onKeyUp);`
-
-We also have all the socket listeners, of the form `socket.on`.
+Socket listeners take the form `socket.on`. Here they all are:
 
 - lose remote control
 - life up
@@ -59,6 +31,34 @@ We also have all the socket listeners, of the form `socket.on`.
 - spawned
 - game over
 - play again
+
+Here are where `keydown`, `keyup`, and `animationend` listeners are added or removed:
+
+In `generateLevel`,
+
+`document.addEventListener("keydown", onKeyDown);`
+`document.addEventListener("keyup", onKeyUp);`
+
+In `socket.on("dead", ...`,
+
+`document.removeEventListener("keydown", onKeyDown);`
+
+In `destroyBlocks(y, x)`,
+
+`cell.addEventListener("animationend", () => {`
+
+In `socket.on("start", ...`,
+
+`document.removeEventListener("keydown", keydownHandler);`
+
+In `socket.on("spawned", ...`,
+
+`document.addEventListener("keydown", onKeyDown);`
+
+In `socket.on("game over", ...`,
+
+`document.removeEventListener("keydown", onKeyDown);`
+`document.removeEventListener("keyup", onKeyUp);`
 
 ## 3. Elements
 
@@ -92,34 +92,49 @@ Globally,
 
 ```javascript
 let grid = document.getElementById("game-grid");
-let gridDataFromServer;
+const startUp = document.getElementById("start-up");
 const gameOver = document.getElementById("game-over");
 const gridWrapper = document.getElementById("grid-wrapper");
 const infoWrapper = document.getElementById("info");
 const instructions = document.getElementById("instructions");
-const playerInfo = document.getElementById("player-info");
+const playerColor = document.getElementById("player-color");
 const lives = document.getElementById("lives");
 const power = document.getElementById("power-up");
+let bomberManWrapper = [];
 ```
 
 In `socket.on("start game" ...`, we make the game visible with `document.getElementById("game").classList.add("show");`
 
-`generateLevel()` concludes the setup. It calls `buildGrid()`, which returns `cellsArr`, a 2d array of 13 rows of 15 columns each. In `buildGrid()`, for each cell of the grid, we make a div and give it the class `cell`, the `style` attributes `top` and `left` with its pixel coordinates, and a `power-up` class if it contains a powerup, along with a class with the name of the specific powerup, `bomb-up`, `fire-up`, `skate`, etc.
+`generateLevel()` concludes the setup. It calls `buildGrid()`, which returns `cellsArr`, a 2d array with 13 rows of 15 columns each. In `buildGrid()`, for each cell of the grid, we make a div and give it the class `cell`, the `style` attributes `top` and `left` with its pixel coordinates, and a `power-up` class if it contains a powerup, along with a class with the name of the specific powerup, `bomb-up`, `fire-up`, `skate`, etc.
 
 ```javascript
-const cellData = gridDataFromServer[row][col];
-const cell = document.createElement("div");
-cell.classList.add("cell");
-cell.style.top = `${cellData.top}px`;
-cell.style.left = `${cellData.left}px`;
-cell.classList.add(`${cellData.type}`);
-if (cellData.powerup) {
-  console.log(cellData.powerup.name);
-  cell.classList.add("power-up");
-  cell.classList.add(cellData.powerup.name);
+function buildGrid() {
+  const cellsArr = [];
+  for (let row = 0; row < numberOfRowsInGrid; row++) {
+    cellsArr.push([]);
+    for (let col = 0; col < numberOfColumnsInGrid; col++) {
+      const cellData = gridDataFromServer[row][col];
+      const cell = document.createElement("div");
+      cell.classList.add("cell");
+      cell.style.top = `${cellData.top}px`;
+      cell.style.left = `${cellData.left}px`;
+      const type = cellData.type;
+      if (type === "breakable") {
+        cell.classList.add("breakable");
+        if (cellData.powerup) {
+          console.log(cellData.powerup.name);
+          cell.classList.add("power-up");
+          cell.classList.add(cellData.powerup.name);
+        }
+      } else if (type === "unbreakable") {
+        cell.classList.add("unbreakable");
+      }
+      grid.append(cell);
+      cellsArr[row].push(cell);
+    }
+  }
+  return cellsArr;
 }
-grid.append(cell);
-cellsArr[row].push(cell);
 ```
 
 `generateLevel()` calls `setSprite(spriteX, spriteY, player)`, which is also used during the game. It changes the CSS `background-position` property to animate the player's walk:
@@ -207,7 +222,7 @@ bomberManWrapper[index].style.transform = `translate(${
 }px, ${position[index].y * cellSize}px)`;
 ```
 
-When the socket receives a "dead" signal, it does the following:
+When the socket receives a "dead" signal (a signal to kill one of the players), it does the following:
 
 ```javascript
 if (index == ownIndex) {
@@ -216,4 +231,19 @@ if (index == ownIndex) {
 bomberManWrapper[index].classList.remove("bomber-man");
 bomberManWrapper[index].classList.remove(`bomber-man${index}`);
 bomberManWrapper[index].classList.add("death");
+```
+
+When the socket receives a "life-up" signal (indicating that someone has collected a "life-up" powerup), it does the following, briefly displaying a heart symbol in the powerup `info-box` if it was the current player who picked it up:
+
+```javascript
+const cell = cellsArr[y][x];
+cell.classList.remove("power-up");
+cell.classList.remove("life-up");
+if (index === ownIndex) {
+  lives.textContent = `Lives: ${life}`;
+  power.innerHTML = "PowerUp: &#x2665;&#xfe0f;";
+  setTimeout(() => {
+    power.innerHTML = "PowerUp: none";
+  }, 2048);
+}
 ```
