@@ -8,7 +8,7 @@
 
 ## 1. Overview
 
-First, identify all event listeners that might affect the DOM, then all DOM elements and all lines in `main.js` that affect those elements.
+I suggest we just framework the game itself, rather than the intro. First, identify all event listeners that might affect the DOM, then all DOM elements and all lines in `main.js` that affect those elements.
 
 ## 2. Event listeners
 
@@ -53,7 +53,7 @@ We also have all the socket listeners, of the form `socket.on`.
 - plantRemoteControlBomb
 - detonateRemoteControlBomb
 - destroy block
-- desroy powerup
+- destroy powerup
 - dead
 - used full-fire
 - spawned
@@ -62,13 +62,37 @@ We also have all the socket listeners, of the form `socket.on`.
 
 ## 3. Elements
 
+Initial HTML consists of a `game` element that starts out hidden and is revealed when the countdown ends. `game-over`, of course, starts out hidden too. At the end, text will be inserted according to who won. The `grid-wrapper` contains everything else, including the `game-grid` itself, an `info` section above it, and `instructions` below. The grid will be filled in with data from the server at the end of the countdown. The `info` section contains three items with class `info-box`, representing the different pieces of info to be displayed for one's own character.
+
+```html
+<div id="game">
+  <h1 id="game-over"></h1>
+  <div id="grid-wrapper">
+    <div id="info">
+      <div class="info-box">
+        <div id="player-color">Player:</div>
+      </div>
+      <div class="info-box">
+        <div id="power-up">Powerup:</div>
+      </div>
+      <div class="info-box">
+        <div id="lives">Lives: 0</div>
+      </div>
+    </div>
+    <div id="game-grid"></div>
+    <div id="instructions">
+      <div>ARROWS TO MOVE . 'X' TO PLANT BOMB</div>
+      <div>REMOTE CONTROL MODE . PRESS 'SPACE' TO EXPLODE</div>
+    </div>
+  </div>
+</div>
+```
+
 Globally,
 
 ```javascript
 let grid = document.getElementById("game-grid");
 let gridDataFromServer;
-const gameStatus = document.getElementById("game-status");
-const startUp = document.getElementById("start-up");
 const gameOver = document.getElementById("game-over");
 const gridWrapper = document.getElementById("grid-wrapper");
 const infoWrapper = document.getElementById("info");

@@ -704,18 +704,6 @@ img {
   transition: opacity 4096ms ease-in-out;
 }
 
-#game-status {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  height: var(--grid-height);
-  width: var(--grid-width);
-  color: white;
-  z-index: 3;
-}
-
 #game-over.show {
   /* display: flex; */
   opacity: 1;
@@ -757,26 +745,6 @@ img {
   font-size: 2rem;
   line-height: 2rem;
   padding: 1%;
-}
-
-#start-up {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  align-items: center;
-  position: absolute;
-  height: var(--grid-height);
-  width: var(--grid-width);
-  color: lightgrey;
-  text-shadow: 1px 1px 2px grey;
-  z-index: 3;
-}
-
-#start-up > div {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  align-items: center;
 }
 
 #game-over,

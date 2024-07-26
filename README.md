@@ -13,7 +13,7 @@
 
 To run the server, install Node dependencies: `npm install`. If it reports any vulnerabilities, `npm audit fix`, as directed. Then `node server.js` to run the server on port 3000.
 
-The server will log its IP address in the browser. To connect over a mobile hotspot, players can enter that address in their browser.
+The server will log its IP address in the terminal. To connect over a mobile hotspot, players can enter that address in their browser.
 
 ## Progress
 

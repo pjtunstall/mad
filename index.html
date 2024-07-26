@@ -48,7 +48,7 @@
       <div id="grid-wrapper">
         <div id="info">
           <div class="info-box">
-            <div id="player-info">Player:</div>
+            <div id="player-color">Player:</div>
           </div>
           <div class="info-box">
             <div id="power-up">Powerup:</div>
@@ -66,9 +66,10 @@
       <script>
         window.addEventListener("load", function () {
           // Use the 'load' event to wait for the entire page to load, including CSS, to avoid FOUC (Flash of Unstyled Content)
-          setTimeout(function () {
+          requestAnimationFrame(() => {
+            // Reveal the start button by removing the 'display: none' style
             document.getElementById("start").style.display = "";
-          }, 0);
+          });
         });
       </script>
       <script src="/socket.io/socket.io.js"></script>

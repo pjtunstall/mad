@@ -1,3 +1,12 @@
+// Global variables:
+// 1. Intro and general variables
+// 2. Game variables
+// 3. Game loop variables
+// 4. Intro and outro sounds
+// 5. Game sounds
+// 6. Story and credits text, character and color arrays
+
+// Intro and general variables
 let phase;
 let players;
 let ownIndex;
@@ -16,7 +25,8 @@ let counting;
 let timerStartTime;
 let resumeFrom;
 let timerId;
-let color = ["red", "green", "blue", "yellow"];
+
+// Game variables
 let position = [
   { y: 1, x: 1 },
   { y: 1, x: 13 },
@@ -35,7 +45,6 @@ const skateTime = 32;
 const normalTime = 64;
 let grid = document.getElementById("game-grid");
 let gridDataFromServer;
-const gameStatus = document.getElementById("game-status");
 const startUp = document.getElementById("start-up");
 const gameOver = document.getElementById("game-over");
 const spriteSize = 64;
@@ -43,7 +52,7 @@ let bomberManWrapper = [];
 const gridWrapper = document.getElementById("grid-wrapper");
 const infoWrapper = document.getElementById("info");
 const instructions = document.getElementById("instructions");
-const playerInfo = document.getElementById("player-info");
+const playerColor = document.getElementById("player-color");
 const lives = document.getElementById("lives");
 const power = document.getElementById("power-up");
 const gridRow = 13;
@@ -55,9 +64,17 @@ let currentScore = startingScore;
 const isKilled = new Array(4).fill(false);
 let cellsArr;
 let breakableCells;
-let gameLoopId;
 
-// intro and outro sounds
+// Game loop variables
+let gameLoopId;
+let offbeat = false;
+const moveInterval = 25;
+let lastTime = 0;
+let lastCollisionCheck = 0;
+const collisionCheckInterval = 100;
+let accumulatedFrameTime = 0;
+
+// Intro and outro sounds
 let context;
 let musicGainNode;
 const introMusic =
@@ -69,7 +86,7 @@ audio.loop = true;
 const clock = new Audio("assets/sfx/old-fashioned-clock-sound-37729.mp3");
 clock.loop = true;
 
-// game sounds
+// Game sounds
 const powerupSound = new Audio("assets/sfx/coin-pickup-98269.mp3");
 const fuseSound = new Audio("assets/sfx/fuse.mp3");
 const screamSound = new Audio("assets/sfx/cartoon-scream-1-6835.mp3");
@@ -91,6 +108,7 @@ socket.on("disconnect", (reason) => {
   location.reload(true);
 });
 
+// Story and credits text, character and color arrays
 let slideshow;
 let startImages = [
   "assets/images/slideshow/OIG1.JeeX.W.9kcfz6VS0J4uP.jpg",
@@ -104,6 +122,15 @@ let startImages = [
   "assets/images/slideshow/OIG2.souzLAE7.Hfsy3099Vv4.jpg",
   "assets/images/slideshow/OIG2.X2Fui0nJzmm3u9LNVXfm.jpg",
   "assets/images/slideshow/OIG1.ixSAqnhJACfFzjGWjbPI.jpg",
+];
+
+const defaultImageForRoles = [
+  "assets/images/roles/default/default.jpg",
+  "assets/images/roles/default/default1.jpg",
+  "assets/images/roles/default/OIG..oUUFHfUtXBqURKCJZbp.jpg",
+  "assets/images/roles/default/OIG.5NlsEQhWcybBlnw0CE7F.jpg",
+  "assets/images/roles/default/OIG.yykY1XiTafngQHZoIuIn.jpg",
+  "assets/images/roles/default/OIG.GhKqkXmNWjAzmkLQReAz.jpg",
 ];
 
 const characters = [
@@ -401,15 +428,6 @@ function updateImage(imageElement, toSrc, delay = 1024) {
       "translateY(100%)";
   }, delay);
 }
-
-const defaultImageForRoles = [
-  "assets/images/roles/default/default.jpg",
-  "assets/images/roles/default/default1.jpg",
-  "assets/images/roles/default/OIG..oUUFHfUtXBqURKCJZbp.jpg",
-  "assets/images/roles/default/OIG.5NlsEQhWcybBlnw0CE7F.jpg",
-  "assets/images/roles/default/OIG.yykY1XiTafngQHZoIuIn.jpg",
-  "assets/images/roles/default/OIG.GhKqkXmNWjAzmkLQReAz.jpg",
-];
 
 function transitionToRoles() {
   phase = "roles";
@@ -859,7 +877,7 @@ function setSprite(spriteX, spriteY, player) {
 }
 
 function generateLevel() {
-  playerInfo.textContent = `Player: ${color[ownIndex]}`;
+  playerColor.textContent = `Player: ${players[ownIndex].color}`;
   lives.textContent = "Lives: 3";
   power.innerHTML = "PowerUp: none";
   let newGrid = document.createElement("div");
@@ -876,13 +894,12 @@ function generateLevel() {
   bomberManWrapper = [];
   for (let i = 0; i < players.length; i++) {
     isKilled[i] = false;
-    color[i] = players[i].color;
     bomberManWrapper[i] = document.createElement("div");
     bomberManWrapper[i].style.transition = `transform ${normalTime}ms`;
     bomberManWrapper[i].classList.add("bomber-man");
     bomberManWrapper[
       i
-    ].style.backgroundImage = `url('assets/images/player-sprites/${color[i]}.png')`;
+    ].style.backgroundImage = `url('assets/images/player-sprites/${players[i].color}.png')`;
     // n & 1 is 1 if n is odd, 0 if n is even
     setSprite(horizontalAnimation[i], (1 + i) & 1, bomberManWrapper[i]);
     grid.appendChild(bomberManWrapper[i]);
@@ -1113,25 +1130,14 @@ const onKeyUp = (e) => {
   }
 };
 
-let offbeat = false;
-const moveInterval = 25;
-let lastTime = 0;
-let lastCollisionCheck = 0;
-const collisionCheckInterval = 100;
-let accumulatedFrameTime = 0;
-
-const gameLoop = (timestamp) => {
+function gameLoop(timestamp) {
   gameLoopId = requestAnimationFrame(gameLoop);
-
   if (!lastTime) {
     lastTime = timestamp;
   }
-
   const moveDeltaTime = timestamp - lastTime;
   lastTime = timestamp;
-
   accumulatedFrameTime += moveDeltaTime;
-
   while (accumulatedFrameTime >= moveInterval) {
     offbeat = !offbeat;
     accumulatedFrameTime -= moveInterval;
@@ -1143,7 +1149,7 @@ const gameLoop = (timestamp) => {
       move(i);
     }
   }
-};
+}
 
 function keydownHandler(e) {
   if (e.key === "s") {
@@ -1153,7 +1159,6 @@ function keydownHandler(e) {
 
 socket.on("start", (grid) => {
   document.removeEventListener("keydown", keydownHandler);
-  startUp.style.display = "none";
   gridDataFromServer = grid;
   generateLevel();
 });
