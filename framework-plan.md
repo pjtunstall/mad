@@ -171,3 +171,49 @@ for (let i = 0; i < players.length; i++) {
 ```
 
 Now we come to the socket and keypress event handlers associated with the game itself, and to the functions they call.
+
+In `getPowerup(y, x, powerup, index)`, the cell is manipulated thus:
+
+```javascript
+cell.classList.remove("power-up");
+cell.classList.remove(powerup.name);
+cell.classList.remove("mystery");
+cell.classList.add("walkable");
+```
+
+If the powerup being collected is a skate, the relevant `bomberManWrapper` is adjusted thus:
+
+```javascript
+if (powerup.name === "skate") {
+  bomberManWrapper[index].style.transition = `transform ${skateTime}ms`;
+} else {
+  bomberManWrapper[index].style.transition = `transform ${normalTime}ms`;
+}
+```
+
+The game loop calls `animateWalk(index)`, which calls `setSprite(spriteX, spriteY, playerWrapper)` with arguments depending on direction of movement and player to be animated, which updates the walking animation frame:
+
+```javascript
+playerWrapper.style.backgroundPosition = `-${spriteX * spriteSize}px -${
+  spriteY * spriteSize
+}px`;
+```
+
+Then the game loop calls `move(index)` to translate each player character:
+
+```javascript
+bomberManWrapper[index].style.transform = `translate(${
+  position[index].x * cellSize
+}px, ${position[index].y * cellSize}px)`;
+```
+
+When the socket receives a "dead" signal, it does the following:
+
+```javascript
+if (index == ownIndex) {
+  document.removeEventListener("keydown", onKeyDown);
+}
+bomberManWrapper[index].classList.remove("bomber-man");
+bomberManWrapper[index].classList.remove(`bomber-man${index}`);
+bomberManWrapper[index].classList.add("death");
+```

@@ -867,15 +867,6 @@ function buildGrid() {
   return cellsArr;
 }
 
-// Player walking sprites are arranged in the spritesheet as follows:
-// top row: left (3 frames), down (3 frames);
-// bottom row: right (3 frames), up (3 frames).
-function setSprite(spriteX, spriteY, player) {
-  player.style.backgroundPosition = `-${spriteX * spriteSize}px -${
-    spriteY * spriteSize
-  }px`;
-}
-
 function generateLevel() {
   playerColor.textContent = `Player: ${players[ownIndex].color}`;
   lives.textContent = "Lives: 3";
@@ -953,7 +944,6 @@ function move(index) {
 function animateWalk(index) {
   const key = direction[index].key;
   if (!key) {
-    key === "";
     return;
   }
   switch (key) {
@@ -975,22 +965,13 @@ function animateWalk(index) {
   horizontalAnimation[index] = (horizontalAnimation[index] + 1) % 3;
 }
 
-function killBomberMan(index) {
-  if (isKilled[index]) {
-    return;
-  }
-  const scream = screamSound.cloneNode(true);
-  scream.play();
-  scream.onended = function () {
-    scream.src = "";
-  };
-  if (index == ownIndex) {
-    document.removeEventListener("keydown", onKeyDown);
-  }
-  isKilled[index] = true;
-  bomberManWrapper[index].classList.remove("bomber-man");
-  bomberManWrapper[index].classList.remove(`bomber-man${index}`);
-  bomberManWrapper[index].classList.add("death");
+// Player walking sprites are arranged in the spritesheet as follows:
+// top row: left (3 frames), down (3 frames);
+// bottom row: right (3 frames), up (3 frames).
+function setSprite(spriteX, spriteY, playerWrapper) {
+  playerWrapper.style.backgroundPosition = `-${spriteX * spriteSize}px -${
+    spriteY * spriteSize
+  }px`;
 }
 
 socket.on("life-up", (index, life, y, x) => {
@@ -1216,7 +1197,21 @@ socket.on("destroy powerup", ({ y, x, powerupName }) => {
 });
 
 socket.on("dead", (index) => {
-  killBomberMan(index);
+  if (isKilled[index]) {
+    return;
+  }
+  isKilled[index] = true;
+  const scream = screamSound.cloneNode(true);
+  scream.play();
+  scream.onended = function () {
+    scream.src = "";
+  };
+  if (index == ownIndex) {
+    document.removeEventListener("keydown", onKeyDown);
+  }
+  bomberManWrapper[index].classList.remove("bomber-man");
+  bomberManWrapper[index].classList.remove(`bomber-man${index}`);
+  bomberManWrapper[index].classList.add("death");
 });
 
 socket.on("used full-fire", (index) => {
