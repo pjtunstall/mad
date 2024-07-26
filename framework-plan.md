@@ -8,11 +8,20 @@
 
 ## 1. Overview
 
-I suggest we just framework the game itself, rather than the intro. First, identify all event listeners that might affect the DOM, all DOM elements and variables that refer to them, and all lines in `main.js` that affect those elements.
+I suggest we just framework the game itself, rather than the intro.
 
-## 2. Event listeners
+First, catalogue all DOM stuff: all DOM elements and variables that refer to them, plus all event handlers (and functions called by event handlers, directly or indirectly) that change the DOM.
 
-Socket listeners take the form `socket.on`. Here they all are:
+## 2. Event handlers
+
+These include handlers for the following event types:
+
+- socket (i.e. signals received from the server)
+- `keydown`
+- `keyup`
+- `animationend`
+
+Socket handlers are callbacks passed to the `socket.on` method. Here are all the names of the socket events for the game itself (as opposed to the intro).
 
 - lose remote control
 - life up
@@ -21,9 +30,9 @@ Socket listeners take the form `socket.on`. Here they all are:
 - start
 - move
 - powerup
-- plantNormalBomb
-- plantRemoteControlBomb
-- detonateRemoteControlBomb
+- plant normal bomb
+- plant remote control bomb
+- detonate remote control bomb
 - destroy block
 - destroy powerup
 - dead
@@ -60,7 +69,7 @@ In `socket.on("game over", ...`,
 `document.removeEventListener("keydown", onKeyDown);`
 `document.removeEventListener("keyup", onKeyUp);`
 
-## 3. Elements
+## 3. Elements and code that affects them
 
 Initial HTML consists of a `game` element that starts out hidden and is revealed when the countdown ends. `game-over`, of course, starts out hidden too. At the end, text will be inserted according to who won. The `grid-wrapper` contains everything else, including the `game-grid` itself, an `info` section above it, and `instructions` below. The grid will be filled in with data from the server at the end of the countdown. The `info` section contains three items with class `info-box`, representing the different pieces of info to be displayed for one's own character.
 
@@ -109,6 +118,10 @@ In `socket.on("start game" ...`, we make the game visible with `document.getElem
 
 ```javascript
 function buildGrid() {
+  let newGrid = document.createElement("div");
+  grid.parentNode.replaceChild(newGrid, grid);
+  grid = newGrid;
+  grid.id = "game-grid";
   const cellsArr = [];
   for (let row = 0; row < numberOfRowsInGrid; row++) {
     cellsArr.push([]);
@@ -151,10 +164,6 @@ player.style.backgroundPosition = `-${spriteX * spriteSize}px -${
 playerInfo.textContent = `Player: ${color[ownIndex]}`;
 lives.textContent = "Lives: 3";
 power.innerHTML = "PowerUp: none";
-let newGrid = document.createElement("div");
-grid.parentNode.replaceChild(newGrid, grid);
-grid = newGrid;
-grid.id = "game-grid";
 ```
 
 Then, after `buildGrid()` has populated the grid with cells, `generateLevel()` continues with
