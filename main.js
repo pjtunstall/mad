@@ -54,6 +54,8 @@ const instructions = document.getElementById("instructions");
 const playerColor = document.getElementById("player-color");
 const lives = document.getElementById("lives");
 const power = document.getElementById("power-up");
+let cellsArr; // 2d array to store the cells of the game grid
+let bomberManWrapper; // Array to store the player sprite divs
 const numberOfRowsInGrid = 13;
 const numberOfColumnsInGrid = 15;
 const cellSize = 64;
@@ -62,8 +64,6 @@ let horizontalAnimation = [0, 0, 0, 0]; // background-positions representing cur
 const startingScore = 0;
 let currentScore = startingScore;
 const isKilled = new Array(4).fill(false);
-let cellsArr; // 2d array to store the cells of the game grid
-let bomberManWrapper; // Array to store the player sprite divs
 let remoteControl = false;
 let isRemoteControlBombPlanted = false;
 
@@ -935,34 +935,6 @@ function gameLoop(timestamp) {
   }
 }
 
-function getPowerup(y, x, powerup, index) {
-  const sound = powerupSound.cloneNode(true);
-  sound.play();
-  sound.onended = function () {
-    sound.src = "";
-  };
-  playerPowerups[index] = powerup.name;
-  const cell = cellsArr[y][x];
-  cell.classList.remove("power-up");
-  cell.classList.remove(powerup.name);
-  cell.classList.remove("mystery");
-  if (index === ownIndex) {
-    power.innerHTML = `PowerUp: ${powerup.name}`;
-    if (powerup.name === "remote-control") {
-      remoteControl = true;
-    }
-  }
-  if (powerup.name === "skate") {
-    bomberManWrapper[index].style.transition = `transform ${skateTime}ms`;
-  } else {
-    bomberManWrapper[index].style.transition = `transform ${normalTime}ms`;
-  }
-}
-
-socket.on("lose remote control", () => {
-  remoteControl = false;
-});
-
 function move(index) {
   bomberManWrapper[index].style.transform = `translate(${
     position[index].x * cellSize
@@ -1031,19 +1003,12 @@ socket.on("add fire", (arr) => {
   const bombElement = document.getElementById(`bomb-${arr[0].y}-${arr[0].x}`);
   bombElement.remove();
   arr.forEach((cellData) => {
-    explode(cellData.y, cellData.x, cellData.style);
+    cellsArr[cellData.y][cellData.x].classList.add(cellData.style);
+    if (gridData[cellData.y][cellData.x].type === "breakable") {
+      socket.emit("destroy", { y: cellData.y, x: cellData.x });
+    }
   });
 });
-
-function explode(y, x, style) {
-  if (isGameOver) {
-    return;
-  }
-  cellsArr[y][x].classList.add(style);
-  if (gridData[y][x].type === "breakable") {
-    socket.emit("destroy", { y, x });
-  }
-}
 
 const onKeyDown = (e) => {
   switch (e.key) {
@@ -1082,25 +1047,13 @@ const onKeyUp = (e) => {
   }
 };
 
-function keydownHandler(e) {
-  if (e.key === "s") {
-    socket.emit("start");
-  }
-}
-
-socket.on("start", (grid) => {
-  document.removeEventListener("keydown", keydownHandler);
-  gridData = grid;
-  generateLevel();
-});
-
 socket.on("move", ({ newPosition, newDirection, index }) => {
   position[index] = newPosition;
   direction[index] = newDirection;
 });
 
 socket.on(
-  "powerup",
+  "get powerup",
   ({ y, x, powerup, index, oldY, oldX, previousPowerup }) => {
     if (previousPowerup) {
       const cell = cellsArr[oldY][oldX];
@@ -1110,6 +1063,40 @@ socket.on(
     getPowerup(y, x, powerup, index);
   }
 );
+
+function getPowerup(y, x, powerup, index) {
+  const sound = powerupSound.cloneNode(true);
+  sound.play();
+  sound.onended = function () {
+    sound.src = "";
+  };
+  playerPowerups[index] = powerup.name;
+  const cell = cellsArr[y][x];
+  cell.classList.remove("power-up");
+  cell.classList.remove(powerup.name);
+  cell.classList.remove("mystery");
+  if (index === ownIndex) {
+    power.innerHTML = `PowerUp: ${powerup.name}`;
+    if (powerup.name === "remote-control") {
+      remoteControl = true;
+    }
+  }
+  if (powerup.name === "skate") {
+    bomberManWrapper[index].style.transition = `transform ${skateTime}ms`;
+  } else {
+    bomberManWrapper[index].style.transition = `transform ${normalTime}ms`;
+  }
+}
+
+socket.on("lose remote control", () => {
+  remoteControl = false;
+});
+
+socket.on("used full-fire", (index) => {
+  if (index === ownIndex) {
+    power.innerHTML = "PowerUp: none";
+  }
+});
 
 socket.on("plant normal bomb", ({ y, x, full }) => {
   const fuse = fuseSound.cloneNode(true);
@@ -1201,17 +1188,13 @@ socket.on("dead", (index) => {
     scream.src = "";
   };
   if (index == ownIndex) {
+    remoteControl = false;
     document.removeEventListener("keydown", onKeyDown);
+    document.removeEventListener("keyup", onKeyUp);
   }
   bomberManWrapper[index].classList.remove("bomber-man");
   bomberManWrapper[index].classList.remove(`bomber-man${index}`);
   bomberManWrapper[index].classList.add("death");
-});
-
-socket.on("used full-fire", (index) => {
-  if (index === ownIndex) {
-    power.innerHTML = "PowerUp: none";
-  }
 });
 
 socket.on("spawned", ({ index, isGameOver, powerup, y, x, life }) => {
@@ -1244,6 +1227,7 @@ socket.on("spawned", ({ index, isGameOver, powerup, y, x, life }) => {
   if (index == ownIndex) {
     lives.textContent = `Lives: ${life}`;
     document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("keyup", onKeyUp);
   }
 });
 

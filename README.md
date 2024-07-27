@@ -17,19 +17,21 @@ The server will log its IP address in the terminal. To connect over a mobile hot
 
 ## Progress
 
-The multiplayer Bomberman game is working in Chrome, Brave, Firefox, and Safari. Not yet tested in Edge. As in the single-player game, all bonus powerups are implemented except bomb-push/throw. Players only drop a powerup on death if they're holding one.
+The multiplayer Bomberman game is working in Chrome, Brave, Firefox, and Safari. Not yet tested in Edge. As in the single-player game, all bonus powerups are implemented except bomb-push/throw.
 
-The only essential thing left to do for the sake of he audit is to add a framework.
+The only essential thing left to do for the sake of he audit is to add a framework. I suggest we just framework the game itself, rather than the eleborate intro. As a first step, I've made a catalog of all code in `index.html` and `main.js` that affects the game part of the DOM.
 
 Notes:
 
-1. The instructions and audit expect us to have a simple lobby with a 20s countdown, followed by a 10s countdown for whoever has joined during the first countdown. Instead, I chose to just implement a 10s countdown. The two countdowns didn't make dramatic sense in the context of my over-the-top intro!
+1. The instructions and audit expect us to have a simple lobby with a 20s countdown, followed by a 10s countdown for whoever has joined during the first countdown. Instead, I chose to implement a 10s countdown only. The two countdowns didn't make dramatic sense in the context of my over-the-top intro!
 
-2. As far as I can see, the instructions for the required tasks don't say whether a player can hold more than one powerup at a time. I've followed the single-player game in assuming not. However, one of the bonus tasks is to ensure that "when a player dies it drops one of it's power ups. If the player had no power ups, it drops a random power up." That does imply the possibility of holding multiple powerups. The corresponding audit question asks, "When a player dies, is a random power up release as described in the subject's bonus section?" I've made it so that the player just drops any powerup they're holding. That seemed more logical to me.
+2. As far as I can see, the instructions for the required tasks don't say whether a player can hold more than one powerup at a time. I've followed the single-player game in assuming not. However, one of the bonus tasks is to ensure that "when a player dies it drops one of it's power ups. If the player had no power ups, it drops a random power up." That does imply the possibility of holding multiple powerups.
 
-3. The instructions are ambigious as to whether "increases the amount of bombs dropped at a time by 1" and "increases explosion range from the bomb in four directions by 1 block" is in comparison to the player's baseline without powerup or their current ability. I've followed the single-player game in assuming the former. It wouldn't be hard to adjust the logic to the incremental interpretation.
+3. The corresponding audit question asks, "When a player dies, is a random power up release [sic] as described in the subject's bonus section?" I've made it so that the player just drops any powerup they're holding. That seemed more logical to me.
 
-4. As it stands, it only allows a single instance of the game to be played at any one time. Switching to allow multiple instances would take some work.
+4. The instructions are ambigious as to whether "increases the amount of bombs dropped at a time by 1" and "increases explosion range from the bomb in four directions by 1 block" is in comparison to the player's baseline without powerup or their current ability. I've followed the single-player game in assuming the former. It wouldn't be hard to adjust the logic to the incremental interpretation.
+
+5. As it stands, it only allows a single instance of the game to be played at any one time. Switching to allow multiple instances would take some work.
 
 ## Todo
 
@@ -39,30 +41,21 @@ This seems a shame as it will, at best, have no effect for players. All we can h
 
 We need to decide which framework to use: mine, Stefan's, the one Bilal has been working on, or something based on Rodrigo Pombo's `Didact`. In what follows, for definiteness, I'll assume we're using my `overReact` (because, being made maively, I think it migh tbe quick and easy to apply), but a lot of the points will hold for any of them. I'll assume the goal is simply to framework the core game, taking `game` or `grid` or perhaps `gridWrapper` as the app. That's enough to satisfy the spirit of the exercise without getting bogged down in making it work with all the optional extras of the intro too.
 
-Here's what I think we'll need to do:
+As a first step, I've cataloged all code that affects the DOM [`framework-plan.md`](framework-plan.md).
 
-Catalog all DOM elements that belong to the app, whether created in `index.html` or `main.js`. Catalog all code that creates, changes, or removes them, and variables that reference them. I've started this in `framework-plan.md`. Places where such code can be found are:
+Remaining tasks:
 
-- top-level: typically global variable declarations
-- event handlers (socket, keydown, keyup, animationend)
-- other functions called by event handlers (directly or indirectly)
-
-Create the virtual nodes and combine them to make the app.
-
-Rewrite event handlers to only modify virtual DOM.
-
-Think of any suitable state variables that we want to trigger automatic updates. We also have the option (escape hatch) of being able to simply call the `update` method on the app.
-
-Make sure that updates are called whenever necessary.
+- Create the virtual nodes and combine them to make the app.
+- Rewrite these lines to only modify virtual DOM.
+- Think of any suitable state variables that we want to trigger automatic updates. We also have the option (escape hatch) of being able to simply call the `update` method on the app.
+- Make sure that updates are called whenever necessary.
 
 ### Extra
 
 - FIX/IMPROVE
   - There's often a jump where the character profile picture changes when the eyelids are still open.
-  - Sometimes there is a pause on initiating movement or changing direction before it takes effect. Lag due to waiting for signal from socket. Could try a rollback technique: show player's own sprite moving immediately and correct when signal comes from server if need be, e.g. if another player or a bomb blocked their way (if they don't have the bomb-pass powerup).
+  - Sometimes there is a pause on initiating movement or changing direction before it takes effect. Lag due to waiting for signal from socket? But test this in case that's not the reason. Could try a rollback technique: show player's own sprite moving immediately and correct when signal comes from server if need be, e.g. if another player or a bomb blocked their way (if they don't have the bomb-pass powerup).
   - Possibly already fixed now that disconnections during countdown are handled better. I haven't managed to recreate it, but I'll leave the details here just in case. Server crashed once when a player in Safari pressed CTR+SHIFT+R to view simplified page, without styles, during countdown. Apparently this led to them being undefined even though the normal disconnection logic had not gone ahead. I've tried a few times and haven't managed to replicate it. It triggered the classic lightning-conductor-of-errors, `isDead(player)`: `return grid[player?.position?.y][player?.position?.x].type === "fire";` (accusing arrow points to 2nd instance of player in the line), "TypeError: Cannot read properties of undefined (reading 'undefined')". Since then I've added some protections and logging in case of future issues.
-  - If you're fast enough, you can plant a bomb after being killed and before you're transported back to your corner. It could be a good exercise to think how it might be fixed. `keydown` event listener is removed on receiving the signal to kill your own character, but you've still had a chance to plant a bomb after the one that killed you exploded. A small delay could be added before allowing you to plant a new bomb, or `X` could be disabled till after the explosion logic is all dealt with. Not a priority, though. I quite like it as a quirk.
-  - You can sometimes run through the fire. It still kills you, so it doens't affect the outcome, and I actually quite like the effect, so I'd be inclined not to fix this one.
   - I didn't anticipate that if you drop a full-fire by collecting another powerup after planting the full-fire bomb and before it goes off, you can collect it again, allowing you to re-use it. It might be nice to leave it in as a fun quirk that can be learnt and exploited. Or it might be a good exercise to fix just it.
 - SECURITY
   - Neater "play again" logic, rather then current, crude solution, which is to force a page reload.

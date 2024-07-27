@@ -375,10 +375,6 @@ function initializeGame() {
   players = players.filter((p) => p && p.color);
   numPlayers = players.length;
   playersInGame = numPlayers;
-  // if (numPlayers === 1) {
-  //   isGameInitialized = false;
-  //   io.emit("game over", { survivorIndex: 0, type: false });
-  // }
   for (let i = 0; i < players.length; i++) {
     players[i].index = i;
     io.to(players[i].id).emit("own index", i);
@@ -466,7 +462,7 @@ function move(player) {
 
     player.powerup = newPowerup;
 
-    io.emit("powerup", {
+    io.emit("get powerup", {
       y: nextY,
       x: nextX,
       powerup: newPowerup,
