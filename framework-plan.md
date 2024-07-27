@@ -4,7 +4,7 @@
 
 [2. Event listeners](#2-event-listeners)
 
-[3. Elements](#3-elements)
+[3. Elements and code that affects them](#3-elements-and-code-that-affects-them)
 
 ## 1. Overview
 
