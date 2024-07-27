@@ -41,7 +41,7 @@ This seems a shame as it will, at best, have no effect for players. All we can h
 
 We need to decide which framework to use: mine, Stefan's, the one Bilal has been working on, or something based on Rodrigo Pombo's `Didact`. In what follows, for definiteness, I'll assume we're using my `overReact` (because, being made maively, I think it migh tbe quick and easy to apply), but a lot of the points will hold for any of them. I'll assume the goal is simply to framework the core game, taking `game` or `grid` or perhaps `gridWrapper` as the app. That's enough to satisfy the spirit of the exercise without getting bogged down in making it work with all the optional extras of the intro too.
 
-As a first step, I've cataloged all code that affects the DOM [`framework-plan.md`](framework-plan.md).
+As a first step, I've [cataloged](framework-plan.md) all code that affects the DOM.
 
 Remaining tasks:
 
