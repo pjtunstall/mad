@@ -19,7 +19,7 @@ The server will log its IP address in the terminal. To connect over a mobile hot
 
 The multiplayer Bomberman game is working in Chrome, Brave, Firefox, and Safari. Not yet tested in Edge. As in the single-player game, all bonus powerups are implemented except bomb-push/throw.
 
-The only essential thing left to do for the sake of he audit is to add a framework. I suggest we just framework the game itself, rather than the eleborate intro. As a first step, I've made a catalog of all code in `index.html` and `main.js` that affects the game part of the DOM.
+The only essential thing left to do for the sake of he audit is to add a framework. I suggest we just framework the game itself, rather than the eleborate intro. As a first step, I've made a [catalog](framework-plan.md) of all code in `index.html` and `main.js` that affects the game part of the DOM.
 
 Notes:
 
