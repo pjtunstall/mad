@@ -17,19 +17,21 @@ The server will log its IP address in the terminal. To connect over a mobile hot
 
 ## Progress
 
-The multiplayer Bomberman game is working in Chrome, Brave, Firefox, and Safari. Not yet tested in Edge. As in the single-player game, all bonus powerups are implemented except bomb-push/throw.
+The multiplayer Bomberman game is working in Chrome, Brave, Firefox, and Safari. Not yet tested in Edge. As in the single-player version from make-your-game, all bonus powerups are implemented except bomb-push/throw.
 
 The only essential thing left to do for the sake of he audit is to add a framework. I suggest we just framework the game itself, rather than the eleborate intro. As a first step, I've made a [catalog](framework-plan.md) of all code in `index.html` and `main.js` that affects the game part of the DOM.
 
 Notes:
 
-1. The instructions and audit expect us to have a simple lobby with a 20s countdown, followed by a 10s countdown for whoever has joined during the first countdown. Instead, I chose to implement a 10s countdown only. The two countdowns didn't make dramatic sense in the context of my over-the-top intro!
+0. I replaced the nice, smooth, pixel-by-pixel movement with translate and transition from cell to cell; that was my rough-and-ready solution to keeping the multiple players in sync. The original single-player version from make-your-game looked more like [this version](https://www.retrogames.cc/nes-games/bomberman-usa.html).
 
-2. As far as I can see, the instructions for the required tasks don't say whether a player can hold more than one powerup at a time. I've followed the single-player game in assuming not. However, one of the bonus tasks is to ensure that "when a player dies it drops one of it's power ups. If the player had no power ups, it drops a random power up." That does imply the possibility of holding multiple powerups.
+1. The instructions and audit expect us to have a simple lobby with a 20s countdown, followed by a 10s countdown for whoever has joined during the first countdown. Instead, I chose to implement a 10s countdown only. The two countdowns didn't make dramatic sense in the context of my over-the-top intro. Also, 20s is not long to chat! (The instructions don't make it clear whether they expect the chat to continue during the game. I've assumed not.)
+
+2. As far as I can see, the instructions for the required tasks don't say whether a player can hold more than one powerup at a time. I followed the single-player game in assuming not. However, one of the bonus tasks is to ensure that "when a player dies it drops one of it's power ups. If the player had no power ups, it drops a random power up." That does imply the possibility of holding multiple powerups. According to Gemini, the original did allow multiple powerups. If we implement that, it will involve changing the logic in the server a bit, as well as the UI where it displays the name of the current powerup. We could modify it to just display briefly the name of a powerup when it's collected, as we currently do for `life-up`. The logic will be a bit more complex, but I think it would make the game more fun. Not necessary for the audit, though, so we don't need to let it hold us up.
 
 3. The corresponding audit question asks, "When a player dies, is a random power up release [sic] as described in the subject's bonus section?" I've made it so that the player just drops any powerup they're holding. That seemed more logical to me.
 
-4. The instructions are ambigious as to whether "increases the amount of bombs dropped at a time by 1" and "increases explosion range from the bomb in four directions by 1 block" is in comparison to the player's baseline without powerup or their current ability. I've followed the single-player game in assuming the former. It wouldn't be hard to adjust the logic to the incremental interpretation.
+4. The instructions are ambigious as to whether "increases the amount of bombs dropped at a time by 1" and "increases explosion range from the bomb in four directions by 1 block" is in comparison to the player's baseline without powerup or their current ability. As a consequence of being able to only hold ond powerup at a time, this has been a moot question. But in case we do allow multiple powerups to be held at once, Gemini says that, indeed, the original game did allow each player to acquire an increasing numbers of bombs, up to a maximum of 10. And, "Each fire-up powerup increased the explosion radius of the bombs by one tile. There was no set limit to how many fire-up powerups could be collected, but the explosion could eventually fill the entire screen."
 
 5. As it stands, it only allows a single instance of the game to be played at any one time. Switching to allow multiple instances would take some work.
 
