@@ -46,7 +46,6 @@ const skateTime = 32; // time in ms for player to move one cell with skate power
 const normalTime = 64; // time in ms for player to move one cell without skate powerup
 let gridData;
 let grid = document.getElementById("game-grid");
-const startUp = document.getElementById("start-up");
 const gameOver = document.getElementById("game-over");
 const gridWrapper = document.getElementById("grid-wrapper");
 const infoWrapper = document.getElementById("info");

@@ -14,7 +14,7 @@ As a first step, here is a catalogue of all the DOM stuff: all DOM elements and 
 
 As it turns out, `overReact`'s event delegation system is indeed an overreaction in this case. The only event handler that's attached to a descendant of `game` (a plausible root element for our app) is the `animationend` handler, which removes the "breakable-block-destruction" class from a block at the end of its destruction animation. The keypress handlers are attached to `document`, and the other event handlers are all for the socket. But sure, if we do use `overReact`, then, for the sake of the exercise, we can shoehorn that little `animationend` handler into being centrally delegated.
 
-Therefore this catalog of event handlers is just for the sake of identifying places where the DOM is modified.
+Therefore this catalog of event handlers is just for the sake of identifying DOM elements and places where the DOM is modified.
 
 ## 2. Event handlers
 
@@ -77,7 +77,30 @@ In `socket.on("game over", ...`,
 
 ## 3. Elements and code that affects them
 
-Initial HTML consists of a `game` element that starts out hidden and is revealed when the countdown ends. `game-over`, of course, starts out hidden too. At the end, text will be inserted into `game-over` according to who won. The `grid-wrapper` contains everything else, including the `game-grid` itself, an `info` section above it, and `instructions` below. The grid will be filled in with data from the server at the end of the countdown. The `info` section contains three items with class `info-box`, representing the different pieces of info to be displayed for one's own character.
+All the game elements defined in `index.html` are shown here. They're all labeled here by id, except for the `info-box`s, which are anonymous and labeled by class. To adapt them to `overReact`, we'd need to give them ids too. They all have tag `div`, except for `game-over`, which is a `h1`.
+
+```
+game
+├── game-over
+├── grid-wrapper
+│   ├── info
+│   │   ├── info-box
+│   │   │   └── player-color
+│   │   ├── info-box
+│   │   │   └── power-up
+│   │   └── info-box
+│   │       └── lives
+│   ├── game-grid
+│   └── instructions
+│       ├── ARROWS TO MOVE . 'X' TO PLANT BOMB
+│       └── REMOTE CONTROL MODE . PRESS 'SPACE' TO EXPLODE
+```
+
+Initial HTML consists of a `game` element that starts out hidden and is revealed when the countdown ends. `game-over`, of course, starts out hidden too. At the end, text will be inserted into `game-over` according to who won.
+
+The `grid-wrapper` contains everything else, including the `game-grid` itself, an `info` section above it (containing three items of class `info-box`, representing the different pieces of info to be displayed for one's own character) and `instructions` below.
+
+The grid will be filled in with 13 \* 15 = 195 elements of class `cell` (and possibly other classes, as described below), based on data from the server at the end of the countdown.
 
 ```html
 <div id="game">
