@@ -892,7 +892,7 @@ img {
   background-size: var(--spritesheet-size);
 }
 
-.bomber-man {
+.bomberman {
   height: var(--cell-height);
   width: var(--cell-width);
   background-size: var(--player-spritesheet-size);

@@ -116,7 +116,7 @@ const playerColor = document.getElementById("player-color");
 const lives = document.getElementById("lives");
 const power = document.getElementById("power-up");
 let cellsArr; // 2d array to store the cells of the game grid
-let bomberManWrapper; // Array to store the player sprite divs
+let playerSprites; // Array to store the player sprite divs
 ```
 
 In `socket.on("start game" ...`, we make the game visible with `document.getElementById("game").classList.add("show");`
@@ -183,20 +183,20 @@ infoWrapper.style.display = "flex";
 instructions.style.display = "flex";
 ```
 
-It concludes by styling the the player character elements in the `bomberManWrapper` array. To each `bomberManWrapper[i]`, where `i` ranges over the length of the players array, `geneerateLevel()` assigns the class `bomber-man` and sets the background image and initial position, i.e. frame, of the walking animation, then appends the bomberManWrapper to the grid.
+It concludes by styling the the player character elements in the `playerSprites` array. To each `playerSprites[i]`, where `i` ranges over the length of the players array, `geneerateLevel()` assigns the class `bomberman` and sets the background image and initial position, i.e. frame, of the walking animation, then appends the playerSprites to the grid.
 
 ```javascript
-bomberManWrapper = [];
+playerSprites = [];
 for (let i = 0; i < players.length; i++) {
   // ...
-  bomberManWrapper[i] = document.createElement("div");
-  bomberManWrapper[i].style.transition = `transform ${normalTime}ms`;
-  bomberManWrapper[i].classList.add("bomber-man");
-  bomberManWrapper[
+  playerSprites[i] = document.createElement("div");
+  playerSprites[i].style.transition = `transform ${normalTime}ms`;
+  playerSprites[i].classList.add("bomberman");
+  playerSprites[
     i
   ].style.backgroundImage = `url('assets/images/player-sprites/${color[i]}.png')`;
-  setSprite(horizontalAnimation[i], (1 + i) & 1, bomberManWrapper[i]);
-  grid.appendChild(bomberManWrapper[i]);
+  setSprite(horizontalAnimation[i], (1 + i) & 1, playerSprites[i]);
+  grid.appendChild(playerSprites[i]);
 }
 ```
 
@@ -221,13 +221,13 @@ cell.classList.remove("mystery");
 cell.classList.add("walkable");
 ```
 
-If the powerup being collected is a skate, the relevant `bomberManWrapper` is adjusted thus to synchronize the CSS animation that moves the player sprite smoothly from cell to cell with its new speed:
+If the powerup being collected is a skate, the relevant `playerSprites` is adjusted thus to synchronize the CSS animation that moves the player sprite smoothly from cell to cell with its new speed:
 
 ```javascript
 if (powerup.name === "skate") {
-  bomberManWrapper[index].style.transition = `transform ${skateTime}ms`;
+  playerSprites[index].style.transition = `transform ${skateTime}ms`;
 } else {
-  bomberManWrapper[index].style.transition = `transform ${normalTime}ms`;
+  playerSprites[index].style.transition = `transform ${normalTime}ms`;
 }
 ```
 
@@ -242,7 +242,7 @@ playerWrapper.style.backgroundPosition = `-${spriteX * spriteSize}px -${
 Then the game loop calls `move(index)` to translate each player character:
 
 ```javascript
-bomberManWrapper[index].style.transform = `translate(${
+playerSprites[index].style.transform = `translate(${
   position[index].x * cellSize
 }px, ${position[index].y * cellSize}px)`;
 ```
@@ -253,9 +253,9 @@ When the socket receives a "dead" signal (a signal to kill one of the players), 
 if (index == ownIndex) {
   document.removeEventListener("keydown", onKeyDown);
 }
-bomberManWrapper[index].classList.remove("bomber-man");
-bomberManWrapper[index].classList.remove(`bomber-man${index}`);
-bomberManWrapper[index].classList.add("death");
+playerSprites[index].classList.remove("bomberman");
+playerSprites[index].classList.remove(`bomberman${index}`);
+playerSprites[index].classList.add("death");
 ```
 
 When the socket receives a "life-up" signal (indicating that someone has collected a "life-up" powerup), it does the following, briefly displaying a heart symbol in the powerup `info-box` if it was the current player who picked it up:
@@ -343,9 +343,9 @@ In "dead",
 if (index == ownIndex) {
   document.removeEventListener("keydown", onKeyDown);
 }
-bomberManWrapper[index].classList.remove("bomber-man");
-bomberManWrapper[index].classList.remove(`bomber-man${index}`);
-bomberManWrapper[index].classList.add("death");
+playerSprites[index].classList.remove("bomberman");
+playerSprites[index].classList.remove(`bomberman${index}`);
+playerSprites[index].classList.add("death");
 ```
 
 In "used full-fire",
@@ -357,21 +357,21 @@ power.innerHTML = "PowerUp: none";
 In "spawned",
 
 ```javascript
-bomberManWrapper[index].style.transition = `transform ${normalTime}ms`;
+playerSprites[index].style.transition = `transform ${normalTime}ms`;
 // ...
 const cell = cellsArr[y][x];
 cell.classList.add("power-up");
 cell.classList.add(powerup.name);
 power.innerHTML = "PowerUp: none";
 // ...
-bomberManWrapper[index].style.opacity = 0;
+playerSprites[index].style.opacity = 0;
 if (index === ownIndex) {
   lives.textContent = `Lives: ${life}`;
 }
 // ...
-bomberManWrapper[index].classList.remove("death");
-bomberManWrapper[index].classList.add("bomber-man");
-setSprite(horizontalAnimation[index], (1 + index) & 1, bomberManWrapper[index]);
+playerSprites[index].classList.remove("death");
+playerSprites[index].classList.add("bomberman");
+setSprite(horizontalAnimation[index], (1 + index) & 1, playerSprites[index]);
 if (index == ownIndex) {
   lives.textContent = `Lives: ${life}`;
   document.addEventListener("keydown", onKeyDown);

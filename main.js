@@ -55,7 +55,7 @@ const playerColor = document.getElementById("player-color");
 const lives = document.getElementById("lives");
 const power = document.getElementById("power-up");
 let cellsArr; // 2d array to store the cells of the game grid
-let bomberManWrapper; // Array to store the player sprite divs
+let playerSprites; // Array to store the player sprite divs
 const numberOfRowsInGrid = 13;
 const numberOfColumnsInGrid = 15;
 const cellSize = 64;
@@ -250,10 +250,10 @@ for (let i = 0; i < 3; i++) {
   `;
 }
 
-const introText = `<br /><br /><br /><br />In the depths of Melancholia, heaviest planet in the universe, a mad alien emperor has issued a decree.<br /><br />Each midwinter, four trapped miners must fight.<br /><br />One alone will survive.<br /><br />But some bleak spirits have come to revel in the art, to seek it out even.<br /><br />The art. The craft.<br /><br />The bomb.<br /><br />For there is a zen to everything, anything the human mind can turn itself to:<br /><br />a zen of flower arranging, a zen of tea.<br /><br />Aye, and there is the zen of bombing.<br /><br />Certain names have become legend. Elemental spirits, gods of destruction. In later times, all gladiators would take on their mask.<br /><br />There were four.<br /><br />There will be only one . . . <br />`;
+const introText = `<br /><br /><br /><br />In the depths of Melancholia, heaviest planet in the universe, a mad alien emperor has issued a decree.<br /><br />Each midwinter, four trapped miners must fight.<br /><br />One alone will survive.<br /><br />But some bleak spirits have come to revel in the art, to seek it out even.<br /><br />The art. The craft.<br /><br />The bomb.<br /><br />For there is a zen to everything, anything the human mind can turn itself to:<br /><br />a zen of flower arranging, a zen of tea.<br /><br />Aye, and there is the zen of bombing.<br /><br />Certain names have become legend. Elemental spirits, gods of destruction. In later times, all gladiators would take on their mask.<br /><br />There were four.<br /><br />There will be only one . . . <br /><br />`;
 let outroText;
-const outroTextWin = `<br /><br /><br /><br />'Nos morituri te salutamus'<br /><br />In the depths of Melancholia, heaviest planet in the universe, a mad alien emperor once issued a decree<br /><br />Funny way to celebrate a solstice, but as good as any you suppose.<br /><br />The laurels and faded ribbons mark you apart as a bomber to be reckoned with although the further you wander the less they mean. But what does any of it mean?<br /><br />You were ready to be one of them, your heroes, the ones who went before. Ready for the blasted god. Yet it's you that great spirit of disaster has bowed down to. You had no plan for this.<br /><br />'We who are about to die salute you'<br /><br />The words grow dim with time as you trudge on into the waste.<br /><br />'Aut non' The emperor's reply.<br /><br />'Or not'<br /><br />And now . . . Uncharted territory.<br />`;
-const outroTextLose = `<br /><br /><br /><br />Something was different this time. You took it to portend some especially great glory. What else could it be, this fiery feeling, this ecstasy?<br /><br />'Nos morituri . . .'<br /><br />Gunpowder, your favorite perfume, hung thick on the winter air that day. You trod as in a dream, craft honed to perfection. Mind racing beyond body, your spirit could hardly contain itself. That should have been the clue.<br /><br />But victory was all you'd known. How could you have known?<br /><br />You moved as never till now, ten steps ahead of your rivals and saw the dozen meanings in every gesture, all the futures branching.<br /><br />All but one.<br /><br />'We who are about to die salute you'<br /><br />'Or not'. The emperor's reply rings hollow in your ears. That charred husk--it dawns on you--is your own. The spectators rise in great silent tumult, but you are already far hence.<br /><br />You were a gladiator once.<br /><br />And now . . . Uncharted territory.<br />`;
+const outroTextWin = `<br /><br /><br /><br />'Nos morituri te salutamus'<br /><br />In the depths of Melancholia, heaviest planet in the universe, a mad alien emperor once issued a decree<br /><br />Funny way to celebrate a solstice, but as good as any you suppose.<br /><br />The laurels and faded ribbons mark you apart as a bomber to be reckoned with although the further you wander the less they mean. But what does any of it mean?<br /><br />You were ready to be one of them, your heroes, the ones who went before. Ready for the blasted god. Yet it's you that great spirit of disaster has bowed down to. You had no plan for this.<br /><br />'We who are about to die salute you'<br /><br />The words grow dim with time as you trudge on into the waste.<br /><br />'Aut non' The emperor's reply.<br /><br />'Or not'<br /><br />And now . . . Uncharted territory.<br /><br />`;
+const outroTextLose = `<br /><br /><br /><br />Something was different this time. You took it to portend some especially great glory. What else could it be, this fiery feeling, this ecstasy?<br /><br />'Nos morituri . . .'<br /><br />Gunpowder, your favorite perfume, hung thick on the winter air that day. You trod as in a dream, craft honed to perfection. Mind racing beyond body, your spirit could hardly contain itself. That should have been the clue.<br /><br />But victory was all you'd known. How could you have known?<br /><br />You moved as never till now, ten steps ahead of your rivals and saw the dozen meanings in every gesture, all the futures branching.<br /><br />All but one.<br /><br />'We who are about to die salute you'<br /><br />'Or not'. The emperor's reply rings hollow in your ears. That charred husk--it dawns on you--is your own. The spectators rise in great silent tumult, but you are already far hence.<br /><br />You were a gladiator once.<br /><br />And now . . . Uncharted territory.<br /><br />`;
 
 transitionToStart();
 
@@ -891,18 +891,18 @@ function generateLevel() {
   infoWrapper.style.display = "flex";
   instructions.style.display = "flex";
 
-  bomberManWrapper = [];
+  playerSprites = [];
   for (let i = 0; i < players.length; i++) {
     isKilled[i] = false;
-    bomberManWrapper[i] = document.createElement("div");
-    bomberManWrapper[i].style.transition = `transform ${normalTime}ms`;
-    bomberManWrapper[i].classList.add("bomber-man");
-    bomberManWrapper[
+    playerSprites[i] = document.createElement("div");
+    playerSprites[i].style.transition = `transform ${normalTime}ms`;
+    playerSprites[i].classList.add("bomberman");
+    playerSprites[
       i
     ].style.backgroundImage = `url('assets/images/player-sprites/${players[i].color}.png')`;
     // n & 1 is 1 if n is odd, 0 if n is even
-    setSprite(horizontalAnimation[i], (1 + i) & 1, bomberManWrapper[i]);
-    grid.appendChild(bomberManWrapper[i]);
+    setSprite(horizontalAnimation[i], (1 + i) & 1, playerSprites[i]);
+    grid.appendChild(playerSprites[i]);
 
     game.style.display = "flex";
     game.classList.add("show");
@@ -936,7 +936,7 @@ function gameLoop(timestamp) {
 }
 
 function move(index) {
-  bomberManWrapper[index].style.transform = `translate(${
+  playerSprites[index].style.transform = `translate(${
     position[index].x * cellSize
   }px, ${position[index].y * cellSize}px)`;
 }
@@ -948,16 +948,16 @@ function animateWalk(index) {
   }
   switch (key) {
     case "ArrowUp":
-      setSprite(horizontalAnimation[index] + 3, 1, bomberManWrapper[index]);
+      setSprite(horizontalAnimation[index] + 3, 1, playerSprites[index]);
       break;
     case "ArrowDown":
-      setSprite(horizontalAnimation[index] + 3, 0, bomberManWrapper[index]);
+      setSprite(horizontalAnimation[index] + 3, 0, playerSprites[index]);
       break;
     case "ArrowRight":
-      setSprite(horizontalAnimation[index], 1, bomberManWrapper[index]);
+      setSprite(horizontalAnimation[index], 1, playerSprites[index]);
       break;
     case "ArrowLeft":
-      setSprite(horizontalAnimation[index], 0, bomberManWrapper[index]);
+      setSprite(horizontalAnimation[index], 0, playerSprites[index]);
       break;
     default:
       return;
@@ -1082,9 +1082,9 @@ function getPowerup(y, x, powerup, index) {
     }
   }
   if (powerup.name === "skate") {
-    bomberManWrapper[index].style.transition = `transform ${skateTime}ms`;
+    playerSprites[index].style.transition = `transform ${skateTime}ms`;
   } else {
-    bomberManWrapper[index].style.transition = `transform ${normalTime}ms`;
+    playerSprites[index].style.transition = `transform ${normalTime}ms`;
   }
 }
 
@@ -1192,15 +1192,15 @@ socket.on("dead", (index) => {
     document.removeEventListener("keydown", onKeyDown);
     document.removeEventListener("keyup", onKeyUp);
   }
-  bomberManWrapper[index].classList.remove("bomber-man");
-  bomberManWrapper[index].classList.remove(`bomber-man${index}`);
-  bomberManWrapper[index].classList.add("death");
+  playerSprites[index].classList.remove("bomberman");
+  playerSprites[index].classList.remove(`bomberman${index}`);
+  playerSprites[index].classList.add("death");
 });
 
 socket.on("spawned", ({ index, isGameOver, powerup, y, x, life }) => {
   if (powerup) {
     if (powerup.name === "skate") {
-      bomberManWrapper[index].style.transition = `transform ${normalTime}ms`;
+      playerSprites[index].style.transition = `transform ${normalTime}ms`;
     }
     playerPowerups[index] = "none";
     const cell = cellsArr[y][x];
@@ -1209,20 +1209,20 @@ socket.on("spawned", ({ index, isGameOver, powerup, y, x, life }) => {
     power.innerHTML = "PowerUp: none";
   }
   if (isGameOver) {
-    bomberManWrapper[index].style.opacity = 0;
+    playerSprites[index].style.opacity = 0;
     if (index === ownIndex) {
       lives.textContent = `Lives: ${life}`;
     }
     return;
   }
   isKilled[index] = false;
-  bomberManWrapper[index].classList.remove("death");
-  bomberManWrapper[index].classList.add("bomber-man");
+  playerSprites[index].classList.remove("death");
+  playerSprites[index].classList.add("bomberman");
   setSprite(
     horizontalAnimation[index],
     // n & 1 is 1 if n is odd, 0 if n is even
     (1 + index) & 1,
-    bomberManWrapper[index]
+    playerSprites[index]
   );
   if (index == ownIndex) {
     lives.textContent = `Lives: ${life}`;
