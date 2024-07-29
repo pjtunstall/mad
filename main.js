@@ -973,45 +973,6 @@ function setSprite(spriteX, spriteY, playerWrapper) {
   }px`;
 }
 
-socket.on("life-up", (index, life, y, x) => {
-  const sound = powerupSound.cloneNode(true);
-  sound.play();
-  sound.onended = function () {
-    sound.src = "";
-  };
-  const cell = cellsArr[y][x];
-  cell.classList.remove("power-up");
-  cell.classList.remove("life-up");
-  if (index === ownIndex) {
-    lives.textContent = `Lives: ${life}`;
-    power.innerHTML = "PowerUp: &#x2665;&#xfe0f;";
-    setTimeout(() => {
-      power.innerHTML = "PowerUp: none";
-    }, 2048);
-  }
-});
-
-socket.on("add fire", (arr) => {
-  if (isGameOver) {
-    return;
-  }
-  cellsArr[arr[0].y][arr[0].x].classList.remove(
-    "bomb",
-    "normal-bomb",
-    "remote-control-bomb"
-  );
-  arr.forEach((cellData) => {
-    cellsArr[cellData.y][cellData.x].classList.add(cellData.style);
-    if (gridData[cellData.y][cellData.x].type === "breakable") {
-      socket.emit("destroy", { y: cellData.y, x: cellData.x });
-    }
-  });
-});
-
-socket.on("remove fire", ({ y, x, style }) => {
-  cellsArr[y][x].classList.remove(style);
-});
-
 const onKeyDown = (e) => {
   switch (e.key) {
     case "ArrowUp":
@@ -1090,6 +1051,24 @@ function getPowerup(y, x, powerup, index) {
   }
 }
 
+socket.on("life-up", (index, life, y, x) => {
+  const sound = powerupSound.cloneNode(true);
+  sound.play();
+  sound.onended = function () {
+    sound.src = "";
+  };
+  const cell = cellsArr[y][x];
+  cell.classList.remove("power-up");
+  cell.classList.remove("life-up");
+  if (index === ownIndex) {
+    lives.textContent = `Lives: ${life}`;
+    power.innerHTML = "PowerUp: &#x2665;&#xfe0f;";
+    setTimeout(() => {
+      power.innerHTML = "PowerUp: none";
+    }, 2048);
+  }
+});
+
 socket.on("lose remote control", () => {
   remoteControl = false;
 });
@@ -1100,10 +1079,31 @@ socket.on("used full-fire", (index) => {
   }
 });
 
+socket.on("add fire", (arr) => {
+  if (isGameOver) {
+    return;
+  }
+  cellsArr[arr[0].y][arr[0].x].classList.remove(
+    "bomb",
+    "normal-bomb",
+    "remote-control-bomb"
+  );
+  arr.forEach((cellData) => {
+    cellsArr[cellData.y][cellData.x].classList.add(cellData.style);
+    if (gridData[cellData.y][cellData.x].type === "breakable") {
+      socket.emit("destroy", { y: cellData.y, x: cellData.x });
+    }
+  });
+});
+
+socket.on("remove fire", ({ y, x, style }) => {
+  cellsArr[y][x].classList.remove(style);
+});
+
 socket.on("plant normal bomb", ({ y, x, full }) => {
   const fuse = fuseSound.cloneNode(true);
   fuse.play();
-  setTimeout(() => {
+  const triggerBombSound = () => {
     fuse.src = "";
     const explosion = full
       ? fullExplosionSound.cloneNode(true)
@@ -1115,7 +1115,8 @@ socket.on("plant normal bomb", ({ y, x, full }) => {
     explosion.onended = () => {
       explosion.src = "";
     };
-  }, 1000);
+  };
+  gridData.bombTimeoutId = setTimeout(triggerBombSound, 1000);
   cellsArr[y][x].classList.add("bomb", "normal-bomb");
 });
 
