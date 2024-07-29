@@ -98,9 +98,9 @@ game
 
 Initial HTML consists of a `game` element that starts out hidden and is revealed when the countdown ends. `game-over`, of course, starts out hidden too. At the end, text will be inserted into `game-over` according to who won.
 
-The `grid-wrapper` contains everything else, including the `game-grid` itself, an `info` section above it (containing three items of class `info-box`, representing the different pieces of info to be displayed for one's own character) and `instructions` below.
+The `grid-wrapper` contains everything else, including the `game-grid` itself, an `info` section above it (containing three items of class `info-box`, representing the different pieces of info to be displayed for one's own character) and `instructions` below. (I have an idea for changing this to accomodate holding multiple powerups, but this is how it is for now.)
 
-The grid will be filled in with 13 \* 15 = 195 elements of class `cell` (and possibly other classes, as described below), based on data from the server at the end of the countdown.
+The game grid will be filled in with 13 \* 15 = 195 `div`s of class `cell` (and possibly other classes, as described below), based on data from the server at the end of the countdown.
 
 ```html
 <div id="game">
@@ -125,6 +125,10 @@ The grid will be filled in with 13 \* 15 = 195 elements of class `cell` (and pos
   </div>
 </div>
 ```
+
+The JavaScript in `main.js` represents the different types of blocks by applying CSS classes: `breakable` or `unbreakable` to the cells. The original `walkable` class is now omitted and its style treated as default. 2-4 player sprites are appended to the grid when the game begins, also with tag `div`, and given the `bomberman` class, which is replaced by a `death` class to show the animation of them being blown up. During the game, `div`s representing the bombs will be appended to the grid. When they explode, the different styles of fire are represented by classes bestowed on the affected cells. On "game over", the `grid-wrapper` is hidden and `game-over` revealed by juggling of `hide` and `show` classes and adding `display: flex` style to `game-over`. Finally, in `transitionToOutro`, `game` is hidden with `display: none`, and our work is done.
+
+Here's a detailed catalog of the JavaScript that interacts with the DOM.
 
 The top level of our code declares the following global variables:
 
@@ -206,7 +210,7 @@ infoWrapper.style.display = "flex";
 instructions.style.display = "flex";
 ```
 
-It concludes by styling the the player character elements in the `playerSprites` array. To each `playerSprites[i]`, where `i` ranges over the length of the players array, `geneerateLevel()` assigns the class `bomberman` and sets the background image and initial position, i.e. frame, of the walking animation, then appends the playerSprites to the grid.
+It concludes by creating and styling the the player character elements in the `playerSprites` array. To each `playerSprites[i]`, where `i` ranges over the length of the players array, `generateLevel()` assigns the class `bomberman` and sets the background image and initial position, i.e. frame, of the walking animation, then appends each player sprite to the grid.
 
 ```javascript
 playerSprites = [];
