@@ -995,8 +995,11 @@ socket.on("add fire", (arr) => {
   if (isGameOver) {
     return;
   }
-  const bombElement = document.getElementById(`bomb-${arr[0].y}-${arr[0].x}`);
-  bombElement.remove();
+  cellsArr[arr[0].y][arr[0].x].classList.remove(
+    "bomb",
+    "normal-bomb",
+    "remote-control-bomb"
+  );
   arr.forEach((cellData) => {
     cellsArr[cellData.y][cellData.x].classList.add(cellData.style);
     if (gridData[cellData.y][cellData.x].type === "breakable") {
@@ -1113,14 +1116,7 @@ socket.on("plant normal bomb", ({ y, x, full }) => {
       explosion.src = "";
     };
   }, 1000);
-  const bomberManCell = cellsArr[y][x];
-  const bombElement = document.createElement("div");
-  bombElement.classList.add("bomb");
-  bombElement.style.top = bomberManCell.style.top;
-  bombElement.style.left = bomberManCell.style.left;
-  bombElement.id = `bomb-${y}-${x}`;
-  grid.appendChild(bombElement);
-  bombElement.style.animation = "bomb-animation 1s steps(1) 2";
+  cellsArr[y][x].classList.add("bomb", "normal-bomb");
 });
 
 socket.on("plant remote control bomb", ({ y, x, index }) => {
@@ -1131,15 +1127,7 @@ socket.on("plant remote control bomb", ({ y, x, index }) => {
   const fuse = fuseSound.cloneNode(true);
   fuse.play();
   remoteControlFuses[index] = fuse;
-
-  const bomberManCell = cellsArr[y][x];
-  const bombElement = document.createElement("div");
-  bombElement.classList.add("bomb");
-  bombElement.style.top = bomberManCell.style.top;
-  bombElement.style.left = bomberManCell.style.left;
-  bombElement.id = `bomb-${y}-${x}`;
-  grid.appendChild(bombElement);
-  bombElement.style.animation = "bomb-animation 1s steps(1) infinite";
+  cellsArr[y][x].classList.add("bomb", "remote-control-bomb");
 });
 
 socket.on("detonate remote control bomb", (index) => {

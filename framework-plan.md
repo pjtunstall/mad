@@ -126,7 +126,7 @@ The game grid will be filled in with 13 \* 15 = 195 `div`s of class `cell` (and 
 </div>
 ```
 
-The JavaScript in `main.js` represents the different types of blocks by applying CSS classes: `breakable` or `unbreakable` to the cells. The original `walkable` class is now omitted and its style treated as default. 2-4 player sprites are appended to the grid when the game begins, also with tag `div`, and given the `bomberman` class, which is replaced by a `death` class to show the animation of them being blown up. During the game, `div`s representing the bombs will be appended to the grid. When they explode, the different styles of fire are represented by classes bestowed on the affected cells. On "game over", the `grid-wrapper` is hidden and `game-over` revealed by juggling of `hide` and `show` classes and adding `display: flex` style to `game-over`. Finally, in `transitionToOutro`, `game` is hidden with `display: none`, and our work is done.
+The JavaScript in `main.js` represents the different types of blocks by applying CSS classes: `breakable` or `unbreakable` to the cells. The original `walkable` class is now omitted and its style treated as default. 2-4 player sprites are appended to the grid when the game begins, also with tag `div`, and given the `bomberman` class, which is replaced by a `death` class to show the animation of them being blown up. During the game, cells are given the class `bomb` when a bomb is planted, together with `normal-bomb` or `remote-control-bomb`, as the case may be, to apply the relevant animation (finite or infinite). When they explode, the different styles of fire (center, intermediate, and end-pieces) are represented by classes given to the affected cells. On "game over", the `grid-wrapper` is hidden and `game-over` revealed by juggling of `hide` and `show` classes and adding `display: flex` style to `game-over`. Finally, in `transitionToOutro`, `game` is hidden with `display: none`, and our work is done.
 
 Here's a detailed catalog of the JavaScript that interacts with the DOM.
 
@@ -302,8 +302,11 @@ if (index === ownIndex) {
 In "add fire",
 
 ```javascript
-const bombElement = document.getElementById(`bomb-${arr[0].y}-${arr[0].x}`);
-bombElement.remove();
+cellsArr[arr[0].y][arr[0].x].classList.remove(
+  "bomb",
+  "normal-bomb",
+  "remote-control-bomb"
+);
 arr.forEach((cellData) => {
   cellsArr[cellData.y][cellData.x].classList.add(cellData.style);
   if (gridData[cellData.y][cellData.x].type === "breakable") {
@@ -321,27 +324,13 @@ cellsArr[y][x].classList.remove(style);
 In "plant normal bomb",
 
 ```javascript
-const bomberManCell = cellsArr[y][x];
-const bombElement = document.createElement("div");
-bombElement.classList.add("bomb");
-bombElement.style.top = bomberManCell.style.top;
-bombElement.style.left = bomberManCell.style.left;
-bombElement.id = `bomb-${y}-${x}`;
-grid.appendChild(bombElement);
-bombElement.style.animation = "bomb-animation 1s steps(1) 2";
+cellsArr[y][x].classList.add("bomb", "normal-bomb");
 ```
 
 In "plant remote control bomb",
 
 ```javascript
-const bomberManCell = cellsArr[y][x];
-const bombElement = document.createElement("div");
-bombElement.classList.add("bomb");
-bombElement.style.top = bomberManCell.style.top;
-bombElement.style.left = bomberManCell.style.left;
-bombElement.id = `bomb-${y}-${x}`;
-grid.appendChild(bombElement);
-bombElement.style.animation = "bomb-animation 1s steps(1) infinite";
+cellsArr[y][x].classList.add("bomb", "remote-control-bomb");
 ```
 
 In "destroy block",

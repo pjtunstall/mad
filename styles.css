@@ -912,6 +912,14 @@ img {
   z-index: 1;
 }
 
+.normal-bomb {
+  animation: bomb-animation 1s steps(1) 2;
+}
+
+.remote-control-bomb {
+  animation: bomb-animation 1s steps(1) infinite;
+}
+
 .explosion-top {
   background-image: url("assets/images/sprites.png");
   height: var(--cell-height);
