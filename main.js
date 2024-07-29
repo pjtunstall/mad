@@ -991,10 +991,6 @@ socket.on("life-up", (index, life, y, x) => {
   }
 });
 
-socket.on("remove fire", ({ y, x, style }) => {
-  cellsArr[y][x].classList.remove(style);
-});
-
 socket.on("add fire", (arr) => {
   if (isGameOver) {
     return;
@@ -1007,6 +1003,10 @@ socket.on("add fire", (arr) => {
       socket.emit("destroy", { y: cellData.y, x: cellData.x });
     }
   });
+});
+
+socket.on("remove fire", ({ y, x, style }) => {
+  cellsArr[y][x].classList.remove(style);
 });
 
 const onKeyDown = (e) => {

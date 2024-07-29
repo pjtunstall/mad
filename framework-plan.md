@@ -281,7 +281,6 @@ if (index == ownIndex) {
   document.removeEventListener("keydown", onKeyDown);
 }
 playerSprites[index].classList.remove("bomberman");
-playerSprites[index].classList.remove(`bomberman${index}`);
 playerSprites[index].classList.add("death");
 ```
 
@@ -300,12 +299,6 @@ if (index === ownIndex) {
 }
 ```
 
-In the "remove fire" handler,
-
-```javascript
-cellsArr[y][x].classList.remove(style);
-```
-
 In "add fire",
 
 ```javascript
@@ -317,6 +310,12 @@ arr.forEach((cellData) => {
     socket.emit("destroy", { y: cellData.y, x: cellData.x });
   }
 });
+```
+
+In the "remove fire" handler,
+
+```javascript
+cellsArr[y][x].classList.remove(style);
 ```
 
 In "plant normal bomb",

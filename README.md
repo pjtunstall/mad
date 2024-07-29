@@ -23,7 +23,7 @@ The only essential thing left to do for the sake of he audit is to add a framewo
 
 Notes:
 
-0. I replaced the nice, smooth, pixel-by-pixel movement with translate and transition from cell to cell. That was my rough-and-ready solution to keeping the multiple players in sync. The original single-player version from make-your-game looked more like [this version](https://www.retrogames.cc/nes-games/bomberman-usa.html).
+0. I replaced the nice, smooth, pixel-by-pixel movement with translate and transition from cell to cell. That was my rough-and-ready solution to keeping the multiple players in sync. With pixel-by-pixel movement, they easily got out of sync, I think due to accumulation of small rounding differences in different browsers. The original single-player version from make-your-game looked more like [this version](https://www.retrogames.cc/nes-games/bomberman-usa.html).
 
 1. The instructions and audit expect us to have a simple lobby with a 20s countdown, followed by a 10s countdown for whoever has joined during the first countdown. Instead, I chose to implement a 10s countdown only. The two countdowns didn't make dramatic sense in the context of my over-the-top intro. Also, 20s is not long to chat! (The instructions don't make it clear whether they expect the chat to continue during the game. I've assumed not.)
 
