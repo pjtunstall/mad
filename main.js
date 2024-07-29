@@ -1192,7 +1192,6 @@ socket.on("dead", (index) => {
     document.removeEventListener("keyup", onKeyUp);
   }
   playerSprites[index].classList.remove("bomberman");
-  playerSprites[index].classList.remove(`bomberman${index}`);
   playerSprites[index].classList.add("death");
 });
 
