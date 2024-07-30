@@ -17,9 +17,11 @@ The server will log its IP address in the terminal. To connect over a mobile hot
 
 ## Progress
 
+I think we can call it done.
+
 The multiplayer Bomberman game is working in Chrome, Brave, Firefox, and Safari. Not yet tested in Edge. As in the single-player version from make-your-game, all bonus powerups are implemented except bomb-push/throw.
 
-The only essential thing left to do for the sake of he audit is to add a framework. I suggest we just framework the game itself, rather than the intro, which includes all sorts of features not required by the instructions. As a first step, I've made a [catalog](framework-plan.md) of all code in `index.html` and `main.js` that affects the game part of the DOM.
+A mini-framework (overReact) has been added to the version in frame. The famework is just being used for the intial render of the game grid. For more detail, see this [discussion](framework.md), which includes the original plan and thoughts on developing it further, together with a catalog of all code in index.html and main.js that affects the game part of the DOM. I don't see see any gain to be had from integrating it more thoroughly.
 
 Notes:
 
