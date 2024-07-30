@@ -55,6 +55,15 @@ Remaining tasks:
 
 ### Extra
 
+- CHAIN EXPLOSIONS
+  - Move timeout from "plant normal bomb" on client to server `plantNormalBomb` so that it has access to the timeout id. Store this id in an object in the grid: `grid[y][x].plantedBomb = { player, fireRange: player.fireRange, full, timeoutId };`. When calculating explosions, the server can then cancel timeouts and trigger explosions as needed. Consider serverside functions: `planNormalBomb`, `plantRemoteControlBomb`, `detonate`, and `addFire`; and clientside handlers for "plant normal bomb", "plant remote control bomb" (plus fuse sound-effect array for the remote control bombs), and "keydown" handler. Think especially carefully about remote control bombs and be sure to replenish the correct players' stock of bombs.
+- MULTI-POWERS
+  - Allow multiple powerups to be held at once: logic, UI (e.g. put info in a margin, move grid to one side, list powerups by their symbol, distinguish between scalar--lives, bombs, fire--and boolean powers, highlight boolean powerups in your possession).
+- HOST PRIVATELY
+  - To allow friends to play remotely (to learn about hosting and as an experiment to see how well the networking works), research how to host on Google App Engine, which, I gather, can be made private, and accessible by signing in to Google. The latter would need an authentication page before the game starts. This would need an authentication page before the game starts. (We'd need to support multiple game instances before hosting publicly, which would be significantly moer work to adapt; see below.)
+
+### Extra-extra
+
 - FIX/IMPROVE
   - There's often a jump where the character profile picture changes when the eyelids are still open.
   - Sometimes there is a pause on initiating movement or changing direction before it takes effect. Lag due to waiting for signal from socket? But test this in case that's not the reason. Could try a rollback technique: show player's own sprite moving immediately and correct when signal comes from server if need be, e.g. if another player or a bomb blocked their way (if they don't have the bomb-pass powerup).
@@ -104,4 +113,4 @@ Remaining tasks:
   - Investigate whether it would be worth implementing the "state pattern" for powerups, especially the movement logic.
 - HOSTING
   - Allow multiple game instance at once.
-  - Host, maybe on Glitch, which I gather has a limited free option to host a Node server, or on Google App Engine, which, I gather, can be made private, and accessible by signing in to Google. The latter would need an authentication page before the game starts.
+  - Host, maybe on Glitch, which I gather has a limited free option to host a Node server.

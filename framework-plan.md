@@ -8,11 +8,11 @@
 
 ## 1. Overview
 
-I suggest we just framework the game itself, rather than the intro.
+I suggest we just framework the game itself, rather than the intro. Easiest of all would be to take `game-grid` as the root node of our frameworked app. We could, as others have done, just use the framework to create the elements and render them initially. Routing is irrelevant: we don't want players being able to navigate at will between different phases of the game.
 
 As a first step, here is a catalogue of all the DOM stuff: all DOM elements and variables that refer to them, all lines that affect the DOM, and all event handlers.
 
-As it turns out, `overReact`'s event delegation system is indeed an overreaction in this case. The only event handler that's attached to a descendant of `game` (a plausible root element for our app) is the `animationend` handler, which removes the "breakable-block-destruction" class from a block at the end of its destruction animation. The keypress handlers are attached to `document`, and the other event handlers are all for the socket. But sure, if we do use `overReact`, then, for the sake of the exercise, we can shoehorn that little `animationend` handler into being centrally delegated.
+As it turns out, `overReact`'s event delegation system is indeed an overreaction in this case. The only event handler that's attached to a descendant of `game` (a plausible root element for our app) is the `animationend` handler, which removes the "breakable-block-destruction" class from a block at the end of its destruction animation. The keypress handlers are attached to `document`, and the other event handlers are all for the socket. For the sake of the exercise, we could shoehorn that little `animationend` handler into being centrally delegated, but it's hardly worth it.
 
 Therefore this catalog of event handlers is just for the sake of identifying DOM elements and places where the DOM is modified.
 
@@ -107,13 +107,13 @@ The game grid will be filled in with 13 \* 15 = 195 `div`s of class `cell` (and 
   <h1 id="game-over"></h1>
   <div id="grid-wrapper">
     <div id="info">
-      <div class="info-box">
+      <div class="info-box" id="color-box">
         <div id="player-color">Player:</div>
       </div>
-      <div class="info-box">
+      <div class="info-box" id="power-box">
         <div id="power-up">Powerup:</div>
       </div>
-      <div class="info-box">
+      <div class="info-box" id="life-box">
         <div id="lives">Lives: 0</div>
       </div>
     </div>
