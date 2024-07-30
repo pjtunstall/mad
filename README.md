@@ -21,7 +21,7 @@ I think we can call it done.
 
 The multiplayer Bomberman game is working in Chrome, Brave, Firefox, and Safari. Not yet tested in Edge. As in the single-player version from make-your-game, all bonus powerups are implemented except bomb-push/throw.
 
-A mini-framework (overReact) has been added to the version in branch `frame`. It won't be added to `main`. The famework is just being used for the intial render of the game grid. For more detail, see this [discussion](framework.md), which includes the original plan and thoughts on developing it further, together with a catalog of all code in index.html and main.js that affects the game part of the DOM. I don't see see any gain to be had from integrating it more thoroughly.
+A mini-framework (overReact) has been added to the version in branch `frame`. It won't be added to `main`. The framework is just being used for the intial render of the game grid. For more detail, see this [discussion](framework.md), which includes the original plan and thoughts on developing it further, together with a catalog of all code in index.html and main.js that affects the game part of the DOM. I don't see see any gain to be had from integrating it more thoroughly.
 
 Notes:
 
