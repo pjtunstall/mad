@@ -10,7 +10,7 @@
 
 ## 1. Overview
 
-After talking to others, I decided to just use the framework to set up the grid initially, taking `game-grid` as the root node of (frameworked part of) the app. That satisfies the audit. The only function affected is `buildGrid()`. Integrating it thoroughly would make the game less performant, but in case anyone is interested in doing something in this direction as an exercise, here is my earlier plan together with a guide to the DOM-related material in the game itself. Further steps that could be taken include:
+After talking to others, I decided to just use the framework to set up the grid initially, taking `game-grid` as the root node of (frameworked part of) the app. That satisfies the audit. The only function affected is `buildGrid()`. Integrating the framework thoroughly would make the game less performant, but in case anyone is interested in doing something in this direction as an exercise, here is my earlier plan together with a guide to the DOM-related material in the game itself. Further steps that could be taken include:
 
 - Rewrite all code that affects the DOM to only modify the virtual DOM.
 - Think of any suitable state variables that we want to trigger automatic updates, e.g. position and direction. We also have the option (escape hatch) of being able to simply call the `update()` method on the app, but we should try to maintain or recreate batching of updates. Caution: pass `update()` to `requestAnimationFrame` (or call it from the game loop) to ensure that the event handler has a chance to make all of its changes to the virtual DOM before diff and reconciliation.
