@@ -39,19 +39,7 @@ Notes:
 
 ### Add framework
 
-This seems a shame as it will, at best, have no effect for players. All we can hope is that the decline in performance will not be noticeable! I suggest we start work on it in a dedicated feature branch so that we'll still have a pre-framework version, in case we want to improve it or eventually host it.
-
-We need to decide which framework to use: mine, Stefan's, the one Bilal has been working on, or something based on Rodrigo Pombo's `Didact`. In what follows, for definiteness, I'll assume we're using my `overReact` (because, being made maively, I think it migh tbe quick and easy to apply), but a lot of the points will hold for any of them. I'll assume the goal is simply to framework the core game, taking `game` or `grid` or perhaps `gridWrapper` as the app. That's enough to satisfy the spirit of the exercise without getting bogged down in making it work with all the optional extras of the intro too.
-
 As a first step, I've [cataloged](framework-plan.md) all code that affects the DOM subtree with `game` as its root.
-
-Remaining tasks:
-
-- Give unique ids to everything, including the `info-box` elements.
-- Create the virtual nodes and combine them to make the app.
-- Rewrite all code that affects the DOM to only modify the virtual DOM.
-- Think of any suitable state variables that we want to trigger automatic updates, e.g. position and direction. We also have the option (escape hatch) of being able to simply call the `update()` method on the app, but we should try to maintain or recreate batching of updates. Caution: pass `update()` to `requestAnimationFrame` (or call it from the game loop) to ensure that the event handler has a chance to make all of its changes to the virtual DOM before diff and reconciliation.
-- Make sure that updates are called whenever necessary.
 
 ### Extra
 
@@ -59,8 +47,6 @@ Remaining tasks:
   - Move timeout from "plant normal bomb" on client to server `plantNormalBomb` so that it has access to the timeout id. Store this id in an object in the grid: `grid[y][x].plantedBomb = { player, fireRange: player.fireRange, full, timeoutId };`. When calculating explosions, the server can then cancel timeouts and trigger explosions as needed. Consider serverside functions: `planNormalBomb`, `plantRemoteControlBomb`, `detonate`, and `addFire`; and clientside handlers for "plant normal bomb", "plant remote control bomb" (plus fuse sound-effect array for the remote control bombs), and "keydown" handler. Think especially carefully about remote control bombs and be sure to replenish the correct players' stock of bombs.
 - MULTI-POWERS
   - Allow multiple powerups to be held at once: logic, UI (e.g. put info in a margin, move grid to one side, list powerups by their symbol, distinguish between scalar--lives, bombs, fire--and boolean powers, highlight boolean powerups in your possession).
-- HOST PRIVATELY
-  - To allow friends to play remotely (to learn about hosting and as an experiment to see how well the networking works), research how to host on Google App Engine, which, I gather, can be made private, and accessible by signing in to Google. The latter would need an authentication page before the game starts. This would need an authentication page before the game starts. (We'd need to support multiple game instances before hosting publicly, which would be significantly moer work to adapt; see below.)
 
 ### Extra-extra
 
@@ -112,5 +98,8 @@ Remaining tasks:
   - Bring client structure more into line with how things are done on the server: player objects rather than those position and direction arrays (which are a leftover from my initial tinkering wit hthe single-player client-only game to make it multi-player, before I moved the logic to the server).
   - Investigate whether it would be worth implementing the "state pattern" for powerups, especially the movement logic.
 - HOSTING
-  - Allow multiple game instance at once.
-  - Host, maybe on Glitch, which I gather has a limited free option to host a Node server.
+  - Privately.
+    - To allow friends to play remotely, as an exercise to learn about hosting, and as an experiment to see how well the networking works. Research how to host on Google App Engine and make accessible by signing in to Google. The latter would need an authentication page before the game starts.
+  - Publicly.
+    - Adapt to allow multiple game instances at once. This would be a bit of work.
+    - Glitch has a limited free option to host a Node server. Their free option is public only, though.

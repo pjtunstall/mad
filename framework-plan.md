@@ -16,6 +16,19 @@ As it turns out, `overReact`'s event delegation system is indeed an overreaction
 
 Therefore this catalog of event handlers is just for the sake of identifying DOM elements and places where the DOM is modified.
 
+A more thorough version would need the following:
+
+- Make sure every element has a unique id. (Done.)
+- Create the virtual nodes and combine them to make the app.
+- Rewrite all code that affects the DOM to only modify the virtual DOM.
+- Think of any suitable state variables that we want to trigger automatic updates, e.g. position and direction. We also have the option (escape hatch) of being able to simply call the `update()` method on the app, but we should try to maintain or recreate batching of updates. Caution: pass `update()` to `requestAnimationFrame` (or call it from the game loop) to ensure that the event handler has a chance to make all of its changes to the virtual DOM before diff and reconciliation.
+- Make sure that updates are called whenever necessary.
+
+A simple version, whhich I recommend, would only need:
+
+- Make sure every element has a unique id. (Done.)
+- Build grid and render via framework.
+
 ## 2. Event handlers
 
 These include handlers for the following event types:

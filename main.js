@@ -857,6 +857,7 @@ function buildGrid() {
     for (let col = 0; col < numberOfColumnsInGrid; col++) {
       const cellData = gridData[row][col];
       const cell = document.createElement("div");
+      cell.id = `cell-${row}-${col}`;
       cell.classList.add("cell");
       cell.style.top = `${cellData.top}px`;
       cell.style.left = `${cellData.left}px`;
@@ -896,6 +897,7 @@ function generateLevel() {
     playerSprites[i] = document.createElement("div");
     playerSprites[i].style.transition = `transform ${normalTime}ms`;
     playerSprites[i].classList.add("bomberman");
+    playerSprites[i].id = `player-${i}`;
     playerSprites[
       i
     ].style.backgroundImage = `url('assets/images/player-sprites/${players[i].color}.png')`;
