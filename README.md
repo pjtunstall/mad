@@ -91,7 +91,7 @@ As a first step, I've [cataloged](framework-plan.md) all code that affects the D
 - ROLES
   - Add randomizer to allow alternative profile pictures for roles: name consistently and put each selection in its own folder so we can programmatically pic one from the folder.
   - Get gray's pitchfork in shot.
-  - Write backstory or character sketch for each role and think how and where to display them.
+  - Write backstory or character sketch for each role and think how and where to display them: maybe in windows superimposed partly over the roles with a little box-shadow, and make them visible on hovering over the character image.
 - KEYS
   - Let different keys be used for different players, at least for testing, so that two can play on one keyboard.
 - STRUCTURE
