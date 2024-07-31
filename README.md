@@ -14,7 +14,7 @@ The server will log its IP address in the terminal. To connect over a mobile hot
 
 ## 2. Background
 
-[bomberman-dom](https://learn.01founders.co/git/root/public/src/branch/master/subjects/bomberman-dom) is the final JavaScript project of the 01Founders course. The brief asks us to make a multiplayer browser game, based on the classic 1983 [Bomberman](https://en.wikipedia.org/wiki/Bomberman), using web sockets, but no WebGL or any framework apart from the toy frontend framework we made in the previous project, [mini-framework](https://github.com/01-edu/public/tree/master/subjects/mini-framework). ([Our mini-framework](https://github.com/pjtunstall/mini-framework).)
+[bomberman-dom](https://github.com/01-edu/public/tree/master/subjects/bomberman-dom) is the final JavaScript project of the [01Founders/01Edu](https://01-edu.org/pedagogy) [course](https://01edu.notion.site/Global-01-Curriculum-50b7d94ac56a429fb3aee19a32248732). The brief asks us to make a multiplayer browser game, based on the classic 1983 [Bomberman](https://en.wikipedia.org/wiki/Bomberman), using web sockets, but no WebGL or any framework apart from the toy frontend framework we made in the previous project, [mini-framework](https://github.com/01-edu/public/tree/master/subjects/mini-framework). ([Our mini-framework](https://github.com/pjtunstall/mini-framework).)
 
 Our multiplayer game was adapted from a single-player original by teammate Rashid and his teammates on that project. (See in-game credits.)
 
