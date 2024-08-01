@@ -14,6 +14,8 @@ To run the server, install Node dependencies: `npm install`. If it reports any v
 
 The server will log its IP address in the terminal. To connect over a mobile hotspot, players can enter that address in their browser. As yet it only supports a single instance of the game.
 
+For the audit, to demonstrate use of our `mini-framework`, switch to branch `<frame>`. See [below](#3-framework).
+
 ## 2. Background
 
 This is our take on the final project of the JavaScript section of the [01Founders course](https://01edu.notion.site/Global-01-Curriculum-50b7d94ac56a429fb3aee19a32248732), a branch of the [01Edu](https://01-edu.org/pedagogy) coding bootcamp system. The [brief](https://github.com/01-edu/public/tree/master/subjects/bomberman-dom) asks us to make a multiplayer browser game, based on the classic 1983 [Bomberman](https://en.wikipedia.org/wiki/Bomberman), using web sockets, but no WebGL or any framework apart from the [toy one](https://github.com/pjtunstall/mini-framework) we made in a previous project, [mini-framework](https://github.com/01-edu/public/tree/master/subjects/mini-framework).
@@ -24,7 +26,7 @@ Our multiplayer game was adapted from a single-player original by one of us, Ras
 
 ## 3. Framework
 
-Branch `<frame>` contains a version that "uses" our framework. We won't be merging it with `main` since it's superfluous to the program. We just added it in a minimal way for the sake of the exercise. Rather than integrating it fully, we just used it to create the grid structure and do one initial render. Since I won't be updating the docs in that branch, it might be convenient to see the difference here.
+Branch `<frame>` contains a version that "uses" our framework. We won't be merging it with `main` since it's superfluous to the game. We just added it in a minimal way just for the sake of the audit. Rather than integrating it fully, we followed the example of students who went before us and just used it to create the grid structure and do one initial render. Since I won't be updating the docs in that branch, it might be convenient to document the difference here.
 
 In that version, the only changes we made were as follows. We placed the `overreact` folder from our `mini-frameowrk` project in the root folder of this one. In `main.js`, we imported it with
 
@@ -109,7 +111,7 @@ function buildGrid() {
 }
 ```
 
-For more detail, see this [discussion](docs/framework.md), which includes the original plan and thoughts on developing it further, together with a catalog of all code in `index.html` and `main.js` that affects the game part of the DOM. I don't see see any gain to be had from integrating it more thoroughly. It would be a needless drag on performance, at best unnoticeable.
+For more detail, see this [discussion](docs/framework.md), which includes the original plan and thoughts on how it might be developed it further, together with a catalog of all code in `index.html` and `main.js` that affects the game part of the DOM. I don't see see any gain to be had from integrating it more thoroughly. It would be a needless drag on performance, at best unnoticeable.
 
 ## 4. Progress
 
