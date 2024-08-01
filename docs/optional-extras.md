@@ -3,7 +3,15 @@
 ## Priority
 
 - CHAIN EXPLOSIONS
-  - Move timeout from "plant normal bomb" on client to server `plantNormalBomb` so that it has access to the timeout id. Store this id in an object in the grid: `grid[y][x].plantedBomb = { player, fireRange: player.fireRange, full, timeoutId };`. When calculating explosions, the server can then cancel timeouts and trigger explosions as needed. Consider serverside functions: `planNormalBomb`, `plantRemoteControlBomb`, `detonate`, and `addFire`; and clientside handlers for "plant normal bomb", "plant remote control bomb" (plus fuse sound-effect array for the remote control bombs), and "keydown" handler. Think especially carefully about remote control bombs and be sure to replenish the correct players' stock of bombs.
+  - Let fire trigger any bombs it encounters.
+  - This is a first step towards letting players hold powerups simultaneously.
+  - Consider the serverside functions: `planNormalBomb`, `plantRemoteControlBomb`, `detonate`, and `addFire`; and clientside handlers for "plant normal bomb", "plant remote control bomb" (plus the `remoteControlFuses` array for the fuse sound-effects for remote-control bombs), and "keydown" handler. Think especially carefully about remote control bombs and be sure to replenish the correct players' stock of bombs.
+  - To detonate a normal bomb ahead of time, the server will need to know its serverside timeout id, location (cell coordinates), the player who planted it (or, equivalently, their index), its fire range, and an index to an array of fuses, to tell the client which sound effect to cancel. Have the whole process controlled by the server, so that there'll be no longer be any clientside timeout id.
+  - Consider whether normal and remote-control bombs should be done in a more similar way, and if so how.
+  - Allow for the possibililty that a player may have planted more than one remote-control bomb, and also have planted some normal bombs before acquiring the remote control.
+  - For a player to deliberately trigger their remote control bombs, the server will need keep a record of all such bombs planted by a player, up to a total of 10. It will need to know their cell coordinates, fire range, player who planted them, and have some way to tell each client to cancel their fuse sounds.
+  - For the server to trigger a bomb ahead of time due to fire reaching it, it will need to know the location (maybe store a bomb object, of some kind, in the 2d `grid` array), the player who planted it (so that it can replenish their stock of bombs), the fire range of that bomb, any serverside timeout id (in the case of normal bombs), and any clientside data, such as timeout id or a way to associate it with its fuse sound.
+  - At present, the clients each store references to fuse sounds of remote-control bombs in an array where the index corresponds to the player, with the assumption that there will be only one remote-control bomb per player. This could be made into an array or arrays, or a map. (Array more performant?)
 - MULTI-POWERS
   - Allow multiple powerups to be held at once: logic, UI (e.g. put info in a margin, move grid to one side, list powerups by their symbol, distinguish between scalar--lives, bombs, fire--and boolean powers, highlight boolean powerups in your possession).
 
