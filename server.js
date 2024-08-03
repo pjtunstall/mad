@@ -19,12 +19,12 @@ let players;
 let playersInChat;
 let playersInCountdown;
 let isGameInProgress; // Set to true when the first player sends the "ready" signal to initiate the countdown for all players in chat.
-let isGameInitialized;
-let playAgainTimeoutId;
-let isAfterGame;
+let isGameInitialized; // Set to true when the `initializeGame` function is called at the end of the countdown.
+let isAfterGame; // Set to true as soon as only one player is left in the game.
 let playersInGame;
 let disconnectees;
 let numberOfStartSignalsReceived;
+let playAgainTimeoutId;
 
 // INTRO
 
@@ -45,6 +45,11 @@ initializeIntro();
 const server = http.createServer((req, res) => {
   const requestUrl = url.parse(req.url);
   let filePath = path.join(__dirname, requestUrl.pathname);
+
+  // // The above seems to be invulnerable to directory traversal, even without explicit sanitization, but the following, commented-out lines, that make provision for query parameters, would not be:
+  // const query = url.parse(req.url, true).query;
+  // let filePath = path.join(__dirname, query.path || "");
+
   if (filePath.endsWith("/")) {
     filePath += "index.html";
   }
@@ -101,6 +106,7 @@ const io = socketIo(server, {
     methods: ["GET", "POST"],
   },
 });
+
 disconnectAll();
 
 const port = process.env.PORT || 3000;
