@@ -251,7 +251,7 @@ for (let i = 0; i < 3; i++) {
 
 const introText = `<br /><br /><br /><br />In the depths of Melancholia, heaviest planet in the universe, a mad alien emperor has issued a decree.<br /><br />Each midwinter, four trapped miners must fight.<br /><br />One alone will survive.<br /><br />But some bleak spirits have come to revel in the art, to seek it out even.<br /><br />The art. The craft.<br /><br />The bomb.<br /><br />For there is a zen to everything, anything the human mind can turn itself to:<br /><br />a zen of flower arranging, a zen of tea.<br /><br />Aye, and there is the zen of bombing.<br /><br />Certain names have become legend. Elemental spirits, gods of destruction. In later times, all gladiators would take on their mask.<br /><br />There were four.<br /><br />There will be only one . . . <br /><br />`;
 let outroText;
-const outroTextWin = `<br /><br /><br /><br />'Nos morituri te salutamus'<br /><br />In the depths of Melancholia, heaviest planet in the universe, a mad alien emperor once issued a decree<br /><br />Funny way to celebrate a solstice, but as good as any you suppose.<br /><br />The laurels and faded ribbons mark you apart as a bomber to be reckoned with although the further you wander the less they mean. But what does any of it mean?<br /><br />You were ready to be one of them, your heroes, the ones who went before. Ready for the blasted god. Yet it's you that great spirit of disaster has bowed down to. You had no plan for this.<br /><br />'We who are about to die salute you'<br /><br />The words grow dim with time as you trudge on into the waste.<br /><br />'Aut non' The emperor's reply.<br /><br />'Or not'<br /><br />And now . . . Uncharted territory.<br /><br />`;
+const outroTextWin = `<br /><br /><br /><br />'Nos morituri te salutamus'<br /><br />In the depths of Melancholia, heaviest planet in the universe, a mad alien emperor once issued a decree<br /><br />Funny way to celebrate a solstice, but as good as any you suppose.<br /><br />The laurels and faded ribbons mark you apart as a bomber to be reckoned with although the further you wander the less they mean. But what does any of it mean?<br /><br />You were ready to be one of them, your heroes, the ones who went before. Ready to meet your Blasted God. Yet it's you that great spirit of disaster has bowed down to. You had no plan for this.<br /><br />'We who are about to die salute you'<br /><br />The words grow dim with time as you trudge on into the waste.<br /><br />'Aut non' The emperor's reply.<br /><br />'Or not'<br /><br />And now . . . Uncharted territory.<br /><br />`;
 const outroTextLose = `<br /><br /><br /><br />Something was different this time. You took it to portend some especially great glory. What else could it be, this fiery feeling, this ecstasy?<br /><br />'Nos morituri . . .'<br /><br />Gunpowder, your favorite perfume, hung thick on the winter air that day. You trod as in a dream, craft honed to perfection. Mind racing beyond body, your spirit could hardly contain itself. That should have been the clue.<br /><br />But victory was all you'd known. How could you have known?<br /><br />You moved as never till now, ten steps ahead of your rivals and saw the dozen meanings in every gesture, all the futures branching.<br /><br />All but one.<br /><br />'We who are about to die salute you'<br /><br />'Or not'. The emperor's reply rings hollow in your ears. That charred husk--it dawns on you--is your own. The spectators rise in great silent tumult, but you are already far hence.<br /><br />You were a gladiator once.<br /><br />And now . . . Uncharted territory.<br /><br />`;
 
 transitionToStart();
@@ -1064,7 +1064,7 @@ socket.on("life-up", (index, life, y, x) => {
   cell.classList.remove("life-up");
   if (index === ownIndex) {
     lives.textContent = `Lives: ${life}`;
-    power.innerHTML = "PowerUp: &#x2665;&#xfe0f;";
+    power.innerHTML = "PowerUp: &#x2665;&#xfe0f;"; // heart symbol
     setTimeout(() => {
       power.innerHTML = "PowerUp: none";
     }, 2048);
@@ -1102,23 +1102,26 @@ socket.on("remove fire", ({ y, x, style }) => {
   cellsArr[y][x].classList.remove(style);
 });
 
+function triggerBombSound(fuse, full) {
+  fuse.src = "";
+  const explosion = full
+    ? fullExplosionSound.cloneNode(true)
+    : explosionSound.cloneNode(true);
+  if (!full) {
+    explosion.volume = 0.3;
+  }
+  explosion.play();
+  explosion.onended = () => {
+    explosion.src = "";
+  };
+}
+
 socket.on("plant normal bomb", ({ y, x, full }) => {
   const fuse = fuseSound.cloneNode(true);
   fuse.play();
-  const triggerBombSound = () => {
-    fuse.src = "";
-    const explosion = full
-      ? fullExplosionSound.cloneNode(true)
-      : explosionSound.cloneNode(true);
-    if (!full) {
-      explosion.volume = 0.3;
-    }
-    explosion.play();
-    explosion.onended = () => {
-      explosion.src = "";
-    };
-  };
-  gridData.bombTimeoutId = setTimeout(triggerBombSound, 1000);
+  gridData.bombTimeoutId = setTimeout(() => {
+    triggerBombSound(fuse, full);
+  }, 1000);
   cellsArr[y][x].classList.add("bomb", "normal-bomb");
 });
 
@@ -1137,16 +1140,7 @@ socket.on("detonate remote control bomb", (index) => {
   if (index === ownIndex) {
     isRemoteControlBombPlanted = false;
   }
-
-  remoteControlFuses[index].pause();
-  remoteControlFuses[index].src = "";
-
-  const explosion = explosionSound.cloneNode(true);
-  explosion.volume = 0.3;
-  explosion.play();
-  explosion.onended = () => {
-    explosion.src = "";
-  };
+  triggerBombSound(remoteControlFuses[index]);
 });
 
 socket.on("destroy block", ({ y, x }) => {
