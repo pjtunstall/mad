@@ -53,6 +53,7 @@
   - Beyond a certain width, chat pane overhangs left edge of input box.
   - Make intro layout more responsive to handle smaller window size, especially the ready button that currently overlaps the title when the screen gets too narrow.
   - Fix scale in CSS to rely only on units relative to screen size and make sure it works on various screen sizes.
+  - Bring back pixel-by-pixel movement (as opposed to cell-by-cell), perhaps by having the server calculate position on an extremely fine-grained grid, with as much resolution as the most detailed screen it's likely to be played on, and let clients round this each to their own current resolution, updated with corrections from the server each tick.
   - Test scrollbars etc. in Edge too. Improve current hacky solution. Understand better.
   - Find a font with more punctiation. None that I've tried looked good enough to sacrifice Wolves and Ravens.
 - ROLES
