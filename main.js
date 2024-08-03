@@ -1090,6 +1090,11 @@ socket.on("add fire", (arr) => {
     "normal-bomb",
     "remote-control-bomb"
   );
+  triggerBombSound(
+    gridData[arr[0].y][arr[0].x].bomb.fuse,
+    gridData[arr[0].y][arr[0].x].bomb.full
+  );
+  gridData[arr[0].y][arr[0].x].bomb = null;
   arr.forEach((cellData) => {
     cellsArr[cellData.y][cellData.x].classList.add(cellData.style);
     if (gridData[cellData.y][cellData.x].type === "breakable") {
@@ -1119,9 +1124,7 @@ function triggerBombSound(fuse, full) {
 socket.on("plant normal bomb", ({ y, x, full }) => {
   const fuse = fuseSound.cloneNode(true);
   fuse.play();
-  gridData.bombTimeoutId = setTimeout(() => {
-    triggerBombSound(fuse, full);
-  }, 1000);
+  gridData[y][x].bomb = { fuse, full };
   cellsArr[y][x].classList.add("bomb", "normal-bomb");
 });
 
@@ -1129,10 +1132,10 @@ socket.on("plant remote control bomb", ({ y, x, index }) => {
   if (index === ownIndex) {
     isRemoteControlBombPlanted = true;
   }
-
   const fuse = fuseSound.cloneNode(true);
   fuse.play();
   remoteControlFuses[index] = fuse;
+  gridData[y][x].bomb = { fuse, full: false };
   cellsArr[y][x].classList.add("bomb", "remote-control-bomb");
 });
 
@@ -1219,6 +1222,11 @@ socket.on("game over", ({ survivorIndex, type }) => {
   document.removeEventListener("keydown", onKeyDown);
   document.removeEventListener("keyup", onKeyUp);
   cancelAnimationFrame(gameLoopId);
+  for (const fuse of remoteControlFuses) {
+    if (fuse) {
+      fuse.src = "";
+    }
+  }
   gridWrapper.classList.add("hide");
   gameOver.innerHTML = "";
   gameOver.classList.remove("hide");
