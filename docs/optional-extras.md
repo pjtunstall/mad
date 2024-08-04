@@ -1,24 +1,8 @@
 # Optional Extras
 
-## Priority
-
-- MULTI-POWERS
-  - Allow multiple powerups to be held at once: logic, UI (e.g. put info in a margin, move grid to one side, list powerups by their symbol, distinguish between scalar--lives, bombs, fire--and boolean powers, highlight boolean powerups in your possession). I read that, in the original, one's stock of bombs could increase up to a limit of 10, and the fire range could increase to the length and breadth of the grid (equivalent to `full-fire`). I picture the margin looking something like this, maybe with the powerup icons next to each or in place of the names, the booleans somehow highlighted when held:
-
-```
-  LIVES 3
-  BOMBS 1
-  FIRE 1
-
-  SKATE
-  BLOCK-PASS
-  BOMB-PASS
-  FULL-FIRE
-```
-
-## Other
-
 - FIX/IMPROVE
+  - I once saw a bug where server and client logged that one of two players had disconnected, but they hadn't. Both players were still in the chat. Only one had the ready button visible. On pressing it, the countdown was triggered for both. Haven't manage to replicate it.
+  - Error message in client console when they themselves disconnect. Cosmetic? (I think so, but see if it can be tidied up.)
   - There's often a jump where the character profile picture changes when the eyelids are still open.
   - Sometimes there's a pause on initiating movement or changing direction before it takes effect. Lag due to waiting for signal from socket? But test this in case that's not the reason. Could try a rollback technique: show player's own sprite moving immediately and correct when signal comes from server if need be, e.g. if another player or a bomb blocked their way (if they don't have the bomb-pass powerup).
   - A bug I saw once, but haven't managed to replicate after many attempts, possibly already fixed now that disconnections during countdown are handled better. But I'll leave the details here just in case. Server crashed when a player in Safari pressed CTR+SHIFT+R to view simplified page, without styles, during countdown. Apparently this led to them being undefined even though the normal disconnection logic had not gone ahead. It triggered that classic lightning-conductor-of-errors, `isDead(player)`: `return grid[player?.position?.y][player?.position?.x].type === "fire";` (accusing arrow points to 2nd instance of player in the line), "TypeError: Cannot read properties of undefined (reading 'undefined')". Since then I've added some protections and logging in case of future issues.
@@ -48,6 +32,7 @@
   - GHOST
     - Player comes back as a ghost is among the suggested bonus tasks. I think it would dilute the drama though. Gilding the lily.
 - DESIGN
+  - Explosions seem to chain well horizontally, but don't look as good vertically. See if we can fix that.
   - Customize sprites or design own sprites from scratch.
   - See if we can get scrollbar "thumb" to appear on hover over the roles menu in all browsers, not just Firefox. At the moment, it appears briefly when the menu first appears in Chrome, for example. I think this is preferable to how it was before, though, when all sorts of scrollbars appeared all the time.
   - Make scrollbar "thumb" partially transparent or not overlapping the right edge of the text if possible.

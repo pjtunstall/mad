@@ -3,16 +3,22 @@ class Player {
   deathInProgress;
   direction;
   fireRange;
+  fullFire;
   id;
   index;
   lives;
   maxBombs;
   plantedBombs;
+  remoteControlBombs;
   name;
   phase;
   position;
-  powerup;
+  powerups;
+  remoteControl;
   role;
+  softBlockPass;
+  bombPass;
+  skates;
 
   // Underscore necessary to distinguish this field from `color` so as to avoid infinite loop while setting initial value. So say's GitHub Copilot. It didn't seem to get stuck, but it did lead to problems.
   set _color(color) {
@@ -24,6 +30,7 @@ class Player {
     this.deathInProgress = false;
     this.direction = { y: 0, x: 0, key: "" };
     this.fireRange = 1;
+    this.fullFire = false;
     this.id = socket.id;
     this.index = index;
     this.initialPosition = {
@@ -32,6 +39,8 @@ class Player {
     };
     this.maxBombs = 1;
     this.plantedBombs = 0;
+    this.remoteControlBombs = [];
+    this.remoteControl = false;
     this.lives = 3;
     this.phase = "start";
     this.position = {
@@ -52,7 +61,41 @@ class Player {
         this.initialPosition = { y: 1, x: 13 };
         break;
     }
-    this.powerup = null;
+    this.powerups = [];
+    this.softBlockPass = false;
+    this.bombPass = false;
+    this.skates = 0;
+  }
+
+  drop(powerupName) {
+    switch (powerupName) {
+      case "bomb-up":
+        if (this.maxBombs > 1) {
+          this.maxBombs--;
+        }
+        break;
+      case "fire-up":
+        if (this.fireRange > 1) {
+          this.fireRange--;
+        }
+        break;
+      case "skate":
+        if (this.skates > 0) {
+          this.skates--;
+        }
+      // At most one of each of the following powerups is spawned.
+      case "remote-control":
+        this.remoteControl = false;
+        break;
+      case "soft-block-pass":
+        this.softBlockPass = false;
+        break;
+      case "bomb-pass":
+        this.bombPass = false;
+        break;
+      case "full-fire":
+        this.fullFire = false;
+    }
   }
 }
 

@@ -89,7 +89,7 @@ In `socket.on("game over", ...`,
 
 ## 4. Elements and code that affects them
 
-All the game elements defined in `index.html` are shown here. They're all labeled here by id, except for the `info-box`s, which are anonymous and labeled by class. To adapt them to `overReact`, we'd need to give them ids too. They all have tag `div`, except for `game-over`, which is a `h1`.
+All the game elements defined in `index.html` are shown here. (Note: this is correct for the version that the framework was applied to. There have been some minor changes in the main version since.) They're all labeled here by id, except for the `info-box`s, which are anonymous and labeled by class. To adapt them to `overReact`, we'd need to give them ids too. They all have tag `div`, except for `game-over`, which is a `h1`.
 
 ```
 game

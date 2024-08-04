@@ -228,23 +228,21 @@ io.on("connection", (socket) => {
   });
 
   socket.on("bomb", ({ y, x, index }) => {
-    if (players[index].powerup?.name === "remote-control") {
+    if (players[index].remoteControl) {
       plantRemoteControlBomb(y, x, index);
       return;
     }
     plantNormalBomb(y, x, index);
   });
 
-  socket.on("detonate remote control bomb", (index) => {
-    detonate(
-      remoteControlBombCoordinates[index].y,
-      remoteControlBombCoordinates[index].x,
-      1
-    );
-    remoteControlBombCoordinates[index] = null;
-    if (players[index].plantedBombs > 0) {
-      players[index].plantedBombs--;
+  socket.on("detonate remote control bombs", (index) => {
+    for (const bomb of players[index].remoteControlBombs) {
+      detonate(bomb.y, bomb.x, bomb.full ? 13 : bomb.fireRange);
+      if (players[index].plantedBombs > 0) {
+        players[index].plantedBombs--;
+      }
     }
+    players[index].remoteControlBombs.length = 0;
     io.emit("detonate remote control bomb", index);
   });
 
@@ -321,7 +319,6 @@ const numberOfColumnsInGrid = 15;
 
 // powerup variables
 const probabilityOfPowerUp = 0.1;
-const remoteControlBombCoordinates = [null, null, null, null];
 const powerupArray = [
   {
     name: "bomb-up",
@@ -344,8 +341,7 @@ const powerupArray = [
     count: 2,
   },
   {
-    // Single use only; otherwise it would be too powerful
-    name: "full-fire",
+    name: "full-fire", // single use
     initialCount: 1,
     count: 1,
   },
@@ -416,7 +412,7 @@ function gameLoop() {
     if (isDead(player)) {
       kill(player);
     }
-    if (beat === true || player.powerup?.name === "skate") {
+    if (beat === true || player.skates > 0) {
       move(player);
       io.emit("move", {
         newPosition: player.position,
@@ -439,10 +435,7 @@ function move(player) {
   player.position.y = nextY;
   player.position.x = nextX;
 
-  if (
-    player.powerup?.name === "soft-block-pass" &&
-    grid[nextY][nextX].type === "breakable"
-  ) {
+  if (player.softBlockPass && grid[nextY][nextX].type === "breakable") {
     return;
   }
 
@@ -451,8 +444,7 @@ function move(player) {
     grid[nextY][nextX].powerup = null;
 
     if (newPowerup.name === "mystery") {
-      newPowerup =
-        powerupArray[Math.floor(Math.random() * (powerupArray.length - 1))]; // -1 because we don't want to include the mystery powerup in the random selection
+      newPowerup = powerupArray[Math.floor(Math.random() * 3)]; // Mustn't generate one of the unique powerups. If we want to allow them, we'd have to change the logic in `player.drop(powerupName)`.
     }
 
     if (newPowerup.name === "life-up") {
@@ -461,51 +453,36 @@ function move(player) {
       return;
     }
 
-    const previousPowerup = player.powerup;
-    if (previousPowerup) {
-      grid[oldY][oldX].powerup = previousPowerup;
-    }
-
-    player.powerup = newPowerup;
+    player.powerups.push(newPowerup);
 
     io.emit("get powerup", {
       y: nextY,
       x: nextX,
       powerup: newPowerup,
       index: player.index,
-      oldY,
-      oldX,
-      previousPowerup,
     });
-
-    if (
-      previousPowerup?.name === "remote-control" &&
-      newPowerup.name !== "remote-control"
-    ) {
-      io.to(player.id).emit("lose remote control");
-    }
-
-    if (newPowerup?.name !== "bomb-up") {
-      player.maxBombs = 1;
-    }
 
     switch (newPowerup.name) {
       case "bomb-up":
-        player.fireRange = 1;
-        player.maxBombs = 2;
+        player.maxBombs++;
         return;
       case "fire-up":
-        player.fireRange = 2;
+        player.fireRange++;
         return;
       case "skate":
-        // Speed boost handled with a flag in server game loop.
-        player.fireRange = 1;
+        player.skates++;
         return;
       case "full-fire":
-        player.fireRange = 13;
+        player.fullFire = true; // like player.fireRange = 13;
         return;
       case "remote-control":
-        player.fireRange = 1;
+        player.remoteControl = true;
+        return;
+      case "soft-block-pass":
+        player.softBlockPass = true;
+        return;
+      case "bomb-pass":
+        player.bombPass = true;
         return;
     }
   }
@@ -521,9 +498,8 @@ function walkable(y, x, player) {
   return (
     grid[y][x].type === "walkable" ||
     grid[y][x].type === "fire" ||
-    (player.powerup?.name === "soft-block-pass" &&
-      grid[y][x].type === "breakable") ||
-    (player.powerup?.name === "bomb-pass" && grid[y][x].type === "bomb")
+    (player.softBlockPass && grid[y][x].type === "breakable") ||
+    (player.bombPass && grid[y][x].type === "bomb")
   );
 }
 
@@ -540,22 +516,21 @@ function plantNormalBomb(y, x, index) {
   grid[y][x].type = "bomb";
   const fireRange = player.fireRange;
   let full = false;
-  if (player.powerup?.name === "full-fire") {
+  if (player.fullFire) {
     full = true;
+    player.fullFire = false;
+    player.powerups = player.powerups.filter(
+      (powerup) => powerup.name !== "full-fire"
+    );
   }
   io.emit("plant normal bomb", { y, x, full });
   const timeoutId = setTimeout(() => {
-    detonate(y, x, fireRange);
-    if (player.powerup?.name === "full-fire") {
-      player.powerup = null;
-      player.fireRange = 1;
-      io.emit("used full-fire", index);
-    }
+    detonate(y, x, full ? 13 : fireRange);
     if (player.plantedBombs > 0) {
       player.plantedBombs--;
     }
   }, 1000);
-  grid[y][x].bombData = { index, fireRange, full, timeoutId };
+  grid[y][x].bombData = { index, fireRange, timeoutId };
 }
 
 function plantRemoteControlBomb(y, x, index) {
@@ -565,14 +540,25 @@ function plantRemoteControlBomb(y, x, index) {
   }
   player.plantedBombs++;
   grid[y][x].type = "bomb";
-  remoteControlBombCoordinates[index] = { y, x };
-  io.emit("plant remote control bomb", { y, x, index });
+  player.remoteControlBombs.push({
+    y,
+    x,
+    fireRange: player.fireRange,
+    full: player.fullFire,
+  });
+  io.emit("plant remote control bomb", { y, x, index, full: player.fullFire });
   grid[y][x].bombData = {
     index,
-    fireRange: player.fireRange,
-    full: false,
+    fireRange: player.fullFire ? 13 : player.fireRange,
     timeoutId: null,
   };
+  if (player.fullFire) {
+    full = true;
+    player.fullFire = false;
+    player.powerups = player.powerups.filter(
+      (powerup) => powerup.name !== "full-fire"
+    );
+  }
 }
 
 // Calculates where the fire can go based on the bomb's position. We make use of the fact that the unbreakable walls are at even coordinates.
@@ -637,13 +623,15 @@ function addFire(y, x, style, origin) {
     setTimeout(() => {
       clearTimeout(grid[y][x].bombData.timeoutId);
       detonate(y, x, grid[y][x].bombData.fireRange);
-      if (grid[y][x].bombData.full) {
-        io.emit("used full-fire", grid[y][x].bombData.index);
-      }
       if (players[grid[y][x].bombData.index].plantedBombs > 0) {
         players[grid[y][x].bombData.index].plantedBombs--;
       }
       grid[y][x].bombData = null;
+      for (const player of players) {
+        player.remoteControlBombs = player.remoteControlBombs.filter(
+          (bomb) => !(bomb.y === y && bomb.x === x)
+        );
+      }
     }, 0);
   }
   grid[y][x].type = "fire";
@@ -658,11 +646,15 @@ function deathAnimationEnd(player, isNotDisconnected) {
   if (player.lives === 0) {
     return;
   }
-  player.plantedBombs = 0;
-  player.maxBombs = 1;
-  player.fireRange = 1;
-  const powerup = player.powerup;
-  player.powerup = null;
+  let powerup;
+  if (player.powerups.length === 0) {
+    powerup = powerupArray[Math.floor(Math.random() * 3)]; // Mustn't generate one of the unique powerups. If we want to allow them, we'd have to change the logic in `player.drop(powerupName)`.
+  } else {
+    const r = Math.floor(Math.random() * player.powerups.length);
+    powerup = player.powerups[r];
+    player.powerups.splice(r, 1);
+    player.drop(powerup.name);
+  }
   const y = player.position.y;
   const x = player.position.x;
   grid[y][x].powerup = powerup;
@@ -677,6 +669,7 @@ function deathAnimationEnd(player, isNotDisconnected) {
       y,
       x,
       life: player.lives,
+      hasSkate: player.skates > 0,
     });
     numPlayers--;
     if (numPlayers === 1) {
@@ -739,13 +732,11 @@ function kill(player, isNotDisconnected = true) {
   player.deathInProgress = true;
   player.direction = { y: 0, x: 0, key: "" };
   io.emit("dead", player.index);
-  if (remoteControlBombCoordinates[player.index]) {
-    detonate(
-      remoteControlBombCoordinates[player.index].y,
-      remoteControlBombCoordinates[player.index].x,
-      1
-    );
-    remoteControlBombCoordinates[player.index] = null;
+  for (const bomb of player.remoteControlBombs) {
+    detonate(bomb.y, bomb.x, bomb.full ? 13 : bomb.fireRange);
+    if (player.plantedBombs > 0) {
+      players.plantedBombs--;
+    }
     io.emit("detonate remote control bomb", player.index);
   }
   setTimeout(() => {

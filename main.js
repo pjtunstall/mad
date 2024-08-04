@@ -41,7 +41,7 @@ let direction = [
   { y: 0, x: 0, key: "" },
   { y: 0, x: 0, key: "" },
 ];
-let playerPowerups = ["none", "none", "none", "none"];
+let skates = [false, false, false, false];
 const skateTime = 32; // time in ms for player to move one cell with skate powerup
 const normalTime = 64; // time in ms for player to move one cell without skate powerup
 let gridData;
@@ -50,7 +50,7 @@ const gameOver = document.getElementById("game-over");
 const gridWrapper = document.getElementById("grid-wrapper");
 const infoWrapper = document.getElementById("info");
 const instructions = document.getElementById("instructions");
-const playerColor = document.getElementById("player-color");
+const playerColor = document.getElementById("player-role");
 const lives = document.getElementById("lives");
 const power = document.getElementById("power-up");
 let cellsArr; // 2d array to store the cells of the game grid
@@ -98,7 +98,7 @@ const explosionSound = new Audio(
 const fullExplosionSound = new Audio(
   "assets/sfx/052168_huge-explosion-85199.mp3"
 );
-let remoteControlFuses = [null, null, null, null];
+let remoteControlFuses = [[], [], [], []];
 
 const socket = io(":3000", {
   reconnection: false, // Changing this to allow reconnection would mean we'd have to alter how the server handles disconnections, including "play again" logic.
@@ -882,9 +882,8 @@ function generateLevel() {
   remoteControl = false;
   isRemoteControlBombPlanted = false;
 
-  playerColor.textContent = `Player: ${players[ownIndex].color}`;
-  lives.textContent = "Lives: 3";
-  power.innerHTML = "PowerUp: none";
+  playerColor.textContent = players[ownIndex].role;
+  lives.textContent = "Lives 3";
 
   buildGrid();
   gridWrapper.classList.remove("hide");
@@ -927,7 +926,7 @@ function gameLoop(timestamp) {
     offbeat = !offbeat;
     accumulatedFrameTime -= moveInterval;
     for (let i = 0; i < players.length; i++) {
-      if (playerPowerups[i] !== "skate" && offbeat) {
+      if (!skates[i] && offbeat) {
         continue;
       }
       animateWalk(i);
@@ -995,7 +994,7 @@ const onKeyDown = (e) => {
     case " ":
     case "Spacebar":
       if (isRemoteControlBombPlanted) {
-        socket.emit("detonate remote control bomb", ownIndex);
+        socket.emit("detonate remote control bombs", ownIndex);
       }
       break;
   }
@@ -1017,17 +1016,9 @@ socket.on("move", ({ newPosition, newDirection, index }) => {
   direction[index] = newDirection;
 });
 
-socket.on(
-  "get powerup",
-  ({ y, x, powerup, index, oldY, oldX, previousPowerup }) => {
-    if (previousPowerup) {
-      const cell = cellsArr[oldY][oldX];
-      cell.classList.add("power-up");
-      cell.classList.add(previousPowerup.name);
-    }
-    getPowerup(y, x, powerup, index);
-  }
-);
+socket.on("get powerup", ({ y, x, powerup, index }) => {
+  getPowerup(y, x, powerup, index);
+});
 
 function getPowerup(y, x, powerup, index) {
   const sound = powerupSound.cloneNode(true);
@@ -1035,21 +1026,16 @@ function getPowerup(y, x, powerup, index) {
   sound.onended = function () {
     sound.src = "";
   };
-  playerPowerups[index] = powerup.name;
   const cell = cellsArr[y][x];
   cell.classList.remove("power-up");
   cell.classList.remove(powerup.name);
   cell.classList.remove("mystery");
-  if (index === ownIndex) {
-    power.innerHTML = `PowerUp: ${powerup.name}`;
-    if (powerup.name === "remote-control") {
-      remoteControl = true;
-    }
+  if (index === ownIndex && powerup.name === "remote-control") {
+    remoteControl = true;
   }
   if (powerup.name === "skate") {
+    skates[index] = true;
     playerSprites[index].style.transition = `transform ${skateTime}ms`;
-  } else {
-    playerSprites[index].style.transition = `transform ${normalTime}ms`;
   }
 }
 
@@ -1062,23 +1048,10 @@ socket.on("life-up", (index, life, y, x) => {
   const cell = cellsArr[y][x];
   cell.classList.remove("power-up");
   cell.classList.remove("life-up");
-  if (index === ownIndex) {
-    lives.textContent = `Lives: ${life}`;
-    power.innerHTML = "PowerUp: &#x2665;&#xfe0f;"; // heart symbol
-    setTimeout(() => {
-      power.innerHTML = "PowerUp: none";
-    }, 2048);
-  }
 });
 
 socket.on("lose remote control", () => {
   remoteControl = false;
-});
-
-socket.on("used full-fire", (index) => {
-  if (index === ownIndex) {
-    power.innerHTML = "PowerUp: none";
-  }
 });
 
 socket.on("add fire", (arr) => {
@@ -1119,7 +1092,7 @@ function triggerBombSound(fuse, full, y, x) {
   explosion.play();
   explosion.onended = () => {
     explosion.src = "";
-    gridData[y][x].bomb = null; // This line can't be placed directly after the line where `triggerBombSound` is called or else the function call triggers an error "can't read properties of null, reading 'fuse'". It can't be placed in `triggerBombSound` after `fuse.src = ""`, the last use of `fuse`. It must be here, even though I'd have thought `explosion` doesn't rely on a reference to `bomb` or `fuse`; presumably `full` is copied, being just a bool; in any case, even `full` is not used in this asynchonous callback.
+    // gridData[y][x].bomb = null; // This line can't be placed directly after the line where `triggerBombSound` is called or else the function call triggers an error "can't read properties of null, reading 'fuse'". It can't be placed in `triggerBombSound` after `fuse.src = ""`, the last use of `fuse`. It must be here, even though I'd have thought `explosion` doesn't rely on a reference to `bomb` or `fuse`; presumably `full` is copied, being just a bool; in any case, even `full` is not used in this asynchonous callback.
   };
 }
 
@@ -1130,22 +1103,26 @@ socket.on("plant normal bomb", ({ y, x, full }) => {
   cellsArr[y][x].classList.add("bomb", "normal-bomb");
 });
 
-socket.on("plant remote control bomb", ({ y, x, index }) => {
+socket.on("plant remote control bomb", ({ y, x, index, full }) => {
   if (index === ownIndex) {
     isRemoteControlBombPlanted = true;
   }
   const fuse = fuseSound.cloneNode(true);
   fuse.play();
-  remoteControlFuses[index] = fuse;
-  gridData[y][x].bomb = { fuse, full: false };
+  remoteControlFuses[index].push({ fuse, y, x });
+  gridData[y][x].bomb = { fuse, full };
   cellsArr[y][x].classList.add("bomb", "remote-control-bomb");
 });
 
-socket.on("detonate remote control bomb", (index) => {
+socket.on("detonate remote control bombs", (index) => {
   if (index === ownIndex) {
     isRemoteControlBombPlanted = false;
   }
-  triggerBombSound(remoteControlFuses[index]);
+  // If we want allow multiple remote control bombs, we can make each `remoteControlFuses[index]` an array of fuses, and iterate over it here.
+  for (const fuse of remoteControlFuses[index]) {
+    triggerBombSound(fuse.fuse, false, fuse.y, fuse.x);
+  }
+  remoteControlFuses[index].length = 0;
 });
 
 socket.on("destroy block", ({ y, x }) => {
@@ -1185,21 +1162,18 @@ socket.on("dead", (index) => {
   playerSprites[index].classList.add("death");
 });
 
-socket.on("spawned", ({ index, isGameOver, powerup, y, x, life }) => {
-  if (powerup) {
-    if (powerup.name === "skate") {
-      playerSprites[index].style.transition = `transform ${normalTime}ms`;
-    }
-    playerPowerups[index] = "none";
-    const cell = cellsArr[y][x];
-    cell.classList.add("power-up");
-    cell.classList.add(powerup.name);
-    power.innerHTML = "PowerUp: none";
+socket.on("spawned", ({ index, isGameOver, powerup, y, x, life, hasSkate }) => {
+  const cell = cellsArr[y][x];
+  cell.classList.add("power-up");
+  cell.classList.add(powerup.name);
+  if (!hasSkate) {
+    skates[index] = false;
+    playerSprites[index].style.transition = `transform ${normalTime}ms`;
   }
   if (isGameOver) {
     playerSprites[index].style.opacity = 0;
     if (index === ownIndex) {
-      lives.textContent = `Lives: ${life}`;
+      lives.textContent = `Lives ${life}`;
     }
     return;
   }
@@ -1213,7 +1187,7 @@ socket.on("spawned", ({ index, isGameOver, powerup, y, x, life }) => {
     playerSprites[index]
   );
   if (index == ownIndex) {
-    lives.textContent = `Lives: ${life}`;
+    lives.textContent = `Lives ${life}`;
     document.addEventListener("keydown", onKeyDown);
     document.addEventListener("keyup", onKeyUp);
   }
@@ -1224,10 +1198,13 @@ socket.on("game over", ({ survivorIndex, type }) => {
   document.removeEventListener("keydown", onKeyDown);
   document.removeEventListener("keyup", onKeyUp);
   cancelAnimationFrame(gameLoopId);
-  for (const fuse of remoteControlFuses) {
-    if (fuse) {
-      fuse.src = "";
+  for (const remoteControlFusesArray of remoteControlFuses) {
+    for (const fuse of remoteControlFusesArray) {
+      if (fuse) {
+        fuse.src = "";
+      }
     }
+    remoteControlFusesArray.length = 0;
   }
   gridWrapper.classList.add("hide");
   gameOver.innerHTML = "";

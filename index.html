@@ -37,7 +37,12 @@
               </ul>
             </div>
             <form id="chat-form" action="">
-              <input id="chat-input" type="text" autocomplete="off" />
+              <input
+                id="chat-input"
+                type="text"
+                maxlength="360"
+                autocomplete="off"
+              />
             </form>
           </div>
         </div>
@@ -48,13 +53,10 @@
       <div id="grid-wrapper">
         <div id="info">
           <div class="info-box" id="color-box">
-            <div id="player-color">Player:</div>
-          </div>
-          <div class="info-box" id="power-box">
-            <div id="power-up">Powerup:</div>
+            <div id="player-role"></div>
           </div>
           <div class="info-box" id="life-box">
-            <div id="lives">Lives: 0</div>
+            <div id="lives"></div>
           </div>
         </div>
         <div id="game-grid"></div>
