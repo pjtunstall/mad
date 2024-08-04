@@ -1058,6 +1058,7 @@ socket.on("add fire", (arr) => {
   if (isGameOver) {
     return;
   }
+  // arr[0] is the cell where the bomb was planted.
   cellsArr[arr[0].y][arr[0].x].classList.remove(
     "bomb",
     "normal-bomb",
@@ -1092,7 +1093,8 @@ function triggerBombSound(fuse, full, y, x) {
   explosion.play();
   explosion.onended = () => {
     explosion.src = "";
-    // gridData[y][x].bomb = null; // This line can't be placed directly after the line where `triggerBombSound` is called or else the function call triggers an error "can't read properties of null, reading 'fuse'". It can't be placed in `triggerBombSound` after `fuse.src = ""`, the last use of `fuse`. It must be here, even though I'd have thought `explosion` doesn't rely on a reference to `bomb` or `fuse`; presumably `full` is copied, being just a bool; in any case, even `full` is not used in this asynchonous callback.
+    // // This line can't be placed directly after the line where `triggerBombSound` is called or else the function call triggers an error "can't read properties of null, reading 'fuse'". It can't be placed in `triggerBombSound` after `fuse.src = ""`, the last use of `fuse`. At first, I managed to put it here, even though I'd have thought `explosion` doesn't rely on a reference to `bomb` or `fuse`; presumably `full` is copied, being just a bool; in any case, even `full` is not used in this asynchonous callback. Later, it became a problem even here. I realized it wasn't necessary to null it since it's obly accessed if a bomb has been planted in the cell, and, if so, it will always have the latest bomb's data. But I'm leaving this comment here because I'd like to understand how the error happened.
+    // gridData[y][x].bomb = null;
   };
 }
 

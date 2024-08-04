@@ -46,7 +46,7 @@ const server = http.createServer((req, res) => {
   const requestUrl = url.parse(req.url);
   let filePath = path.join(__dirname, requestUrl.pathname);
 
-  // // The above seems to be invulnerable to directory traversal, even without explicit sanitization, but the following, commented-out lines, that make provision for query parameters, would not be:
+  // // The above seems to be invulnerable to directory traversal, even without explicit sanitization. I needed to allow query parameters, as in the following lines, before I succeeded with a directory traversal attack:
   // const query = url.parse(req.url, true).query;
   // let filePath = path.join(__dirname, query.path || "");
 
@@ -96,7 +96,7 @@ function getLocalIP() {
       }
     }
   }
-  return null; // No suitable IP address found
+  return null; // No suitable IP address found.
 }
 
 const SERVER_IP_ADDRESS = getLocalIP() || "localhost";
@@ -341,7 +341,7 @@ const powerupArray = [
     count: 2,
   },
   {
-    name: "full-fire", // single use
+    name: "full-fire", // I decided to make it single-use because it's so powerful.
     initialCount: 1,
     count: 1,
   },
@@ -659,7 +659,7 @@ function deathAnimationEnd(player, isNotDisconnected) {
   const x = player.position.x;
   grid[y][x].powerup = powerup;
   if (player.lives === 1) {
-    // This player is out of the game
+    // This player is out of the game.
     player.lives = 0;
     player.position = { y: 0, x: 0 };
     io.emit("spawned", {
@@ -673,7 +673,7 @@ function deathAnimationEnd(player, isNotDisconnected) {
     });
     numPlayers--;
     if (numPlayers === 1) {
-      // Last man standing: the end of the game
+      // Last man standing: the end of the game.
       isAfterGame = true;
       clearInterval(gameLoopId);
       let survivorIndex = null;
@@ -682,7 +682,7 @@ function deathAnimationEnd(player, isNotDisconnected) {
           otherPlayer.lives > 1 ||
           (otherPlayer.lives > 0 && !otherPlayer.deathInProgress)
         ) {
-          // Only allow a player to win if they're not in the process of losing their last life
+          // Only allow a player to win if they're not in the process of losing their last life.
           survivorIndex = otherPlayer.index;
           break;
         }
@@ -793,7 +793,7 @@ function buildGrid() {
     }
   }
 
-  // Make sure there are definitely always at least 3 distinct powerups on the map
+  // Make sure there are definitely always at least 3 distinct powerups on the map.
   let y = 3 + 2 * Math.floor(Math.random() * 4);
   let x = 3 + 2 * Math.floor(Math.random() * 5);
   for (let i = 0; i < 3; i++) {
