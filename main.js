@@ -986,9 +986,9 @@ const onKeyDown = (e) => {
     case "x":
       if (!isKilled[ownIndex]) {
         socket.emit("bomb", {
-          index: ownIndex,
           y: position[ownIndex].y,
           x: position[ownIndex].x,
+          index: ownIndex,
         });
       }
       break;
@@ -1092,9 +1092,10 @@ socket.on("add fire", (arr) => {
   );
   triggerBombSound(
     gridData[arr[0].y][arr[0].x].bomb.fuse,
-    gridData[arr[0].y][arr[0].x].bomb.full
+    gridData[arr[0].y][arr[0].x].bomb.full,
+    arr[0].y,
+    arr[0].x
   );
-  gridData[arr[0].y][arr[0].x].bomb = null;
   arr.forEach((cellData) => {
     cellsArr[cellData.y][cellData.x].classList.add(cellData.style);
     if (gridData[cellData.y][cellData.x].type === "breakable") {
@@ -1107,7 +1108,7 @@ socket.on("remove fire", ({ y, x, style }) => {
   cellsArr[y][x].classList.remove(style);
 });
 
-function triggerBombSound(fuse, full) {
+function triggerBombSound(fuse, full, y, x) {
   fuse.src = "";
   const explosion = full
     ? fullExplosionSound.cloneNode(true)
@@ -1118,6 +1119,7 @@ function triggerBombSound(fuse, full) {
   explosion.play();
   explosion.onended = () => {
     explosion.src = "";
+    gridData[y][x].bomb = null; // This line can't be placed directly after the line where `triggerBombSound` is called or else the function call triggers an error "can't read properties of null, reading 'fuse'". It can't be placed in `triggerBombSound` after `fuse.src = ""`, the last use of `fuse`. It must be here, even though I'd have thought `explosion` doesn't rely on a reference to `bomb` or `fuse`; presumably `full` is copied, being just a bool; in any case, even `full` is not used in this asynchonous callback.
   };
 }
 

@@ -227,7 +227,7 @@ io.on("connection", (socket) => {
     players[index].direction = { y: 0, x: 0, key: "" };
   });
 
-  socket.on("bomb", ({ index, y, x }) => {
+  socket.on("bomb", ({ y, x, index }) => {
     if (players[index].powerup?.name === "remote-control") {
       plantRemoteControlBomb(y, x, index);
       return;
@@ -544,7 +544,7 @@ function plantNormalBomb(y, x, index) {
     full = true;
   }
   io.emit("plant normal bomb", { y, x, full });
-  setTimeout(() => {
+  const timeoutId = setTimeout(() => {
     detonate(y, x, fireRange);
     if (player.powerup?.name === "full-fire") {
       player.powerup = null;
@@ -555,6 +555,7 @@ function plantNormalBomb(y, x, index) {
       player.plantedBombs--;
     }
   }, 1000);
+  grid[y][x].bombData = { index, fireRange, full, timeoutId };
 }
 
 function plantRemoteControlBomb(y, x, index) {
@@ -566,6 +567,12 @@ function plantRemoteControlBomb(y, x, index) {
   grid[y][x].type = "bomb";
   remoteControlBombCoordinates[index] = { y, x };
   io.emit("plant remote control bomb", { y, x, index });
+  grid[y][x].bombData = {
+    index,
+    fireRange: player.fireRange,
+    full: false,
+    timeoutId: null,
+  };
 }
 
 // Calculates where the fire can go based on the bomb's position. We make use of the fact that the unbreakable walls are at even coordinates.
@@ -573,7 +580,7 @@ function detonate(y, x, fireRange) {
   const arr = [];
   let style = "explosion-middle";
   arr.push({ y, x, style });
-  addFire(y, x, style);
+  addFire(y, x, style, true);
   if ((x & 1) === 1) {
     const top = Math.max(y - fireRange, 1);
     const bottom = Math.min(y + fireRange, numberOfRowsInGrid - 2);
@@ -620,12 +627,24 @@ function detonate(y, x, fireRange) {
   io.emit("add fire", arr);
 }
 
-function addFire(y, x, style) {
+function addFire(y, x, style, origin) {
   if (grid[y][x].type === "breakable") {
     io.emit("destroy block", { y, x });
   } else if (grid[y][x].powerup) {
     grid[y][x].powerup = null;
     io.emit("destroy powerup", { y, x, powerupName: grid[y][x].powerup });
+  } else if (grid[y][x].type === "bomb" && !origin) {
+    setTimeout(() => {
+      clearTimeout(grid[y][x].bombData.timeoutId);
+      detonate(y, x, grid[y][x].bombData.fireRange);
+      if (grid[y][x].bombData.full) {
+        io.emit("used full-fire", grid[y][x].bombData.index);
+      }
+      if (players[grid[y][x].bombData.index].plantedBombs > 0) {
+        players[grid[y][x].bombData.index].plantedBombs--;
+      }
+      grid[y][x].bombData = null;
+    }, 0);
   }
   grid[y][x].type = "fire";
   setTimeout(() => {

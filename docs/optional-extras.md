@@ -2,17 +2,6 @@
 
 ## Priority
 
-- CHAIN EXPLOSIONS
-  - Let fire trigger any bombs it encounters.
-  - This is a first step towards letting players hold powerups simultaneously.
-  - Consider the serverside functions: `plantNormalBomb`, `plantRemoteControlBomb`, `detonate`, and `addFire`; and clientside handlers for "plant normal bomb" and "plant remote control bomb" messages from the web socket (plus the `remoteControlFuses` array for the fuse sound-effects for remote-control bombs), and "keydown" handler. Think especially carefully about remote-control bombs and be sure to replenish the correct players' stock of bombs.
-  - To detonate a normal bomb ahead of time, the server will need to know its serverside timeout id, location (cell coordinates), the player who planted it (or, equivalently, their index), its fire range, and an index to an array of fuses, to tell the client which sound effect to cancel. Actually, we could have the whole process controlled by the server, so that there'll be no longer be any clientside timeout id.
-  - Consider whether normal and remote-control bombs should be done in a more similar way, and if so how.
-  - Allow for the possibililty that a player may have planted more than one remote-control bomb, and also have planted some normal bombs before acquiring the remote control.
-  - For a player to deliberately trigger their remote control bombs, the server will need keep a record of all such bombs planted by a player, up to a total of 10. It will need to know their cell coordinates, fire range, player who planted them, and have some way to tell each client to cancel their fuse sounds.
-  - For the server to trigger a bomb ahead of time due to fire reaching it, it will need to know the location (maybe store a bomb object, of some kind, in the 2d `grid` array), the player who planted it (so that it can replenish their stock of bombs), the fire range of that bomb, any serverside timeout id (in the case of normal bombs), and any clientside data, such as timeout id or a way to associate it with its fuse sound.
-  - At present, the clients each store references to fuse sounds of remote-control bombs in an array where the index corresponds to the player, with the assumption that there will be only one remote-control bomb per player. This could be made into an array of arrays, or a map. (Array more performant?)
-  - Decide whether to have the server calculate a composite explosion all in one go and emit that to clients, or calculate each bomb's explosion seperately, and emit them one after another.
 - MULTI-POWERS
   - Allow multiple powerups to be held at once: logic, UI (e.g. put info in a margin, move grid to one side, list powerups by their symbol, distinguish between scalar--lives, bombs, fire--and boolean powers, highlight boolean powerups in your possession). I read that, in the original, one's stock of bombs could increase up to a limit of 10, and the fire range could increase to the length and breadth of the grid (equivalent to `full-fire`). I picture the margin looking something like this, maybe with the powerup icons next to each or in place of the names, the booleans somehow highlighted when held:
 
