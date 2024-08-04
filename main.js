@@ -1163,6 +1163,9 @@ socket.on("dead", (index) => {
 });
 
 socket.on("spawned", ({ index, isGameOver, powerup, y, x, life, hasSkate }) => {
+  if (phase === "start") {
+    return; // To avoid cosmetic error message for player who disconnects and is sent to wait on the "game in progress" screen.
+  }
   const cell = cellsArr[y][x];
   cell.classList.add("power-up");
   cell.classList.add(powerup.name);
@@ -1194,6 +1197,9 @@ socket.on("spawned", ({ index, isGameOver, powerup, y, x, life, hasSkate }) => {
 });
 
 socket.on("game over", ({ survivorIndex, type }) => {
+  if (phase === "start") {
+    return; // To avoid cosmetic error message for player who disconnects and is sent to wait on the "game in progress" screen.
+  }
   isGameOver = true;
   document.removeEventListener("keydown", onKeyDown);
   document.removeEventListener("keyup", onKeyUp);
