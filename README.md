@@ -1,40 +1,36 @@
 # The Mad Bomber's Tea Party
 
-[1. Setup](#1-setup)
+[1. Background](#1-background)
 
-[2. Background](#2-background)
+[2. Setup](#2-setup)
 
 [3. Progress](#3-progress)
 
 [4. Framework](#4-framework)
 
-## 1. Setup
+## 1. Background
 
-To run the server, install Node dependencies: `npm install`. If it reports any vulnerabilities, `npm audit fix`, as directed. Then `node server.js` to run the server on port 3000.
-
-The server will log its IP address in the terminal. To connect over a mobile hotspot, players can enter that address into their browser. As yet it only supports a single instance of the game.
-
-For the audit, to demonstrate use of our `mini-framework`, switch to branch `<frame>`. See [below](#4-framework).
-
-## 2. Background
-
-This is our take on the final project of the JavaScript section of the [01Founders course](https://01edu.notion.site/Global-01-Curriculum-50b7d94ac56a429fb3aee19a32248732), a branch of the [01Edu](https://01-edu.org/pedagogy) coding bootcamp system. The [brief](https://github.com/01-edu/public/tree/master/subjects/bomberman-dom) asks us to make a multiplayer browser game, based on the classic 1983 [Bomberman](https://en.wikipedia.org/wiki/Bomberman), using web sockets, but no WebGL or any framework apart from the [toy one](https://github.com/pjtunstall/mini-framework) we made in a previous project, [mini-framework](https://github.com/01-edu/public/tree/master/subjects/mini-framework).
+This is our take on the final project of the JavaScript section of the [01Founders course](https://01edu.notion.site/Global-01-Curriculum-50b7d94ac56a429fb3aee19a32248732), a branch of the [01Edu](https://01-edu.org/pedagogy) coding bootcamp system. The [brief](https://github.com/01-edu/public/tree/master/subjects/bomberman-dom) asks us to make a multiplayer browser game, based on the classic 1983 [Bomberman](https://en.wikipedia.org/wiki/Bomberman), using web sockets, but no WebGL or any framework apart from the [miniature one](https://github.com/pjtunstall/mini-framework) we made in a previous project, [mini-framework](https://github.com/01-edu/public/tree/master/subjects/mini-framework).
 
 Our multiplayer game was adapted from a single-player original by one of us, Rashid, and his teammates on that project. (See in-game credits.)
 
 [Other features](docs/optional-extras.md) may be added to the game at some point.
 
+## 2. Setup
+
+Clone the repo and cd into the root directory of the project. To run the server, install Node dependencies with `npm install`. If it reports any vulnerabilities, `npm audit fix`, as directed. Then `node server.js` to run the server on port 3000.
+
+The server will log its IP address in the terminal. To connect over a mobile hotspot, players can enter that address into their browser. As yet it only supports a single instance of the game.
+
+For the audit, to demonstrate use of our `mini-framework`, switch to branch `<frame>`. See [below](#4-framework).
+
+Note: the instructions ask us to have a lobby with a 20s countdown, followed by a 10s countdown for whoever has joined during the first countdown. Instead, we chose to implement a 10s countdown only. The two countdowns didn't make dramatic sense, especially in the context of our more elaborate intro. Also, 20s is not long to chat! (The instructions don't make it clear whether they expect the chat to continue during the game. We assumed not.)
+
 ## 3. Progress
 
 I think we can call it done.
 
-The multiplayer Bomberman game is working in Chrome, Brave, Firefox, and Safari. Not yet tested in Edge. As in the single-player version from make-your-game, all bonus powerups are implemented except bomb-push/throw.
-
-Notes:
-
-0. I replaced the nice, smooth, pixel-by-pixel movement of the single-player version with translate and transition from cell to cell. That was my rough-and-ready solution to keeping the multiple players in sync. With pixel-by-pixel movement, they easily got out of sync as I moved the logic incrementally to the server, I think due to accumulation of small rounding differences in different browsers. The original single-player version from make-your-game looked more like [this version](https://www.retrogames.cc/nes-games/bomberman-usa.html). Pixelwise movement could perhaps be restored by having the server calculate position on an extremely fine-grained grid, with as much resolution as the most detailed screen it's likely to be played on, and let clients round this each to their own current resolution, updated with corrections from the server each tick.
-
-1. The instructions and audit expect us to have a simple lobby with a 20s countdown, followed by a 10s countdown for whoever has joined during the first countdown. Instead, I chose to implement a 10s countdown only. The two countdowns didn't make dramatic sense in the context of my over-the-top intro. Also, 20s is not long to chat! (The instructions don't make it clear whether they expect the chat to continue during the game. I've assumed not.)
+The multiplayer Bomberman game is working in Chrome, Brave, Firefox, and Safari. As in the single-player version from make-your-game, all bonus powerups are implemented except bomb-push/throw.
 
 ## 4. Framework
 

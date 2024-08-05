@@ -1,6 +1,9 @@
 # Optional Extras
 
-- FIX?
+- TEST
+  - Play test.
+  - Examine more thoroughly in different browsers, including Edge and Opera, which I haven't looked at yet.
+- FIX
   - Possibly fixed now that I dealt with another disconnection-related error, but, just in case, here's a note of what happened: I once saw a bug where server and client logged that one of two players had disconnected, but they hadn't. Both players were still in the chat. Only one had the ready button visible. On pressing it, the countdown was triggered for both. Haven't manage to replicate it.
   - A bug I saw once, but haven't managed to replicate after many attempts, possibly already fixed now that disconnections during countdown are handled better. But I'll leave the details here just in case. Server crashed when a player in Safari pressed CTR+SHIFT+R to view simplified page, without styles, during countdown. Apparently this led to them being undefined even though the normal disconnection logic had not gone ahead. It triggered that classic lightning-conductor-of-errors, `isDead(player)`: `return grid[player?.position?.y][player?.position?.x].type === "fire";` (accusing arrow points to 2nd instance of player in the line), "TypeError: Cannot read properties of undefined (reading 'undefined')". Since then I've added some protections and logging in case of future issues.
 - NETWORK
@@ -36,7 +39,7 @@
   - Beyond a certain width, chat pane overhangs left edge of input box.
   - Make intro layout more responsive to handle smaller window size, especially the ready button that currently overlaps the title when the screen gets too narrow.
   - Fix scale in CSS to rely only on units relative to screen size and make sure it works on various screen sizes.
-  - Bring back pixel-by-pixel movement (as opposed to cell-by-cell), perhaps by having the server calculate position on an extremely fine-grained grid, with as much resolution as the most detailed screen it's likely to be played on, and let clients round this each to their own current resolution, updated with corrections from the server each tick.
+  - I replaced the nice, smooth, pixel-by-pixel movement of the single-player version with translate and transition from cell to cell. That was my rough-and-ready solution to keeping the multiple players in sync. With pixel-by-pixel movement, they easily got out of sync as I moved the logic incrementally to the server, I think due to accumulation of small rounding differences in different browsers. The original single-player version from make-your-game looked more like [this version](https://www.retrogames.cc/nes-games/bomberman-usa.html). Pixelwise movement could perhaps be restored by having the server calculate position on an extremely fine-grained grid, with as much resolution as the most detailed screen it's likely to be played on, and let clients round this each to their own current resolution, updated with corrections from the server each tick.
   - Test scrollbars etc. in Edge too. Improve current hacky solution. Understand better.
   - Find a font with more punctiation. None that I've tried looked good enough to sacrifice Wolves and Ravens.
 - ROLES
