@@ -10,7 +10,7 @@
 
 ## 1. Background
 
-This is our take on the final project of the JavaScript section of the [01Founders course](https://01edu.notion.site/Global-01-Curriculum-50b7d94ac56a429fb3aee19a32248732), a branch of the [01Edu](https://01-edu.org/pedagogy) coding bootcamp system. The [brief](https://github.com/01-edu/public/tree/master/subjects/bomberman-dom) asks us to make a multiplayer browser game, based on the classic 1983 [Bomberman](https://en.wikipedia.org/wiki/Bomberman), using web sockets, but no WebGL or any framework apart from the [miniature one](https://github.com/pjtunstall/mini-framework) we made in a previous project, [mini-framework](https://github.com/01-edu/public/tree/master/subjects/mini-framework).
+This is our take on the final project of the JavaScript section of the [01Founders course](https://01edu.notion.site/Global-01-Curriculum-50b7d94ac56a429fb3aee19a32248732), a branch of the [01Edu](https://01-edu.org/pedagogy) coding bootcamp system. The [brief](https://github.com/01-edu/public/tree/master/subjects/bomberman-dom) asks us to make a multiplayer browser game, based on the classic 1983 [Bomberman](https://en.wikipedia.org/wiki/Bomberman), using web sockets, but no WebGL or any framework apart from the [miniature one](https://github.com/pjtunstall/mini-framework) we made in a previous project.
 
 Our multiplayer game was adapted from a single-player original by one of us, Rashid, and his teammates on that project. (See in-game credits.)
 
@@ -18,7 +18,9 @@ Our multiplayer game was adapted from a single-player original by one of us, Ras
 
 ## 2. Setup
 
-Clone the repo and cd into the root directory of the project. To run the server, install Node dependencies with `npm install`. If it reports any vulnerabilities, `npm audit fix`, as directed. Then `node server.js` to run the server on port 3000.
+Clone the repo and cd into the root directory of the project.
+
+To run the server, install Node dependencies with `npm install`. If it reports any vulnerabilities, `npm audit fix`, as directed. Then `node server.js` to run the server on port 3000.
 
 The server will log its IP address in the terminal. To connect over a mobile hotspot, players can enter that address into their browser. As yet it only supports a single instance of the game.
 
@@ -27,8 +29,6 @@ For the audit, to demonstrate use of our `mini-framework`, switch to branch `<fr
 Note: the instructions ask us to have a lobby with a 20s countdown, followed by a 10s countdown for whoever has joined during the first countdown. Instead, we chose to implement a 10s countdown only. The two countdowns didn't make dramatic sense, especially in the context of our more elaborate intro. Also, 20s is not long to chat! (The instructions don't make it clear whether they expect the chat to continue during the game. We assumed not.)
 
 ## 3. Progress
-
-I think we can call it done.
 
 The multiplayer Bomberman game is working in Chrome, Brave, Firefox, and Safari. As in the single-player version from make-your-game, all bonus powerups are implemented except bomb-push/throw.
 
