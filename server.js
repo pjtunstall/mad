@@ -25,6 +25,7 @@ let playersInGame;
 let disconnectees;
 let numberOfStartSignalsReceived;
 let playAgainTimeoutId;
+// let stopFlags;
 
 // INTRO
 
@@ -207,24 +208,31 @@ io.on("connection", (socket) => {
   });
 
   socket.on("move", ({ index, key }) => {
+    players[index].direction.key = key;
     switch (key) {
       case "ArrowUp":
-        players[index].direction = { y: -1, x: 0, key };
+        players[index].direction.y = -1;
+        players[index].direction.x = 0;
         break;
       case "ArrowDown":
-        players[index].direction = { y: 1, x: 0, key };
+        players[index].direction.y = 1;
+        players[index].direction.x = 0;
         break;
       case "ArrowLeft":
-        players[index].direction = { y: 0, x: -1, key };
+        players[index].direction.y = 0;
+        players[index].direction.x = -1;
         break;
       case "ArrowRight":
-        players[index].direction = { y: 0, x: 1, key };
-        break;
+        players[index].direction.y = 0;
+        players[index].direction.x = 1;
     }
   });
 
   socket.on("stop", (index) => {
-    players[index].direction = { y: 0, x: 0, key: "" };
+    // stopFlags[index] = true;
+    player.direction.y = 0;
+    player.direction.x = 0;
+    player.direction.key = "";
   });
 
   socket.on("bomb", ({ y, x, index }) => {
@@ -375,6 +383,7 @@ function initializeGame() {
   }
   grid = buildGrid();
   players = players.filter((p) => p && p.color);
+  // stopFlags = new Array(players.length).fill(false);
   numPlayers = players.length;
   playersInGame = numPlayers;
   for (let i = 0; i < players.length; i++) {
@@ -382,7 +391,6 @@ function initializeGame() {
     io.to(players[i].id).emit("own index", i);
     players[i].lives = 3;
     players[i].phase = "game";
-    players[i].powerup = null;
     spawn(players[i]);
     io.to(players[i].id).emit("start game", {
       updatedPlayers: players,
@@ -419,6 +427,12 @@ function gameLoop() {
         newDirection: player.direction,
         index: player.index,
       });
+      // if (stopFlags[player.index]) {
+      //   player.direction.y = 0;
+      //   player.direction.x = 0;
+      //   player.direction.key = "";
+      //   stopFlags[player.index] = false;
+      // }
     }
   }
 }
@@ -429,12 +443,8 @@ function move(player) {
   if (!walkable(nextY, nextX, player)) {
     return;
   }
-
-  oldY = player.position.y;
-  oldX = player.position.x;
   player.position.y = nextY;
   player.position.x = nextX;
-
   if (player.softBlockPass && grid[nextY][nextX].type === "breakable") {
     return;
   }

@@ -415,7 +415,7 @@ function updateImage(imageElement, toSrc, delay = 1024) {
     // Needed to remove and re-append the image element make it work in Safari. It was fine in Chrome, Brave, and Firefox. Safari was downloading the right image and showed the correct src for the image element. One theory is "aggressive caching". Failed solutions that might be useful on another occasion: `imageElement.src = toSrc + "?t=" + Date.now()` to make the browser think it's a new image, or `imageElement.src = "";` followed by `imageElement.src = toSrc;`, intended to force a reload. Removing the image and replacing it with a new one lost the event listeners. Rather than going to the trouble of re-adding them, I tried this approach, which worked.
     const mainPane = document.getElementById("main-pane");
     imageElement.classList.remove("show");
-    mainPane.removeChild(imageElement);
+    mainPane.removeChild(imageElement); // Occasionally we see `Uncaught DOMException: Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node.` in Chrome, at least, but everything looks fine.
     imageElement.src = toSrc;
     imageElement.classList.add("show");
     mainPane.appendChild(imageElement);
@@ -974,13 +974,65 @@ function setSprite(spriteX, spriteY, playerWrapper) {
   }px`;
 }
 
-const onKeyDown = (e) => {
+// function walkable(y, x) {
+//   for (let i = 0; i < players.length; i++) {
+//     // Check if another player is in the target cell
+//     if (position[i].y === y && position[i].x === x) {
+//       return false;
+//     }
+//   }
+//   return gridData[y][x].type === "walkable" || gridData[y][x].type === "fire";
+// }
+
+function anticipateMove(key) {
+  direction[ownIndex].key = key;
+  switch (key) {
+    case "ArrowUp":
+      direction[ownIndex].y = -1;
+      direction[ownIndex].x = 0;
+      break;
+    case "ArrowDown":
+      direction[ownIndex].y = 1;
+      direction[ownIndex].x = 0;
+      break;
+    case "ArrowLeft":
+      direction[ownIndex].y = 0;
+      direction[ownIndex].x = -1;
+      break;
+    case "ArrowRight":
+      direction[ownIndex].y = 0;
+      direction[ownIndex].x = 1;
+  }
+  animateWalk(ownIndex);
+  // const nextY = position[ownIndex].y + direction[ownIndex].y;
+  // const nextX = position[ownIndex].x + direction[ownIndex].x;
+  // if (walkable(nextY, nextX)) {
+  //   position[ownIndex].y = nextY;
+  //   position[ownIndex].x = nextX;
+  // }
+}
+
+// function throttle(func, limit) {
+//   let inThrottle;
+//   return function () {
+//     const args = arguments;
+//     const context = this;
+//     if (!inThrottle) {
+//       func.apply(context, args);
+//       inThrottle = true;
+//       setTimeout(() => (inThrottle = false), limit);
+//     }
+//   };
+// }
+
+let onKeyDown = (e) => {
   switch (e.key) {
     case "ArrowUp":
     case "ArrowDown":
-    case "ArrowRight":
     case "ArrowLeft":
+    case "ArrowRight":
       socket.emit("move", { index: ownIndex, key: e.key });
+      anticipateMove(e.key);
       break;
     case "x":
       if (!isKilled[ownIndex]) {
@@ -1000,7 +1052,12 @@ const onKeyDown = (e) => {
   }
 };
 
+// onKeyDown = throttle(onKeyDown, 128);
+
 const onKeyUp = (e) => {
+  direction[ownIndex].y = 0;
+  direction[ownIndex].x = 0;
+  direction[ownIndex].key = "";
   switch (e.key) {
     case "ArrowUp":
     case "ArrowDown":
@@ -1012,8 +1069,29 @@ const onKeyUp = (e) => {
 };
 
 socket.on("move", ({ newPosition, newDirection, index }) => {
-  position[index] = newPosition;
-  direction[index] = newDirection;
+  // // Prototype attempt at rollback.
+  // if (index === ownIndex) {
+  //   if (
+  //     position[index].y !== newPosition.y ||
+  //     position[index].x !== newPosition.x
+  //   ) {
+  //     playerSprites[index].style.transition = "none";
+  //     playerSprites[index].style.transform = `translate(${
+  //       position[index].x * cellSize
+  //     }px, ${position[index].y * cellSize}px)`;
+  //     playerSprites[index].style.transition = `transform ${
+  //       skates[index] ? skateTime : normalTime
+  //     }ms`;
+  //   }
+  //   position[index].y = newPosition.y;
+  //   position[index].x = newPosition.x;
+  //   return;
+  // }
+  position[index].y = newPosition.y;
+  position[index].x = newPosition.x;
+  direction[index].y = newDirection.y;
+  direction[index].x = newDirection.x;
+  direction[index].key = newDirection.key;
 });
 
 socket.on("get powerup", ({ y, x, powerup, index }) => {
@@ -1133,6 +1211,7 @@ socket.on("destroy block", ({ y, x }) => {
   cell.addEventListener("animationend", () => {
     cell.classList.remove("breakable-block-destruction");
   });
+  gridData[y][x].type = "walkable";
 });
 
 socket.on("destroy powerup", ({ y, x, powerupName }) => {
