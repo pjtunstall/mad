@@ -25,7 +25,6 @@ let playersInGame;
 let disconnectees;
 let numberOfStartSignalsReceived;
 let playAgainTimeoutId;
-// let stopFlags;
 
 // INTRO
 
@@ -229,7 +228,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("stop", (index) => {
-    // stopFlags[index] = true;
     player.direction.y = 0;
     player.direction.x = 0;
     player.direction.key = "";
@@ -383,7 +381,6 @@ function initializeGame() {
   }
   grid = buildGrid();
   players = players.filter((p) => p && p.color);
-  // stopFlags = new Array(players.length).fill(false);
   numPlayers = players.length;
   playersInGame = numPlayers;
   for (let i = 0; i < players.length; i++) {
@@ -427,12 +424,6 @@ function gameLoop() {
         newDirection: player.direction,
         index: player.index,
       });
-      // if (stopFlags[player.index]) {
-      //   player.direction.y = 0;
-      //   player.direction.x = 0;
-      //   player.direction.key = "";
-      //   stopFlags[player.index] = false;
-      // }
     }
   }
 }
