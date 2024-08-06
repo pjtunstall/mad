@@ -974,16 +974,6 @@ function setSprite(spriteX, spriteY, playerWrapper) {
   }px`;
 }
 
-// function walkable(y, x) {
-//   for (let i = 0; i < players.length; i++) {
-//     // Check if another player is in the target cell
-//     if (position[i].y === y && position[i].x === x) {
-//       return false;
-//     }
-//   }
-//   return gridData[y][x].type === "walkable" || gridData[y][x].type === "fire";
-// }
-
 function anticipateMove(key) {
   direction[ownIndex].key = key;
   switch (key) {
@@ -1004,26 +994,7 @@ function anticipateMove(key) {
       direction[ownIndex].x = 1;
   }
   animateWalk(ownIndex);
-  // const nextY = position[ownIndex].y + direction[ownIndex].y;
-  // const nextX = position[ownIndex].x + direction[ownIndex].x;
-  // if (walkable(nextY, nextX)) {
-  //   position[ownIndex].y = nextY;
-  //   position[ownIndex].x = nextX;
-  // }
 }
-
-// function throttle(func, limit) {
-//   let inThrottle;
-//   return function () {
-//     const args = arguments;
-//     const context = this;
-//     if (!inThrottle) {
-//       func.apply(context, args);
-//       inThrottle = true;
-//       setTimeout(() => (inThrottle = false), limit);
-//     }
-//   };
-// }
 
 let onKeyDown = (e) => {
   switch (e.key) {
@@ -1052,8 +1023,6 @@ let onKeyDown = (e) => {
   }
 };
 
-// onKeyDown = throttle(onKeyDown, 128);
-
 const onKeyUp = (e) => {
   direction[ownIndex].y = 0;
   direction[ownIndex].x = 0;
@@ -1069,24 +1038,6 @@ const onKeyUp = (e) => {
 };
 
 socket.on("move", ({ newPosition, newDirection, index }) => {
-  // // Prototype attempt at rollback.
-  // if (index === ownIndex) {
-  //   if (
-  //     position[index].y !== newPosition.y ||
-  //     position[index].x !== newPosition.x
-  //   ) {
-  //     playerSprites[index].style.transition = "none";
-  //     playerSprites[index].style.transform = `translate(${
-  //       position[index].x * cellSize
-  //     }px, ${position[index].y * cellSize}px)`;
-  //     playerSprites[index].style.transition = `transform ${
-  //       skates[index] ? skateTime : normalTime
-  //     }ms`;
-  //   }
-  //   position[index].y = newPosition.y;
-  //   position[index].x = newPosition.x;
-  //   return;
-  // }
   position[index].y = newPosition.y;
   position[index].x = newPosition.x;
   direction[index].y = newDirection.y;
