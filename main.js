@@ -1040,6 +1040,9 @@ const onKeyUp = (e) => {
 socket.on("move", ({ newPosition, newDirection, index }) => {
   position[index].y = newPosition.y;
   position[index].x = newPosition.x;
+  if (index === ownIndex) {
+    return;
+  }
   direction[index].y = newDirection.y;
   direction[index].x = newDirection.x;
   direction[index].key = newDirection.key;
