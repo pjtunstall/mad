@@ -52,8 +52,8 @@
   - Generally, simplify any logic that can be simplified.
   - Consider whether any variable names could be made clearer or standardized.
 - STRUCTURE
+  - Modularize! Tidy project structure. Split backend and frontend into modules, such as intro and game, and others within those: game setup, socket handlers, key handlers, ...
   - Implement neater "play again" logic, rather then current, crude solution, which is to force a page reload.
-  - Tidy project structure. Split backend and frontend into modules, such as intro and game, and others within those: game setup, socket handlers, key handlers, ...
   - I originally wrote: "Bring client structure more into line with how things are done on the server: player objects rather than those position and direction arrays (which are a leftover from my initial tinkering with the single-player client-only game to make it multi-player, before I moved the logic to the server)." But before doing that, consider whether it would actually be detrimental to performance. (See Andrew Kelley's talk [Practical Data-Oriented Design](https://www.youtube.com/watch?v=IroPQ150F6c).)
 - HOSTING
   - Private.

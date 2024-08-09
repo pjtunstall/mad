@@ -292,22 +292,6 @@ io.on("connection", (socket) => {
   });
 });
 
-function restart() {
-  clearTimeout(playAgainTimeoutId);
-  playAgainTimeoutId = setTimeout(() => {
-    players = [];
-    disconnectees = [];
-    playersInChat = 0;
-    playersInCountdown = 0;
-    playersInGame = 0;
-    numberOfStartSignalsReceived = 0;
-    isGameInProgress = false;
-    isGameInitialized = false;
-    isAfterGame = false;
-    io.emit("play again");
-  }, 100);
-}
-
 // GAME
 
 // game loop variables
@@ -371,6 +355,22 @@ const powerupArray = [
 
 let gameLoopId;
 
+function restart() {
+  clearTimeout(playAgainTimeoutId);
+  playAgainTimeoutId = setTimeout(() => {
+    players = [];
+    disconnectees = [];
+    playersInChat = 0;
+    playersInCountdown = 0;
+    playersInGame = 0;
+    numberOfStartSignalsReceived = 0;
+    isGameInProgress = false;
+    isGameInitialized = false;
+    isAfterGame = false;
+    io.emit("play again");
+  }, 100);
+}
+
 function initializeGame() {
   if (isGameInitialized) {
     return;
@@ -403,6 +403,74 @@ function initializeGame() {
     }
   }
   gameLoopId = setInterval(gameLoop, tick);
+}
+
+function buildGrid() {
+  const grid = Array.from({ length: numberOfRowsInGrid }, () =>
+    Array(numberOfColumnsInGrid).fill(null)
+  );
+  for (let row = 0; row < numberOfRowsInGrid; row++) {
+    for (let col = 0; col < numberOfColumnsInGrid; col++) {
+      const top = row * cellSize;
+      const left = col * cellSize;
+      let type = "indestructable";
+      let powerup = null;
+      if (
+        row === 0 ||
+        col === 0 ||
+        row === numberOfRowsInGrid - 1 ||
+        col === numberOfColumnsInGrid - 1 ||
+        (row % 2 === 0 && col % 2 === 0)
+      ) {
+        type = "unbreakable";
+      } else if (
+        (row >= 1 && row <= 2 && col >= 1 && col <= 2) ||
+        (row >= 1 &&
+          row <= 2 &&
+          col >= numberOfColumnsInGrid - 3 &&
+          col <= numberOfColumnsInGrid - 2) ||
+        (row >= numberOfRowsInGrid - 3 &&
+          row <= numberOfRowsInGrid - 2 &&
+          col >= 1 &&
+          col <= 2) ||
+        (row >= numberOfRowsInGrid - 3 &&
+          row <= numberOfRowsInGrid - 2 &&
+          col >= numberOfColumnsInGrid - 3 &&
+          col <= numberOfColumnsInGrid - 2) ||
+        Math.random() < 0.6
+      ) {
+        type = "walkable";
+      } else {
+        type = "breakable";
+
+        const randomPowerup =
+          powerupArray[Math.floor(Math.random() * powerupArray.length)];
+        if (Math.random() < probabilityOfPowerUp && randomPowerup.count > 0) {
+          powerup = randomPowerup;
+          randomPowerup.count--;
+        }
+      }
+      grid[row][col] = { type, top, left, powerup };
+    }
+  }
+
+  // Make sure there are definitely always at least 3 distinct powerups on the map.
+  let y = 3 + 2 * Math.floor(Math.random() * 4);
+  let x = 3 + 2 * Math.floor(Math.random() * 5);
+  for (let i = 0; i < 3; i++) {
+    y += 2;
+    if (y > 9) {
+      y = 3;
+    }
+    x += 2;
+    if (x > 11) {
+      x = 3;
+    }
+    grid[y][x].type = "breakable";
+    grid[y][x].powerup = powerupArray[i];
+  }
+
+  return grid;
 }
 
 function gameLoop() {
@@ -743,72 +811,4 @@ function kill(player, isNotDisconnected = true) {
   setTimeout(() => {
     deathAnimationEnd(player, isNotDisconnected);
   }, 1000);
-}
-
-function buildGrid() {
-  const grid = Array.from({ length: numberOfRowsInGrid }, () =>
-    Array(numberOfColumnsInGrid).fill(null)
-  );
-  for (let row = 0; row < numberOfRowsInGrid; row++) {
-    for (let col = 0; col < numberOfColumnsInGrid; col++) {
-      const top = row * cellSize;
-      const left = col * cellSize;
-      let type = "indestructable";
-      let powerup = null;
-      if (
-        row === 0 ||
-        col === 0 ||
-        row === numberOfRowsInGrid - 1 ||
-        col === numberOfColumnsInGrid - 1 ||
-        (row % 2 === 0 && col % 2 === 0)
-      ) {
-        type = "unbreakable";
-      } else if (
-        (row >= 1 && row <= 2 && col >= 1 && col <= 2) ||
-        (row >= 1 &&
-          row <= 2 &&
-          col >= numberOfColumnsInGrid - 3 &&
-          col <= numberOfColumnsInGrid - 2) ||
-        (row >= numberOfRowsInGrid - 3 &&
-          row <= numberOfRowsInGrid - 2 &&
-          col >= 1 &&
-          col <= 2) ||
-        (row >= numberOfRowsInGrid - 3 &&
-          row <= numberOfRowsInGrid - 2 &&
-          col >= numberOfColumnsInGrid - 3 &&
-          col <= numberOfColumnsInGrid - 2) ||
-        Math.random() < 0.6
-      ) {
-        type = "walkable";
-      } else {
-        type = "breakable";
-
-        const randomPowerup =
-          powerupArray[Math.floor(Math.random() * powerupArray.length)];
-        if (Math.random() < probabilityOfPowerUp && randomPowerup.count > 0) {
-          powerup = randomPowerup;
-          randomPowerup.count--;
-        }
-      }
-      grid[row][col] = { type, top, left, powerup };
-    }
-  }
-
-  // Make sure there are definitely always at least 3 distinct powerups on the map.
-  let y = 3 + 2 * Math.floor(Math.random() * 4);
-  let x = 3 + 2 * Math.floor(Math.random() * 5);
-  for (let i = 0; i < 3; i++) {
-    y += 2;
-    if (y > 9) {
-      y = 3;
-    }
-    x += 2;
-    if (x > 11) {
-      x = 3;
-    }
-    grid[y][x].type = "breakable";
-    grid[y][x].powerup = powerupArray[i];
-  }
-
-  return grid;
 }

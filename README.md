@@ -32,4 +32,4 @@ The multiplayer Bomberman game is working in Chrome, Brave, Firefox, and Safari.
 
 ## 4. Framework
 
-We're using it in a minimal way, just to construct the game grid. For more detail, see this [discussion](docs/framework.md), which includes the original plan and thoughts on how it might be developed it further. But I don't see see any gain to be had from this. It would complicate the code, impinge on performance, and be--from players' perspective--at best unnoticeble.
+We're using it in a minimal way, just to construct the game grid. For more detail, see this [discussion](docs/framework.md), which includes the original plan and thoughts on how it might be developed it further. But I don't see see any gain to be had from this. It would complicate the code, impinge on performance, and be--from the players' perspective--at best unnoticeble.
