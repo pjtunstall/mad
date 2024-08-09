@@ -1,3 +1,5 @@
+import { overReact } from "./overreact/over-react.js";
+
 // Global variables:
 // 1. Intro and general variables
 // 2. Game variables
@@ -847,36 +849,74 @@ socket.on("start game", ({ updatedPlayers, newGrid }) => {
 });
 
 function buildGrid() {
-  let newGrid = document.createElement("div");
-  grid.parentNode.replaceChild(newGrid, grid);
-  grid = newGrid;
-  grid.id = "game-grid";
+  const vApp = new overReact.VNode("div", { attrs: { id: "game-grid" } });
   cellsArr = [];
   for (let row = 0; row < numberOfRowsInGrid; row++) {
     cellsArr.push([]);
     for (let col = 0; col < numberOfColumnsInGrid; col++) {
       const cellData = gridData[row][col];
-      const cell = document.createElement("div");
-      cell.id = `cell-${row}-${col}`;
-      cell.classList.add("cell");
-      cell.style.top = `${cellData.top}px`;
-      cell.style.left = `${cellData.left}px`;
+      const cell = new overReact.VNode("div", {
+        attrs: {
+          id: `cell-${row}-${col}`,
+          class: "cell",
+          style: `top: ${cellData.top}px; left: ${cellData.left}px;`,
+        },
+      });
       const type = cellData.type;
       if (type === "breakable") {
-        cell.classList.add("breakable");
+        cell.addClass("breakable");
         if (cellData.powerup) {
           console.log(cellData.powerup.name);
-          cell.classList.add("power-up");
-          cell.classList.add(cellData.powerup.name);
+          cell.addClass("power-up");
+          cell.addClass(cellData.powerup.name);
         }
       } else if (type === "unbreakable") {
-        cell.classList.add("unbreakable");
+        cell.addClass("unbreakable");
       }
-      grid.append(cell);
-      cellsArr[row].push(cell);
+      vApp.children.push(cell);
+    }
+  }
+  let app = new overReact.App(vApp, grid, { dummyState: 0 });
+  grid = app.$app;
+  for (let row = 0; row < numberOfRowsInGrid; row++) {
+    for (let col = 0; col < numberOfColumnsInGrid; col++) {
+      cellsArr[row][col] = document.getElementById(`cell-${row}-${col}`);
     }
   }
 }
+
+// // Original version of the function, that manipulates the DOM directly without using the overReact framework.
+// function buildGrid() {
+//   let newGrid = document.createElement("div");
+//   grid.parentNode.replaceChild(newGrid, grid);
+//   grid = newGrid;
+//   grid.id = "game-grid";
+//   cellsArr = [];
+//   for (let row = 0; row < numberOfRowsInGrid; row++) {
+//     cellsArr.push([]);
+//     for (let col = 0; col < numberOfColumnsInGrid; col++) {
+//       const cellData = gridData[row][col];
+//       const cell = document.createElement("div");
+//       cell.id = `cell-${row}-${col}`;
+//       cell.classList.add("cell");
+//       cell.style.top = `${cellData.top}px`;
+//       cell.style.left = `${cellData.left}px`;
+//       const type = cellData.type;
+//       if (type === "breakable") {
+//         cell.classList.add("breakable");
+//         if (cellData.powerup) {
+//           console.log(cellData.powerup.name);
+//           cell.classList.add("power-up");
+//           cell.classList.add(cellData.powerup.name);
+//         }
+//       } else if (type === "unbreakable") {
+//         cell.classList.add("unbreakable");
+//       }
+//       grid.append(cell);
+//       cellsArr[row].push(cell);
+//     }
+//   }
+// }
 
 function generateLevel() {
   remoteControl = false;

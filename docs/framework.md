@@ -10,9 +10,7 @@
 
 ## 1. Overview
 
-(Note that the code described below was correct at the time of planning, and still applies to the <frame> branch where the framework was added, but has been superceded by later developments in <main>.)
-
-After talking to others, I decided to just use the framework to set up the grid initially, taking `game-grid` as the root node of (frameworked part of) the app. That satisfies the audit. The only function affected is `buildGrid()`. Integrating the framework thoroughly would likely be detrimental to performance, but in case anyone is interested in doing something in this direction as an exercise, here is my earlier plan together with a guide to the DOM-related material in the game itself. Further steps that could be taken include:
+We decided to just use the framework to set up the grid initially, taking `game-grid` as the root node of (frameworked part of) the app. That satisfies the audit. The only function affected is `buildGrid()`. Integrating the framework thoroughly would likely be detrimental to performance, but for the sake of posterity, and in case anyone is interested in doing something in this direction as an exercise, here is my original plan together with a guide to the DOM-related material in the game itself. Further steps that could be taken include:
 
 - Rewrite all code that affects the DOM to only modify the virtual DOM.
 - Think of any suitable state variables that we want to trigger automatic updates, e.g. position and direction. We also have the option (escape hatch) of being able to simply call the `update()` method on the app, but we should try to maintain or recreate batching of updates. Caution: pass `update()` to `requestAnimationFrame` (or call it from the game loop) to ensure that the event handler has a chance to make all of its changes to the virtual DOM before diff and reconciliation.
@@ -24,7 +22,7 @@ A smaller-scale project might be to replace `dummyState` with a state object con
 
 I suggest we just framework the game itself, rather than the intro. Easiest of all would be to take `game-grid` as the root node of our frameworked app. (Other candidates are `game` and `grid-wrapper`.) We could, as others have done, just use the framework to create the elements and render them initially. Routing is irrelevant: we don't want players being able to navigate at will between different phases of the game.
 
-As a first step, here is a catalogue of all the DOM stuff: all DOM elements and variables that refer to them, all lines that affect the DOM, and all event handlers.
+As a first step, here is a catalogue of all the DOM stuff: all DOM elements and variables that refer to them, all lines that affect the DOM, and all event handlers.<sup id="ref-f1">[1](#f1)</sup>
 
 As it turns out, `overReact`'s event delegation system is indeed an overreaction in this case. The only event handler that's attached to a descendant of `game` (a plausible root element for our app) is the `animationend` handler, which removes the "breakable-block-destruction" class from a block at the end of its destruction animation. The keypress handlers are attached to `document`, and the other event handlers are all for the socket. For the sake of the exercise, we could shoehorn that little `animationend` handler into being centrally delegated, but it's hardly worth it.
 
@@ -422,3 +420,5 @@ gameOver.style.display = "flex";
 ```
 
 And pretty much the whole of `displayGameOverMessage(survivorIndex, type)` and `transitionToOutro()` is DOM stuff. And that's it for the game itself.
+
+<a id="f1" href="#ref-f1">1</a>: Note that the code described below was correct at the time of planning, but has been superceded, in some cases, by later developments. [↩](#ref-f1)
