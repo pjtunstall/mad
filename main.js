@@ -21,11 +21,8 @@ const chatForm = document.getElementById("chat-form");
 const chatInput = document.getElementById("chat-input");
 let currentIndex;
 let lastClickedItem;
-let alreadyInChat;
-let countdown;
 let typingTimeout;
 let counting;
-let timerStartTime;
 let resumeFrom;
 let timerId;
 
@@ -264,13 +261,10 @@ function transitionToStart() {
   ownIndex = null;
   playersInLobby = 0;
   currentIndex = 0;
-  alreadyInChat = false;
   players = [];
   counting = false;
-  timerStartTime = null;
   resumeFrom = 10;
   timerId = null;
-  countdown = 11;
   document
     .getElementById("credit-content-0")
     .addEventListener("animationend", (event) => {
