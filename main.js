@@ -685,6 +685,7 @@ function transitionToChat() {
   chatForm.style.opacity = 1;
   const inputField = chatForm.querySelector("input");
   inputField.value = "";
+  inputField.setAttribute("maxLength", 1024);
   let placeholderIndex = Math.floor(Math.random() * placeholders.length);
   inputField.placeholder = placeholders[placeholderIndex];
   inputField.focus();
