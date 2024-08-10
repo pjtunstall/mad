@@ -9,16 +9,16 @@ import { overReact } from "./overreact/over-react.js";
 // 6. Story and credits text, character and color arrays
 
 // Intro and general variables
-let isGameOver;
-let phase;
-let players;
-let ownIndex;
-let playersInLobby;
 const startButton = document.getElementById("start");
 const everythingContainer = document.getElementById("everything-container");
 const readyButton = document.getElementById("ready");
 const chatForm = document.getElementById("chat-form");
 const chatInput = document.getElementById("chat-input");
+let isGameOver;
+let phase;
+let players;
+let ownIndex;
+let playersInLobby;
 let currentIndex;
 let lastClickedItem;
 let typingTimeout;
@@ -33,14 +33,14 @@ let position = [
   { y: 11, x: 1 },
   { y: 11, x: 13 },
 ];
-// Components of normalized velocity vector for each player, and the key pressed to achieve that vector
+// Components of normalized velocity vector for each player, and the key for that direction
 let direction = [
   { y: 0, x: 0, key: "" },
   { y: 0, x: 0, key: "" },
   { y: 0, x: 0, key: "" },
   { y: 0, x: 0, key: "" },
 ];
-let skates = [false, false, false, false];
+let skates = [false, false, false, false]; // whether player has skate powerup
 const skateTime = 32; // time in ms for player to move one cell with skate powerup
 const normalTime = 64; // time in ms for player to move one cell without skate powerup
 let gridData;
@@ -59,10 +59,7 @@ const numberOfColumnsInGrid = 15;
 const cellSize = 64;
 const spriteSize = 64;
 let horizontalAnimation = [0, 0, 0, 0]; // background-positions representing current frames of each player's walking animation
-const startingScore = 0;
-let currentScore = startingScore;
 const isKilled = new Array(4).fill(false);
-let remoteControl = false;
 let isRemoteControlBombPlanted = false;
 
 // Game loop variables
@@ -70,8 +67,6 @@ let gameLoopId;
 let offbeat = false;
 const moveInterval = 25;
 let lastTime = 0;
-let lastCollisionCheck = 0;
-const collisionCheckInterval = 100;
 let accumulatedFrameTime = 0;
 
 // Intro and outro sounds
@@ -914,7 +909,6 @@ function buildGrid() {
 // }
 
 function generateLevel() {
-  remoteControl = false;
   isRemoteControlBombPlanted = false;
 
   playerColor.textContent = players[ownIndex].role;
@@ -1097,9 +1091,6 @@ function getPowerup(y, x, powerup, index) {
   cell.classList.remove("power-up");
   cell.classList.remove(powerup.name);
   cell.classList.remove("mystery");
-  if (index === ownIndex && powerup.name === "remote-control") {
-    remoteControl = true;
-  }
   if (powerup.name === "skate") {
     skates[index] = true;
     playerSprites[index].style.transition = `transform ${skateTime}ms`;
@@ -1115,10 +1106,6 @@ socket.on("life-up", (index, life, y, x) => {
   const cell = cellsArr[y][x];
   cell.classList.remove("power-up");
   cell.classList.remove("life-up");
-});
-
-socket.on("lose remote control", () => {
-  remoteControl = false;
 });
 
 socket.on("add fire", (arr) => {
@@ -1220,7 +1207,6 @@ socket.on("dead", (index) => {
     scream.src = "";
   };
   if (index == ownIndex) {
-    remoteControl = false;
     document.removeEventListener("keydown", onKeyDown);
     document.removeEventListener("keyup", onKeyUp);
   }
