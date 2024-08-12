@@ -107,7 +107,7 @@ socket.on("disconnect", (reason) => {
   location.reload(true);
 });
 
-// Story and credits text, character and color arrays
+// Images
 let slideshow;
 let startImages = [
   "frontend/assets/images/slideshow/OIG1.JeeX.W.9kcfz6VS0J4uP.jpg",
@@ -132,6 +132,7 @@ const defaultImageForRoles = [
   "frontend/assets/images/roles/default/OIG.GhKqkXmNWjAzmkLQReAz.jpg",
 ];
 
+// Story and credits text, character and color arrays
 const characters = [
   "Old Nickle",
   "Blackleg",
@@ -382,8 +383,7 @@ function startSlideshow(images) {
   let mainPane = document.getElementById("main-pane");
   mainPane.appendChild(imgElement);
 
-  // Watch out! There is another fucntion of this name, with a different signature, in the global scope.
-  function updateImage() {
+  function updateSlideshowImage() {
     imgElement.classList.remove("show");
     document.querySelector(".top-eyelid").style.transform = "translateY(0)";
     document.querySelector(".bottom-eyelid").style.transform = "translateY(0)";
@@ -398,11 +398,10 @@ function startSlideshow(images) {
     }, 512);
   }
 
-  updateImage();
-  return setInterval(updateImage, 8192);
+  updateSlideshowImage();
+  return setInterval(updateSlideshowImage, 8192);
 }
 
-// Beware! There is another function of this name, with a different signature, inside the `startSlideshow` function.
 function updateImage(imageElement, toSrc, delay = 1024) {
   imageElement.classList.remove("show");
 
