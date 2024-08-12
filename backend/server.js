@@ -44,7 +44,7 @@ initializeIntro();
 
 const server = http.createServer((req, res) => {
   const requestUrl = url.parse(req.url);
-  let filePath = path.join(__dirname, requestUrl.pathname);
+  let filePath = path.join(__dirname, "..", requestUrl.pathname);
 
   // // The above seems to be invulnerable to directory traversal, even without explicit sanitization. I needed to allow query parameters, as in the following lines, before I succeeded with a directory traversal attack:
   // const query = url.parse(req.url, true).query;

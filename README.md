@@ -18,9 +18,14 @@ This game was adapted from a single-player original by one of us, Rashid, and hi
 
 ## 2. Setup
 
-Clone the repo and cd into the root directory of the project.
+Clone the repo and navigate into the backend folder:
 
-To run the server, install Node dependencies with `npm install`. If it reports any vulnerabilities, `npm audit fix`, as directed. Then `node server.js` to run the server on port 3000.
+```zsh
+git clone https://github.com/pjtunstall/mad
+cd mad/backend
+```
+
+Install Node dependencies with `npm install`. If it reports any vulnerabilities, `npm audit fix`, as directed. Then run `node server.js` to start the server on port 3000.
 
 The server will log its IP address in the terminal. To connect over a mobile hotspot, players can enter that address into their browser. As yet it only supports a single instance of the game.
 
@@ -32,4 +37,4 @@ The multiplayer Bomberman game is working in Chrome, Brave, Firefox, and Safari.
 
 ## 4. Framework
 
-We're using it in a minimal way, just to construct the game grid. For more detail, see this [discussion](docs/framework.md), which includes the original plan and thoughts on how it might be developed it further. But I don't see see any gain to be had from this. It would complicate the code, impinge on performance, and be--from the players' perspective--at best unnoticeble.
+We're using it in a minimal way, just to construct the game grid, so as to meet the requirements for the 01Founders exercise. For more detail, see this [discussion](docs/framework.md), which includes the original plan and thoughts on how it might be developed it further. But I don't see any good in that. I think it would complicate the code, impinge on performance, and be--from the players' perspective--at best unnoticeble.
