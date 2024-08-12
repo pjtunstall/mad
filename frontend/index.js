@@ -73,24 +73,28 @@ let accumulatedFrameTime = 0;
 let context;
 let musicGainNode;
 const introMusic =
-  "assets/music/music_fx_ominous_cinematic_nordic_folk_with_hardanger.mp3";
+  "frontend/assets/music/music_fx_ominous_cinematic_nordic_folk_with_hardanger.mp3";
 const outroMusic =
-  "assets/music/music_fx_rustic_folk_blissful_epiphany_dulcimer_drones.mp3";
-const audio = new Audio("assets/sfx/quick-mechanical-keyboard-14391.mp3");
+  "frontend/assets/music/music_fx_rustic_folk_blissful_epiphany_dulcimer_drones.mp3";
+const audio = new Audio(
+  "frontend/assets/sfx/quick-mechanical-keyboard-14391.mp3"
+);
 audio.loop = true;
-const clock = new Audio("assets/sfx/old-fashioned-clock-sound-37729.mp3");
+const clock = new Audio(
+  "frontend/assets/sfx/old-fashioned-clock-sound-37729.mp3"
+);
 clock.loop = true;
 
 // Game sounds
-const powerupSound = new Audio("assets/sfx/coin-pickup-98269.mp3");
-const fuseSound = new Audio("assets/sfx/fuse.mp3");
-const screamSound = new Audio("assets/sfx/cartoon-scream-1-6835.mp3");
+const powerupSound = new Audio("frontend/assets/sfx/coin-pickup-98269.mp3");
+const fuseSound = new Audio("frontend/assets/sfx/fuse.mp3");
+const screamSound = new Audio("frontend/assets/sfx/cartoon-scream-1-6835.mp3");
 fuseSound.loop = true;
 const explosionSound = new Audio(
-  "assets/sfx/8-bit-explosion-low-resonant-45659.mp3"
+  "frontend/assets/sfx/8-bit-explosion-low-resonant-45659.mp3"
 );
 const fullExplosionSound = new Audio(
-  "assets/sfx/052168_huge-explosion-85199.mp3"
+  "frontend/assets/sfx/052168_huge-explosion-85199.mp3"
 );
 let remoteControlFuses = [[], [], [], []];
 
@@ -106,26 +110,26 @@ socket.on("disconnect", (reason) => {
 // Story and credits text, character and color arrays
 let slideshow;
 let startImages = [
-  "assets/images/slideshow/OIG1.JeeX.W.9kcfz6VS0J4uP.jpg",
-  "assets/images/slideshow/OIG1.RHh.TiTv_89Q_qetbTqj.jpg",
-  "assets/images/slideshow/OIG1.tT9zpwTaUvUSXc63p1uk.jpg",
-  "assets/images/slideshow/OIG2.5v.ScYh44ajXn0PSpcT2.jpg",
-  "assets/images/slideshow/OIG2.Jb7YWs.Tj7vKMzHxi7X7.jpg",
-  "assets/images/slideshow/OIG2.L5eB8ppZFTF.HHCu1eFe.jpg",
-  "assets/images/slideshow/OIG2.m1xtNwK.2dLzyjVhdYht.jpg",
-  "assets/images/slideshow/OIG2.sdD0aK7mFca3yF_OSxuW.jpg",
-  "assets/images/slideshow/OIG2.souzLAE7.Hfsy3099Vv4.jpg",
-  "assets/images/slideshow/OIG2.X2Fui0nJzmm3u9LNVXfm.jpg",
-  "assets/images/slideshow/OIG1.ixSAqnhJACfFzjGWjbPI.jpg",
+  "frontend/assets/images/slideshow/OIG1.JeeX.W.9kcfz6VS0J4uP.jpg",
+  "frontend/assets/images/slideshow/OIG1.RHh.TiTv_89Q_qetbTqj.jpg",
+  "frontend/assets/images/slideshow/OIG1.tT9zpwTaUvUSXc63p1uk.jpg",
+  "frontend/assets/images/slideshow/OIG2.5v.ScYh44ajXn0PSpcT2.jpg",
+  "frontend/assets/images/slideshow/OIG2.Jb7YWs.Tj7vKMzHxi7X7.jpg",
+  "frontend/assets/images/slideshow/OIG2.L5eB8ppZFTF.HHCu1eFe.jpg",
+  "frontend/assets/images/slideshow/OIG2.m1xtNwK.2dLzyjVhdYht.jpg",
+  "frontend/assets/images/slideshow/OIG2.sdD0aK7mFca3yF_OSxuW.jpg",
+  "frontend/assets/images/slideshow/OIG2.souzLAE7.Hfsy3099Vv4.jpg",
+  "frontend/assets/images/slideshow/OIG2.X2Fui0nJzmm3u9LNVXfm.jpg",
+  "frontend/assets/images/slideshow/OIG1.ixSAqnhJACfFzjGWjbPI.jpg",
 ];
 
 const defaultImageForRoles = [
-  "assets/images/roles/default/default.jpg",
-  "assets/images/roles/default/default1.jpg",
-  "assets/images/roles/default/OIG..oUUFHfUtXBqURKCJZbp.jpg",
-  "assets/images/roles/default/OIG.5NlsEQhWcybBlnw0CE7F.jpg",
-  "assets/images/roles/default/OIG.yykY1XiTafngQHZoIuIn.jpg",
-  "assets/images/roles/default/OIG.GhKqkXmNWjAzmkLQReAz.jpg",
+  "frontend/assets/images/roles/default/default.jpg",
+  "frontend/assets/images/roles/default/default1.jpg",
+  "frontend/assets/images/roles/default/OIG..oUUFHfUtXBqURKCJZbp.jpg",
+  "frontend/assets/images/roles/default/OIG.5NlsEQhWcybBlnw0CE7F.jpg",
+  "frontend/assets/images/roles/default/OIG.yykY1XiTafngQHZoIuIn.jpg",
+  "frontend/assets/images/roles/default/OIG.GhKqkXmNWjAzmkLQReAz.jpg",
 ];
 
 const characters = [
@@ -510,7 +514,7 @@ function makeMenu() {
       }
       item.style.textDecoration = "underline";
       lastClickedItem = item;
-      const toSrc = `assets/images/roles/${colors[i]}.jpg`;
+      const toSrc = `frontend/assets/images/roles/${colors[i]}.jpg`;
       updateImage(imageElement, toSrc);
       imageElement.style.filter = "brightness(100%)";
       imageElement.style.pointerEvents = "auto";
@@ -806,12 +810,12 @@ async function startCountdown() {
   }
   const imageElement = document.querySelector("#main-pane img");
   resumeFrom = Math.min(resumeFrom, 10);
-  imageElement.src = `assets/images/numbers/${resumeFrom}.jpg`;
+  imageElement.src = `frontend/assets/images/numbers/${resumeFrom}.jpg`;
 
   for await (let count of counter(resumeFrom - 1)) {
     resumeFrom = count;
     imageElement.classList.remove("show");
-    imageElement.src = `assets/images/numbers/${count}.jpg`;
+    imageElement.src = `frontend/assets/images/numbers/${count}.jpg`;
     imageElement.classList.add("show");
   }
 
@@ -928,7 +932,7 @@ function generateLevel() {
     playerSprites[i].id = `player-${i}`;
     playerSprites[
       i
-    ].style.backgroundImage = `url('assets/images/player-sprites/${players[i].color}.png')`;
+    ].style.backgroundImage = `url('frontend/assets/images/player-sprites/${players[i].color}.png')`;
     // n & 1 is 1 if n is odd, 0 if n is even
     setSprite(horizontalAnimation[i], (1 + i) & 1, playerSprites[i]);
     grid.appendChild(playerSprites[i]);
@@ -1282,19 +1286,19 @@ function displayGameOverMessage(survivorIndex, type) {
     if (winner) {
       if (ownIndex === survivorIndex) {
         outroText = outroTextWin;
-        imageElement.src = "assets/images/game-over/won.jpg";
+        imageElement.src = "frontend/assets/images/game-over/won.jpg";
         gameOver.innerHTML = `<h1>GAME OVER<br/><br/>THE CLASHING CYMBALS OF VICTORY<br/>ARE YOURS<br/>'${winner.role.toUpperCase()}'<h1>`;
       } else {
-        imageElement.src = `assets/images/game-over/lost.jpg`;
+        imageElement.src = `frontend/assets/images/game-over/lost.jpg`;
         gameOver.innerHTML = `<h1>GAME OVER<br/><br/>YOU LOST TO<br/>'${winner.role}'</h1>`;
       }
     } else {
-      imageElement.src = `assets/images/game-over/lost.jpg`;
+      imageElement.src = `frontend/assets/images/game-over/lost.jpg`;
       gameOver.innerHTML = `<h1>GAME OVER<br/><br/>THERE ARE NO WINNERS</h1>`;
     }
   } else {
     outroText = outroTextWin;
-    imageElement.src = "assets/images/game-over/won.jpg";
+    imageElement.src = "frontend/assets/images/game-over/won.jpg";
     gameOver.innerHTML = `<h1>GAME OVER<br/><br/>A MEANINGLESS TRIUMPH<br/>YOUR FOES HAVE FLED INTO THE AETHER<h1>`;
   }
   gameOver.classList.remove("show");
