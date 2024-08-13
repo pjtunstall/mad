@@ -223,8 +223,8 @@ for (let i = 0; i < 3; i++) {
               Shinichi Nakamoto and Shigeki Fujiwara.
             </p>
             <p>
-              This multiplayer edition by Mohammed Rashidur Rahman, Peter
-              Tunstall, Bilal Sharif, and Daisy "Citric" Murray.
+              This multiplayer edition by Peter
+              Tunstall, Bilal Sharif, and Stefan Cornea.
             </p>
             <p>
               Adapted from Mohammed Rashidur Rahman, Michael Adeleke, and Peter

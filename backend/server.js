@@ -197,7 +197,7 @@ io.on("connection", (socket) => {
 
   socket.on("start game", () => {
     numberOfStartSignalsReceived++;
-    if (numberOfStartSignalsReceived !== playersInCountdown) {
+    if (numberOfStartSignalsReceived < playersInCountdown) {
       // Necessary because all players will send this signal. Eventually, move countdown logic to server.
       return;
     }
