@@ -33,6 +33,7 @@
     - Player comes back as a ghost is among the suggested bonus tasks. I think it would dilute the drama though. Gilding the lily.
 - DESIGN
   - Fix how the the character profile picture sometimes changes abruptly when the eyelids are still open.
+  - Investigate why the glow on hover over the character names on chosing a role only extends left and up, not right or down. Make it symmetrical.
   - Fix how overlapping explosions aren't organized into a big explosion, but are calculated and emitted as independent explosions, which can result in an arm-piece cutting through where a center piece should be. Look at `detonate(y, x, fireRange)` and `function addFire(y, x, style, origin)` in `server.js`.
   - Customize sprites or design own sprites from scratch.
   - See if we can get scrollbar "thumb" to appear on hover over the roles menu in all browsers, not just Firefox. At the moment, it appears briefly when the menu first appears in Chrome, for example. I think this is preferable to how it was before, though, when all sorts of scrollbars appeared all the time.
