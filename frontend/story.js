@@ -9,8 +9,7 @@ export const creditsText = `
       Shinichi Nakamoto and Shigeki Fujiwara.
     </p>
     <p>
-      This multiplayer edition by Peter
-      Tunstall, Bilal Sharif, and Stefan Cornea.
+      This multiplayer edition by Peter Tunstall and Bilal Sharif.
     </p>
     <p>
       Adapted from Mohammed Rashidur Rahman, Michael Adeleke, and Peter
