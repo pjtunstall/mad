@@ -442,7 +442,6 @@ function buildGrid() {
         type = "walkable";
       } else {
         type = "breakable";
-
         const randomPowerup =
           powerupArray[Math.floor(Math.random() * powerupArray.length)];
         if (Math.random() < probabilityOfPowerUp && randomPowerup.count > 0) {
@@ -604,7 +603,11 @@ function plantNormalBomb(y, x, index) {
 
 function plantRemoteControlBomb(y, x, index) {
   const player = players[index];
-  if (player.plantedBombs >= player.maxBombs || grid[y][x].type === "bomb") {
+  if (
+    player.plantedBombs >= player.maxBombs ||
+    grid[y][x].type === "bomb" ||
+    grid[y][x].type === "breakable"
+  ) {
     return;
   }
   player.plantedBombs++;
