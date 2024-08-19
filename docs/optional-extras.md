@@ -1,11 +1,5 @@
 # Optional Extras
 
-- TEST
-  - Play test.
-  - Examine more thoroughly in different browsers, including Edge and Opera, which I haven't looked at yet.
-- FIX
-  - Possibly fixed now that I dealt with another disconnection-related error, but, just in case, here's a note of what happened: I once saw a bug where server and client logged that one of two players had disconnected, but they hadn't. Both players were still in the chat. Only one had the ready button visible. On pressing it, the countdown was triggered for both. Haven't manage to replicate it.
-  - A bug I saw once, but haven't managed to replicate after many attempts, possibly already fixed now that disconnections during countdown are handled better. But I'll leave the details here just in case. Server crashed when a player in Safari pressed CTR+SHIFT+R to view simplified page, without styles, during countdown. Apparently this led to them being undefined even though the normal disconnection logic had not gone ahead. It triggered that classic lightning-conductor-of-errors, `isDead(player)`: `return grid[player?.position?.y][player?.position?.x].type === "fire";` (accusing arrow points to 2nd instance of player in the line), "TypeError: Cannot read properties of undefined (reading 'undefined')". Since then I've added some protections and logging in case of future issues.
 - NETWORK
   - Consider what to do at bottlenecks where a lagging client might prevent progress indefinitely: at the end of the countdown and on game over, waiting for everyone to press the bomb (ready) button. In a multi-instance version, this would be taken care of by the regular connection logic.
   - Implement some decent reconnection logic (e.g. 3 attempts then consider gone: update player.id to new id using index from client to link them; better yet, use a cookie. Test how well connections last, using a mobile hotspot.)
