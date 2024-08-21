@@ -564,8 +564,8 @@ function walkable(y, x, player) {
     }
   }
   return (
-    grid[y][x].type === "walkable" ||
-    grid[y][x].type === "fire" ||
+    grid[y][x]?.type === "walkable" ||
+    grid[y][x]?.type === "fire" ||
     (player.softBlockPass && grid[y][x].type === "breakable") ||
     (player.bombPass && grid[y][x].type === "bomb")
   );

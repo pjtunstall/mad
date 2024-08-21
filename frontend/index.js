@@ -933,6 +933,7 @@ let onKeyDown = (e) => {
       socket.emit("move", { index: ownIndex, key: e.key });
       anticipateMove(e.key);
       break;
+    case "X":
     case "x":
       if (!isKilled[ownIndex]) {
         socket.emit("bomb", {
