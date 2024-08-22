@@ -499,12 +499,15 @@ function move(player) {
   const nextY = player.position.y + player.direction.y;
   const nextX = player.position.x + player.direction.x;
   if (!walkable(nextY, nextX, player)) {
-    return;
+    return false; // Return value not currently used, but part of an experient to deal differently with the case where the player did actually change position.
+  }
+  if (player.position.y === nextY && player.position.x === nextX) {
+    return false;
   }
   player.position.y = nextY;
   player.position.x = nextX;
   if (player.softBlockPass && grid[nextY][nextX].type === "breakable") {
-    return;
+    return true;
   }
 
   let newPowerup = grid[nextY][nextX].powerup;
@@ -518,7 +521,7 @@ function move(player) {
     if (newPowerup.name === "life-up") {
       player.lives++;
       io.emit("life-up", player.index, player.lives, nextY, nextX);
-      return;
+      return true;
     }
 
     player.powerups.push(newPowerup);
@@ -533,27 +536,29 @@ function move(player) {
     switch (newPowerup.name) {
       case "bomb-up":
         player.maxBombs++;
-        return;
+        return true;
       case "fire-up":
         player.fireRange++;
-        return;
+        return true;
       case "skate":
         player.skates++;
-        return;
+        return true;
       case "full-fire":
         player.fullFire = true; // like player.fireRange = 13;
-        return;
+        return true;
       case "remote-control":
         player.remoteControl = true;
-        return;
+        return true;
       case "soft-block-pass":
         player.softBlockPass = true;
-        return;
+        return true;
       case "bomb-pass":
         player.bombPass = true;
-        return;
+        return true;
     }
   }
+
+  return true;
 }
 
 function walkable(y, x, player) {
@@ -564,10 +569,11 @@ function walkable(y, x, player) {
     }
   }
   return (
+    // It can happen that grid[y][x] is undefined. Why?
     grid[y][x]?.type === "walkable" ||
     grid[y][x]?.type === "fire" ||
-    (player.softBlockPass && grid[y][x].type === "breakable") ||
-    (player.bombPass && grid[y][x].type === "bomb")
+    (player.softBlockPass && grid[y][x]?.type === "breakable") ||
+    (player.bombPass && grid[y][x]?.type === "bomb")
   );
 }
 

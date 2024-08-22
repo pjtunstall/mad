@@ -12,6 +12,7 @@
   - If arrays will have a known size, initialize them with that size.
   - Recycle arrays and objects where possible, rather than pushing, popping, and making new ones.
   - `socket.IO` was probably overkill on this project, but we might as well leave it for now. Their rooms feature could make it more convenient to implement multiple game instances, especially if we went the single-threaded route, albeit we have implemented our own rooms on other projects. Look at pros and cons before changing.
+  - By adding `will-change: transform` to the `bomberman` class to promote each instance to its own layer, moving a player sprite no longer causes paint flashing on younger siblings (i.e. those appended later to the grid). However, when a bomb goes off, there is still a paint flash for all cells at its level and lower. Gemini advises that this would not be a good use of layers, but what would prevent the superfluous repaint? Its ownly coherent suggestion so far is Canvas or WebGL, both forbidden on this project.
 - BONUS
   - Easy bonus: allow a 5th player to be spawed in the center of the grid. (Make sure they have space and that they don't interfere with the mechanism to always place one each of the three basic powerups.)
   - POWERUPS

@@ -892,6 +892,7 @@ img {
   background-image: url("assets/images/player-sprites/gold.png");
   position: absolute;
   z-index: 3;
+  will-change: transform;
 }
 
 .bomb {

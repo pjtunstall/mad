@@ -37,11 +37,12 @@ let timerId;
 let outroText;
 
 // Game variables
+let isFirstMove = [true, true, true, true];
 let position = [
   { y: 1, x: 1 },
-  { y: 1, x: 13 },
-  { y: 11, x: 1 },
   { y: 11, x: 13 },
+  { y: 11, x: 1 },
+  { y: 1, x: 13 },
 ];
 // Components of normalized velocity vector for each player, and the key for that direction
 let direction = [
@@ -820,6 +821,7 @@ function generateLevel() {
 
   playerSprites = [];
   for (let i = 0; i < players.length; i++) {
+    isFirstMove[i] = true;
     isKilled[i] = false;
     playerSprites[i] = document.createElement("div");
     playerSprites[i].style.transition = `transform ${normalTime}ms`;
@@ -864,9 +866,29 @@ function gameLoop(timestamp) {
 }
 
 function move(index) {
+  // // The commented-out lines were an experiment to prevent unnecessary repaints of player sprites when their position hasn't changed. This convoluted process would be needed apparently to access a transformed position (`sprite.style.left` won't do it). But, in practice, they didn't seem to make a difference. We only see paint flashing in Chrome when a player sprite actually changes position. The one nuance to this is that each player sprite has to be promoted to its own layer with `will-change: transform` or else a paint flash is seen on all younger siblings of the current player sprite, i.e. those appended later to the grid.
+  // const sprite = playerSprites[index];
+  // const style = window.getComputedStyle(sprite);
+  // const matrixString = style.getPropertyValue("transform");
+  // if (matrixString !== "none") {
+  //   const matrixValues = matrixString
+  //     .match(/matrix\((.+)\)/)[1]
+  //     .split(", ")
+  //     .map(Number);
+  //   const currentX = matrixValues[4];
+  //   const currentY = matrixValues[5];
+  //   if (
+  //     currentX === position[index].x * cellSize &&
+  //     currentY === position[index].y * cellSize
+  //   ) {
+  //     return;
+  //   }
+  // }
+
   playerSprites[index].style.transform = `translate(${
     position[index].x * cellSize
   }px, ${position[index].y * cellSize}px)`;
+  isFirstMove[index] = false;
 }
 
 function animateWalk(index) {
