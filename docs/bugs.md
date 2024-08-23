@@ -2,6 +2,7 @@
 
 More play testing would help to replicate any of these that are still happening and investigate the causes, as well as revealing any yet-to-be-discovered bugs.
 
+- Server crashed twice on game of 4 players over mobile hotspot at `(player.bombPass && grid[y][x]?.type === "bomb")` in `walkable` before optional chaining added.
 - Sometimes, after a game, one or more players can be stuck on the "game in progress" screen. Only seen over mobile hotspot.
 - On one occasion, collecting full-fire after remote-control, at first 'X' seemed to be doing nothing, but it did plant an invisible bomb, which exploded normally on SPACE, and only then could the full-fire be planted. I fixed another thing: making sure you can't plant a remore-control bomb on a soft block, in case you have soft-block-pass, and tested many times but, since then, I've yet to get this glitchy interaction between full-fire and remote-control to recur.
 - On one occasion, one player heard the remote control fuse sound even after the game was over, until the page was reloaded; this on the same occasion as the next two bugs when 4 people played over a mobile hotspot.
