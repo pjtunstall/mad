@@ -62,7 +62,7 @@ const infoWrapper = document.getElementById("info");
 const instructions = document.getElementById("instructions");
 const playerColor = document.getElementById("player-role");
 const lives = document.getElementById("lives");
-const power = document.getElementById("power-up");
+const powerupIndicator = document.getElementById("powerup");
 let cellsArr; // 2d array to store the cells of the game grid
 let playerSprites; // Array to store the player sprite divs
 const numberOfRowsInGrid = 13;
@@ -812,6 +812,7 @@ function generateLevel() {
   isRemoteControlBombPlanted = false;
 
   playerColor.textContent = players[ownIndex].role;
+  powerupIndicator.textContent = "Power-up";
   lives.textContent = "Lives 3";
 
   buildGrid();
@@ -1000,10 +1001,6 @@ socket.on("move", ({ newPosition, newDirection, index }) => {
 });
 
 socket.on("get powerup", ({ y, x, powerup, index }) => {
-  getPowerup(y, x, powerup, index);
-});
-
-function getPowerup(y, x, powerup, index) {
   const sound = powerupSound.cloneNode(true);
   sound.play();
   sound.onended = function () {
@@ -1017,7 +1014,13 @@ function getPowerup(y, x, powerup, index) {
     skates[index] = true;
     playerSprites[index].style.transition = `transform ${skateTime}ms`;
   }
-}
+  if (index === ownIndex) {
+    powerupIndicator.textContent = powerup.name;
+    setTimeout(() => {
+      powerupIndicator.textContent = "Power-up";
+    }, 3000);
+  }
+});
 
 socket.on("life-up", (index, life, y, x) => {
   const sound = powerupSound.cloneNode(true);
@@ -1030,6 +1033,10 @@ socket.on("life-up", (index, life, y, x) => {
   cell.classList.remove("life-up");
   if (index === ownIndex) {
     lives.textContent = `Lives ${life}`;
+    powerupIndicator.innerHTML = "&#x2764;";
+    setTimeout(() => {
+      powerupIndicator.textContent = "Power-up";
+    }, 3000);
   }
 });
 
