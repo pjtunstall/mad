@@ -207,6 +207,18 @@ io.on("connection", (socket) => {
   });
 
   socket.on("move", ({ index, key }) => {
+    if (
+      key !== "ArrowUp" &&
+      key !== "ArrowDown" &&
+      key !== "ArrowLeft" &&
+      key !== "ArrowRight"
+    ) {
+      console.log(
+        `Invalid direction key received from ${players[index].role}:`,
+        key
+      );
+      return;
+    }
     players[index].direction.key = key;
     switch (key) {
       case "ArrowUp":
@@ -568,12 +580,18 @@ function walkable(y, x, player) {
       return false;
     }
   }
+  if (!grid[y][x]) {
+    // Occasionally undefined when playing over hotspot. Why?
+    console.log(
+      `${player.role} tried to move to grid[${y}][${x}], which is ${grid[y][x]}`
+    );
+    return false;
+  }
   return (
-    // It can happen that grid[y][x] is undefined. Why?
-    grid[y][x]?.type === "walkable" ||
-    grid[y][x]?.type === "fire" ||
-    (player.softBlockPass && grid[y][x]?.type === "breakable") ||
-    (player.bombPass && grid[y][x]?.type === "bomb")
+    grid[y][x].type === "walkable" ||
+    grid[y][x].type === "fire" ||
+    (player.softBlockPass && grid[y][x].type === "breakable") ||
+    (player.bombPass && grid[y][x].type === "bomb")
   );
 }
 

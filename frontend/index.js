@@ -735,7 +735,8 @@ socket.on("start game", ({ updatedPlayers, newGrid }) => {
   audio.pause();
   intro.style.display = "none";
   document.body.style.background = "gray";
-  document.body.style.transform = "scale(0.5)";
+  const factor = Math.min(screen.height / 768, screen.width / 1366);
+  document.body.style.transform = `scale(${0.5 * factor})`;
   document.getElementById("game").classList.add("show");
   generateLevel();
 });
@@ -1003,6 +1004,8 @@ socket.on("move", ({ newPosition, newDirection, index }) => {
   direction[index].key = newDirection.key;
 });
 
+let powerupDisplayTimeoutId;
+
 socket.on("get powerup", ({ y, x, powerup, index }) => {
   const sound = powerupSound.cloneNode(true);
   sound.play();
@@ -1019,7 +1022,8 @@ socket.on("get powerup", ({ y, x, powerup, index }) => {
   }
   if (index === ownIndex) {
     powerupIndicator.textContent = powerup.name;
-    setTimeout(() => {
+    clearTimeout(powerupDisplayTimeoutId);
+    powerupDisplayTimeoutId = setTimeout(() => {
       powerupIndicator.textContent = "Power-up";
     }, 3000);
   }
@@ -1037,7 +1041,8 @@ socket.on("life-up", (index, life, y, x) => {
   if (index === ownIndex) {
     lives.textContent = `Lives ${life}`;
     powerupIndicator.innerHTML = "&#x2764;"; // heart
-    setTimeout(() => {
+    clearTimeout(powerupDisplayTimeoutId);
+    powerupDisplayTimeoutId = setTimeout(() => {
       powerupIndicator.textContent = "Power-up";
     }, 3000);
   }
@@ -1178,6 +1183,9 @@ socket.on("spawned", ({ index, isGameOver, powerup, y, x, life, hasSkate }) => {
   );
   if (index == ownIndex) {
     lives.textContent = `Lives ${life}`;
+    direction[index].y = 0;
+    direction[index].x = 0;
+    direction[index].key = "";
     document.addEventListener("keydown", onKeyDown);
     document.addEventListener("keyup", onKeyUp);
   }
