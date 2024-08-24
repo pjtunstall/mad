@@ -511,7 +511,7 @@ function move(player) {
   const nextY = player.position.y + player.direction.y;
   const nextX = player.position.x + player.direction.x;
   if (!walkable(nextY, nextX, player)) {
-    return false; // Return value not currently used, but part of an experient to deal differently with the case where the player did actually change position.
+    return false;
   }
   if (player.position.y === nextY && player.position.x === nextX) {
     return false;
@@ -587,12 +587,17 @@ function walkable(y, x, player) {
     );
     return false;
   }
-  return (
+  const isInBounds =
+    y > 0 ||
+    y < numberOfRowsInGrid - 1 ||
+    x > 0 ||
+    x < numberOfColumnsInGrid - 1;
+  const isLegitDestination =
     grid[y][x].type === "walkable" ||
     grid[y][x].type === "fire" ||
     (player.softBlockPass && grid[y][x].type === "breakable") ||
-    (player.bombPass && grid[y][x].type === "bomb")
-  );
+    (player.bombPass && grid[y][x].type === "bomb");
+  return isLegitDestination && isInBounds;
 }
 
 function plantNormalBomb(y, x, index) {

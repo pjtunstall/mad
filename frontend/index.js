@@ -1040,7 +1040,7 @@ socket.on("life-up", (index, life, y, x) => {
   cell.classList.remove("life-up");
   if (index === ownIndex) {
     lives.textContent = `Lives ${life}`;
-    powerupIndicator.innerHTML = "&#x2764;"; // heart
+    powerupIndicator.innerHTML = "life-up";
     clearTimeout(powerupDisplayTimeoutId);
     powerupDisplayTimeoutId = setTimeout(() => {
       powerupIndicator.textContent = "Power-up";
