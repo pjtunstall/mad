@@ -200,6 +200,9 @@ function gameInProgress() {
   const credits = document.getElementById("credits");
   credits.classList.remove("hide");
   credits.classList.add("show");
+  setInterval(() => {
+    window.location.reload();
+  }, 40000);
 }
 
 function transitionToName() {
@@ -1033,7 +1036,7 @@ socket.on("life-up", (index, life, y, x) => {
   cell.classList.remove("life-up");
   if (index === ownIndex) {
     lives.textContent = `Lives ${life}`;
-    powerupIndicator.innerHTML = "&#x2764;";
+    powerupIndicator.innerHTML = "&#x2764;"; // heart
     setTimeout(() => {
       powerupIndicator.textContent = "Power-up";
     }, 3000);
