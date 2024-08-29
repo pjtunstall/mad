@@ -18,6 +18,7 @@ import {
 // 5. Game sounds
 
 // Intro, outro, and general variables
+const dpr = devicePixelRatio || 1;
 const startButton = document.getElementById("start");
 const everythingContainer = document.getElementById("everything-container");
 const readyButton = document.getElementById("ready");
@@ -736,12 +737,12 @@ socket.on("start game", ({ updatedPlayers, newGrid }) => {
   intro.style.display = "none";
   document.body.style.background = "gray";
   const factor = Math.min(screen.height / 768, screen.width / 1366);
-  document.body.style.transform = `scale(${0.5 * factor})`;
+  document.body.style.transform = `scale(${0.5 * factor * dpr})`;
   document.getElementById("game").classList.add("show");
   generateLevel();
 });
 
-// This is where we use the overReact framework for the sake of the audit.
+// This is where we use our overReact framework for the sake of the audit. See immediately after for the original `buildGrid` function.
 function buildGrid() {
   const vApp = new overReact.VNode("div", { attrs: { id: "game-grid" } });
   cellsArr = [];
@@ -1250,7 +1251,7 @@ function displayGameOverMessage(survivorIndex, type) {
 function transitionToOutro() {
   fetchMusic(outroMusic);
   document.body.style.background = "black";
-  document.body.style.transform = "scale(1)";
+  document.body.style.transform = `scale(${1})`;
   game.style.display = "none";
   credits.style.display = "none";
   intro.style.display = "block";
