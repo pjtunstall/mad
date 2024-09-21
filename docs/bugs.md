@@ -1,6 +1,13 @@
 # Bugs
 
-More play testing would help to replicate any of these that are still happening and investigate the causes, as well as revealing any yet-to-be-discovered bugs.
+## Current
+
+- In Chrome for one player with a big screen, arrow keys caused the game grid to move around a very big, scrollable area, even when zoomed right out.
+- On one occasion, when two people were playing abomb hiss continued indefinitely. I don't know the exact circumstances.
+
+## Seen on previous versions
+
+More play testing would help to replicate any of the following that are still happening and investigate the causes, as well as revealing any yet-to-be-discovered bugs.
 
 - Server crashed twice on game of 4 players over mobile hotspot at `(player.bombPass && grid[y][x]?.type === "bomb")` in `walkable` before I added a check to make sure `grid[y][x]` is defined.
 - Sometimes, after a game, one or more players would got stuck on the "game in progress" screen. Only seen over mobile hotspot. Since I saw that, I'm having the client reload the page every 40s while on the game-in-progress screen just in case it's no longer in progress but somehow they didn't receive the signal to that effect.

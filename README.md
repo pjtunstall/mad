@@ -14,7 +14,7 @@ This is our take on the final project of the JavaScript section of the [01Founde
 
 This game was adapted from a single-player original by some of our fellow students: Peter Coles, Michael Adeleke, and Mohammed Rashidur Rahman.
 
-[Other features](docs/optional-extras.md) may be added eventually.
+[Other features](docs/further.md) may be added eventually.
 
 ## 2. Setup
 
@@ -33,7 +33,7 @@ Note: the instructions ask us to have a lobby with a 20s countdown, followed by 
 
 ## 3. Progress
 
-The multiplayer Bomberman game is working in Chrome, Brave, Firefox, and Safari. As in the single-player version from make-your-game, all bonus powerups are implemented except bomb-push (throw).
+This multiplayer version can be played in Chrome, Brave, Firefox, Edge, and Safari. As its single-player precursor, all bonus powerups are implemented except bomb-push (throw). Intermittent [bugs](docs/bugs.md) remain. To tackle these, more play testing would be needed under various conditions and on different devices. It's still too sensitive to screen dimensions. Size, proportions, and alignment could be fixed better, leaving less to chance, especially on the intro. See [Further](docs/further.md) (in particular, DESIGN) for more detail.
 
 ## 4. Framework
 

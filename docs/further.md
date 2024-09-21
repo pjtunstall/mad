@@ -1,4 +1,4 @@
-# Optional Extras
+# Further
 
 - NETWORK
   - Consider what to do at bottlenecks where a lagging client might prevent progress indefinitely: at the end of the countdown and on game over, waiting for everyone to press the bomb (ready) button. In a multi-instance version, this would be taken care of by the regular connection logic.
