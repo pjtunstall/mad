@@ -18,7 +18,6 @@ import {
 // 5. Game sounds
 
 // Intro, outro, and general variables
-const dpr = devicePixelRatio || 1;
 const startButton = document.getElementById("start");
 const everythingContainer = document.getElementById("everything-container");
 const readyButton = document.getElementById("ready");
@@ -726,7 +725,7 @@ async function startCountdown() {
   readyButton.classList.add("hide");
   readyButton.classList.remove("show");
 
-  // At this point, we could send a signal to the server like this to start the game, but it would make more sense to move the countdown logic to the server and have it initiate the game itself when it reaches this point, maybe waiting a couple of seconds for any lagging players to catch up to zero, but starting regardless when some deadline is reached.
+  // At this point, we could send a signal to the server like this to start the game, but I think it would make more sense to move the countdown logic to the server and have it initiate the game itself when it reaches this point, maybe waiting a couple of seconds for any lagging players to catch up to zero, but starting regardless when some deadline is reached.
   socket.emit("start game");
 }
 
@@ -737,7 +736,7 @@ socket.on("start game", ({ updatedPlayers, newGrid }) => {
   intro.style.display = "none";
   document.body.style.background = "gray";
   const factor = Math.min(screen.height / 768, screen.width / 1366);
-  document.body.style.transform = `scale(${0.5 * factor * dpr})`;
+  document.body.style.transform = `scale(${0.5 * factor})`;
   document.getElementById("game").classList.add("show");
   generateLevel();
 });
