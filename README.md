@@ -1,5 +1,7 @@
 # The Mad Bomber's Tea Party
 
+![red](images/red.jpg)
+
 [1. Background](#1-background)
 
 [2. Setup](#2-setup)
@@ -8,8 +10,6 @@
 
 [4. Framework](#4-framework)
 
-![intro](images/intro.jpg)
-
 ## 1. Background
 
 This is our take on the final project of the JavaScript section of the [01Founders course](https://01edu.notion.site/Global-01-Curriculum-50b7d94ac56a429fb3aee19a32248732), a branch of the [01Edu](https://01-edu.org/pedagogy) coding bootcamp system. The [brief](https://github.com/01-edu/public/tree/master/subjects/bomberman-dom) asks us to make a browser game for two to four players, based on the classic 1983 [Bomberman](https://en.wikipedia.org/wiki/Bomberman), using web sockets, but no WebGL or any framework apart from the [home-made one](https://github.com/pjtunstall/mini-framework) we built for our previous project.
@@ -17,8 +17,6 @@ This is our take on the final project of the JavaScript section of the [01Founde
 This game was adapted from a single-player original by some of our fellow students: Peter Coles, Michael Adeleke, and Mohammed Rashidur Rahman.
 
 [Other features](docs/further.md) may be added eventually.
-
-![red](images/red.jpg)
 
 ## 2. Setup
 
