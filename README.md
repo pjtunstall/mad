@@ -1,8 +1,11 @@
 # The Mad Bomber's Tea Party
 
 [1. Background](#1-background)
+
 [2. Setup](#2-setup)
+
 [3. Progress](#3-progress)
+
 [4. Framework](#4-framework)
 
 ![intro](images/intro.jpg)
