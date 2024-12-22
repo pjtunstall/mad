@@ -2,13 +2,10 @@
 
 ![red](images/red.jpg)
 
-[1. Background](#1-background)
-
-[2. Setup](#2-setup)
-
-[3. Progress](#3-progress)
-
-[4. Framework](#4-framework)
+1. [Background](#background)
+2. [Setup](#setup)
+3. [Progress](#progress)
+4. [Framework](#framework)
 
 ## 1. Background
 
