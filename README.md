@@ -1,12 +1,11 @@
 # The Mad Bomber's Tea Party
 
 [1. Background](#1-background)
-
 [2. Setup](#2-setup)
-
 [3. Progress](#3-progress)
-
 [4. Framework](#4-framework)
+
+![intro](images/intro.jpg)
 
 ## 1. Background
 
@@ -15,6 +14,8 @@ This is our take on the final project of the JavaScript section of the [01Founde
 This game was adapted from a single-player original by some of our fellow students: Peter Coles, Michael Adeleke, and Mohammed Rashidur Rahman.
 
 [Other features](docs/further.md) may be added eventually.
+
+![red](images/red.jpg)
 
 ## 2. Setup
 
@@ -25,7 +26,7 @@ git clone https://github.com/pjtunstall/mad
 cd mad/backend
 ```
 
-Install Node dependencies with `npm install`. If it reports any vulnerabilities, `npm audit fix`, as directed. Then run `node server.js` to start the server on port 3000.
+Install Node dependencies with `npm install`. Then run `node server.js` to start the server on port 3000.
 
 The server will log its IP address in the terminal. To connect over a mobile hotspot, players can enter that address into their browser. As yet it only supports a single instance of the game.
 
