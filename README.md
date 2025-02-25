@@ -32,7 +32,7 @@ Note: the instructions ask us to have a lobby with a 20s countdown, followed by 
 
 ## 3. Progress
 
-This multiplayer version can be played in Chrome, Brave, Firefox, Edge, and Safari. As its single-player precursor, all bonus powerups are implemented except bomb-push (throw). Intermittent [bugs](docs/bugs.md) remain. To tackle these, more play testing would be needed under various conditions and on different devices. It's still too sensitive to screen dimensions. Size, proportions, and alignment could be fixed better, leaving less to chance, especially on the intro. See [Further](docs/further.md) (in particular, DESIGN) for more detail.
+This multiplayer version can be played in Chrome, Brave, Firefox, Edge, and Safari. As in its single-player precursor, all bonus powerups are implemented except bomb-push (throw). Intermittent [bugs](docs/bugs.md) remain. To tackle these, more play testing would be needed under various conditions and on different devices. It's still too sensitive to screen dimensions. Size, proportions, and alignment could be fixed better, leaving less to chance, especially on the intro. See [Further](docs/further.md) (in particular, DESIGN) for more detail.
 
 ## 4. Framework
 
