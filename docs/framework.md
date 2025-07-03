@@ -10,7 +10,49 @@
 
 ## 1. Overview
 
-We decided to just use the framework to set up the grid initially, taking `game-grid` as the root node of (frameworked part of) the app. That satisfies the audit. The only function affected is `buildGrid()`. Integrating the framework thoroughly would likely be detrimental to performance, but for the sake of posterity, and in case anyone is interested in doing something in this direction as an exercise, here is my original plan together with a guide to the DOM-related material in the game itself. Further steps that could be taken include:
+We decided to just use the framework to set up the grid initially, taking `game-grid` as the root node of (frameworked part of) the app. That satisfies the audit. The only function affected is `buildGrid()`. This has now been removed since it's superfluous to the needs of the game.
+
+```javascript
+// This is where we use our overReact framework for the sake of the audit. See immediately after for the original `buildGrid` function.
+function buildGrid() {
+  const vApp = new overReact.VNode("div", { attrs: { id: "game-grid" } });
+  cellsArr = [];
+  for (let row = 0; row < numberOfRowsInGrid; row++) {
+    cellsArr.push([]);
+    for (let col = 0; col < numberOfColumnsInGrid; col++) {
+      const cellData = gridData[row][col];
+      const cell = new overReact.VNode("div", {
+        attrs: {
+          id: `cell-${row}-${col}`,
+          class: "cell",
+          style: `top: ${cellData.top}px; left: ${cellData.left}px;`,
+        },
+      });
+      const type = cellData.type;
+      if (type === "breakable") {
+        cell.addClass("breakable");
+        if (cellData.powerup) {
+          console.log(cellData.powerup.name);
+          cell.addClass("power-up");
+          cell.addClass(cellData.powerup.name);
+        }
+      } else if (type === "unbreakable") {
+        cell.addClass("unbreakable");
+      }
+      vApp.children.push(cell);
+    }
+  }
+  let app = new overReact.App(vApp, grid, { dummyState: 0 });
+  grid = app.$app;
+  for (let row = 0; row < numberOfRowsInGrid; row++) {
+    for (let col = 0; col < numberOfColumnsInGrid; col++) {
+      cellsArr[row][col] = document.getElementById(`cell-${row}-${col}`);
+    }
+  }
+}
+```
+
+Integrating the framework thoroughly would likely be detrimental to performance, but for the sake of posterity, and in case anyone is interested in doing something in this direction as an exercise, here is my original plan together with a guide to the DOM-related material in the game itself. Further steps that could be taken include:
 
 - Rewrite all code that affects the DOM to only modify the virtual DOM.
 - Think of any suitable state variables that we want to trigger automatic updates, e.g. position and direction. We also have the option (escape hatch) of being able to simply call the `update()` method on the app, but we should try to maintain or recreate batching of updates. Caution: pass `update()` to `requestAnimationFrame` (or call it from the game loop) to ensure that the event handler has a chance to make all of its changes to the virtual DOM before diff and reconciliation.

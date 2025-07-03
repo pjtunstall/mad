@@ -1,4 +1,3 @@
-import { overReact } from "./overreact/over-react.js";
 import {
   creditsText,
   characters,
@@ -167,14 +166,20 @@ function transitionToStart() {
       event.target.style.opacity = 0;
     });
   everythingContainer.style.pointerEvents = "none";
-  startButton.addEventListener("click", transitionToName, { once: true });
-  chatInput.placeholder = "Who are you?";
-  chatForm.addEventListener("submit", submitName);
+  startButton.addEventListener("click", transitionToCode, { once: true });
 }
+
+socket.on("authenticated", transitionToName);
+
+socket.on("rejected", () => {
+  chatInput.placeholder = "Code rejected. Try again.";
+  chatForm.addEventListener("submit", submitCode);
+  chatForm.querySelector("input").focus();
+});
 
 socket.on("server full", () => {
   startButton.innerHTML = `SERVER FULL<br/>SO IT GOES`;
-  startButton.removeEventListener("click", transitionToName);
+  startButton.removeEventListener("click", transitionToCode);
   startButton.style.pointerEvents = "none";
   socket.on("new space", reloadPage);
 });
@@ -195,7 +200,7 @@ function gameInProgress() {
   startButton.classList.remove("hide");
   startButton.classList.add("show");
   startButton.innerHTML = "GAME IN PROGRESS<br/>SUCH IS LIFE . . .";
-  startButton.removeEventListener("click", transitionToName);
+  startButton.removeEventListener("click", transitionToCode);
   startButton.style.pointerEvents = "none";
   const credits = document.getElementById("credits");
   credits.classList.remove("hide");
@@ -205,8 +210,8 @@ function gameInProgress() {
   }, 40000);
 }
 
-function transitionToName() {
-  phase = "name";
+function transitionToCode() {
+  phase = "code";
   startButton.classList.add("hide");
   document.getElementById("credits").classList.add("hide");
   everythingContainer.classList.add("show");
@@ -218,7 +223,15 @@ function transitionToName() {
   const textElement = document.getElementById("text");
   typeLetter(textElement, introText, 14);
 
+  chatInput.placeholder = "Enter your code.";
+  chatForm.addEventListener("submit", submitCode);
   chatForm.querySelector("input").focus();
+}
+
+function transitionToName() {
+  phase = "name";
+  chatInput.placeholder = "Who are you?";
+  chatForm.addEventListener("submit", submitName);
 }
 
 function typeLetter(textElement, text, frequency) {
@@ -625,12 +638,21 @@ function transitionToChat() {
   }
 }
 
+function submitCode(event) {
+  event.preventDefault();
+  const input = event.target.querySelector("input");
+  socket.emit("code", input.value);
+  input.value = "";
+  chatForm.removeEventListener("submit", submitCode);
+}
+
 function submitName(event) {
   event.preventDefault();
   const input = event.target.querySelector("input");
   socket.emit("name", input.value);
   input.value = "";
   chatForm.style.opacity = 0;
+  chatForm.removeEventListener("submit", submitName);
   transitionToRoles();
 }
 
@@ -741,76 +763,37 @@ socket.on("start game", ({ updatedPlayers, newGrid }) => {
   generateLevel();
 });
 
-// This is where we use our overReact framework for the sake of the audit. See immediately after for the original `buildGrid` function.
 function buildGrid() {
-  const vApp = new overReact.VNode("div", { attrs: { id: "game-grid" } });
+  let newGrid = document.createElement("div");
+  grid.parentNode.replaceChild(newGrid, grid);
+  grid = newGrid;
+  grid.id = "game-grid";
   cellsArr = [];
   for (let row = 0; row < numberOfRowsInGrid; row++) {
     cellsArr.push([]);
     for (let col = 0; col < numberOfColumnsInGrid; col++) {
       const cellData = gridData[row][col];
-      const cell = new overReact.VNode("div", {
-        attrs: {
-          id: `cell-${row}-${col}`,
-          class: "cell",
-          style: `top: ${cellData.top}px; left: ${cellData.left}px;`,
-        },
-      });
+      const cell = document.createElement("div");
+      cell.id = `cell-${row}-${col}`;
+      cell.classList.add("cell");
+      cell.style.top = `${cellData.top}px`;
+      cell.style.left = `${cellData.left}px`;
       const type = cellData.type;
       if (type === "breakable") {
-        cell.addClass("breakable");
+        cell.classList.add("breakable");
         if (cellData.powerup) {
           console.log(cellData.powerup.name);
-          cell.addClass("power-up");
-          cell.addClass(cellData.powerup.name);
+          cell.classList.add("power-up");
+          cell.classList.add(cellData.powerup.name);
         }
       } else if (type === "unbreakable") {
-        cell.addClass("unbreakable");
+        cell.classList.add("unbreakable");
       }
-      vApp.children.push(cell);
-    }
-  }
-  let app = new overReact.App(vApp, grid, { dummyState: 0 });
-  grid = app.$app;
-  for (let row = 0; row < numberOfRowsInGrid; row++) {
-    for (let col = 0; col < numberOfColumnsInGrid; col++) {
-      cellsArr[row][col] = document.getElementById(`cell-${row}-${col}`);
+      grid.append(cell);
+      cellsArr[row].push(cell);
     }
   }
 }
-
-// // Original version of the function, that manipulates the DOM directly without using the overReact framework.
-// function buildGrid() {
-//   let newGrid = document.createElement("div");
-//   grid.parentNode.replaceChild(newGrid, grid);
-//   grid = newGrid;
-//   grid.id = "game-grid";
-//   cellsArr = [];
-//   for (let row = 0; row < numberOfRowsInGrid; row++) {
-//     cellsArr.push([]);
-//     for (let col = 0; col < numberOfColumnsInGrid; col++) {
-//       const cellData = gridData[row][col];
-//       const cell = document.createElement("div");
-//       cell.id = `cell-${row}-${col}`;
-//       cell.classList.add("cell");
-//       cell.style.top = `${cellData.top}px`;
-//       cell.style.left = `${cellData.left}px`;
-//       const type = cellData.type;
-//       if (type === "breakable") {
-//         cell.classList.add("breakable");
-//         if (cellData.powerup) {
-//           console.log(cellData.powerup.name);
-//           cell.classList.add("power-up");
-//           cell.classList.add(cellData.powerup.name);
-//         }
-//       } else if (type === "unbreakable") {
-//         cell.classList.add("unbreakable");
-//       }
-//       grid.append(cell);
-//       cellsArr[row].push(cell);
-//     }
-//   }
-// }
 
 function generateLevel() {
   isRemoteControlBombPlanted = false;

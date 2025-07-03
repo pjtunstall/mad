@@ -36,4 +36,4 @@ This multiplayer version can be played in Chrome, Brave, Firefox, Edge, and Safa
 
 ## 4. Framework
 
-We're using it in a minimal way, just to construct the game grid, so as to meet the requirements for the 01Founders exercise. For more detail, see this [discussion](docs/framework.md), which includes the original plan and thoughts on how it might be developed it further. But I don't see any good in that. I think it would complicate the code, impinge on performance, and be--from the players' perspective--at best unnoticeble.
+In the version submitted for 01Founders, we used my homemade frontend framework, [overReact](https://github.com/pjtunstall/overreact), in a minimal way, just to construct the grid, so as to meet the requirements for the exercise. For more detail, see this [discussion](docs/framework.md), which includes the original plan and thoughts on how it might be developed it further. I've removed this dependency now as it was superfluous to the needs of the game.

@@ -151,7 +151,18 @@ io.on("connection", (socket) => {
   console.log(`User ${player.index} connected`, socket.id);
   socket.emit("players", players);
 
+  socket.on("code", (code) => {
+    const correctCode = "beans";
+    if (code === correctCode) {
+      player.phase = "name";
+      socket.emit("authenticated");
+    } else {
+      socket.emit("rejected");
+    }
+  });
+
   socket.on("name", (name) => {
+    name = name.length > 1024 ? name.slice(0, 1024) : name;
     name = sanitize(name);
     player.name = name;
     player.phase = "roles";
@@ -173,6 +184,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("chat message", (msg) => {
+    msg = msg.length > 1024 ? msg.slice(0, 1024) : msg;
     msg = sanitize(msg);
     io.emit("chat message", { msg, player });
   });
