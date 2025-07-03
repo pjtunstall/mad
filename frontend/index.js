@@ -172,9 +172,7 @@ function transitionToStart() {
 socket.on("authenticated", transitionToName);
 
 socket.on("rejected", () => {
-  chatInput.placeholder = "Code rejected. Try again.";
-  chatForm.addEventListener("submit", submitCode);
-  chatForm.querySelector("input").focus();
+  window.location.reload();
 });
 
 socket.on("server full", () => {
