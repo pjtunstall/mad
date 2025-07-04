@@ -1,6 +1,6 @@
 # The Mad Bomber's Tea Party
 
-![red](images/red.jpg)
+![red](red.jpg)
 
 1. [Background](#background)
 2. [Setup](#setup)
